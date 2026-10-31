@@ -15,6 +15,7 @@ import net.minecraft.util.Identifier;
  * quando o efeito começa e tira quando acaba (ou quando a pessoa bebe leite ou morre):
  * <ul>
  *   <li>tamanho 30% do normal: o jogador fica com ~0,5 bloco de altura, como um sapo;</li>
+ *   <li>40% mais rápido (como a poção de Velocidade II);</li>
  *   <li>pulo mais forte (uns 2 blocos);</li>
  *   <li>cai de até 3 blocos a mais sem se machucar.</li>
  * </ul>
@@ -28,6 +29,8 @@ public class BatraquizadoEffect extends StatusEffect {
     public BatraquizadoEffect() {
         super(StatusEffectCategory.HARMFUL, COLOR);
         addAttributeModifier(EntityAttributes.GENERIC_SCALE, SCALE_ID, -0.7,
+                EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, Batraquizar.id("batraquizado_speed"), 0.4,
                 EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         addAttributeModifier(EntityAttributes.GENERIC_JUMP_STRENGTH, Batraquizar.id("batraquizado_jump"), 0.15,
                 EntityAttributeModifier.Operation.ADD_VALUE);

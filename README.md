@@ -5,7 +5,7 @@ Mods de Minecraft (Fabric) do edugcs. Cada mod fica na sua própria pasta, com R
 | Mod | O que faz | Minecraft |
 |---|---|---|
 | [**jblesk**](jblesk/) | **jbleskão** (bloco) e **jblesk** (caixa de som portátil): tocam músicas e playlists do YouTube, SoundCloud ou links diretos de áudio para todo mundo que estiver perto. Pausa, pular na barra, volume pessoal, alcance perto/longe, e a caixa também toca do inventário, do baú do burro e do barco com baú. | 1.21.1 (Fabric) |
-| [**batraquizar**](batraquizar/) | O **Batraquizador**, uma poção: jogue a versão arremessável em alguém e ele vira sapo (pequeno, pulando alto, coaxando e sem conseguir atacar) até o efeito passar ou beber leite. | 1.21.1 (Fabric) |
+| [**batraquizar**](batraquizar/) | O **Batraquizador**, uma poção: jogue a versão arremessável em alguém e ele vira sapo (pequeno, rápido, pulando alto, coaxando e sem conseguir atacar) até o efeito passar ou beber leite. | 1.21.1 (Fabric) |
 
 ## Baixar o .jar
 

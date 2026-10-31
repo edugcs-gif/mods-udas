@@ -20,6 +20,7 @@ Também dá para fazer a **Flecha do Batraquizador** com o Batraquizador Persist
 
 - **Vira sapo de verdade** para todo mundo: o jogador (ou qualquer criatura atingida) é desenhado como um sapo, que anda e pula junto com ele e **coaxa** de vez em quando. O nome do jogador continua aparecendo em cima do sapo.
 - **Fica pequeno** (30% do tamanho, uns 0,5 bloco de altura): passa por buracos de 1 bloco e a câmera fica lá embaixo.
+- **Fica 40% mais rápido** (como a poção de Velocidade II).
 - **Pula mais alto** (uns 2 blocos) e cai de até 3 blocos a mais sem se machucar.
 - **Não ataca nem quebra blocos** (sapo não tem mão: em primeira pessoa o braço some).
 - Ainda pode **usar itens**: comer, abrir portas e **beber leite**, que desfaz o feitiço na hora.
