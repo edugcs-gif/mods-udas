@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
  * Batraquizar: a poção Batraquizador. Quem bebe, é atingido pela poção arremessável (ou persistente, ou pela flecha) vira
  * sapo até o efeito acabar. Leite desfaz, como qualquer efeito.
  *
- * <p>Ser sapo é o efeito {@link FrogEffect}: ele encolhe a pessoa (atributo de tamanho), deixa pular
- * mais alto e cair sem se machucar de alturas pequenas. O desenho de sapo é só no cliente
+ * <p>Ser sapo é o efeito Batraquizado ({@link BatraquizadoEffect}): ele encolhe a pessoa (atributo de
+ * tamanho), deixa pular mais alto e cair sem se machucar de alturas pequenas. O desenho de sapo é só no cliente
  * ({@code BatraquizarClient}); ele sabe quem é sapo pelo modificador de tamanho, que o jogo já manda para
  * todos os jogadores por perto.
  */
@@ -37,14 +37,15 @@ public class Batraquizar implements ModInitializer {
     private static final int DURATION = 60 * 20;
     private static final int LONG_DURATION = 3 * 60 * 20;
 
-    public static final RegistryEntry<StatusEffect> FROG_EFFECT =
-            Registry.registerReference(Registries.STATUS_EFFECT, id("frog"), new FrogEffect());
+    public static final RegistryEntry<StatusEffect> BATRAQUIZADO =
+            Registry.registerReference(Registries.STATUS_EFFECT, id("batraquizado"), new BatraquizadoEffect());
 
     // As duas usam o nome "batraquizador", então as traduções são as mesmas ("Batraquizador").
     public static final RegistryEntry<Potion> BATRAQUIZADOR = Registry.registerReference(Registries.POTION,
-            id("batraquizador"), new Potion("batraquizador", new StatusEffectInstance(FROG_EFFECT, DURATION)));
+            id("batraquizador"), new Potion("batraquizador", new StatusEffectInstance(BATRAQUIZADO, DURATION)));
     public static final RegistryEntry<Potion> LONG_BATRAQUIZADOR = Registry.registerReference(Registries.POTION,
-            id("long_batraquizador"), new Potion("batraquizador", new StatusEffectInstance(FROG_EFFECT, LONG_DURATION)));
+            id("long_batraquizador"),
+            new Potion("batraquizador", new StatusEffectInstance(BATRAQUIZADO, LONG_DURATION)));
 
     public static Identifier id(String path) {
         return Identifier.of(MOD_ID, path);
@@ -53,7 +54,7 @@ public class Batraquizar implements ModInitializer {
     /** Esta criatura está transformada em sapo? Funciona no servidor e no cliente (para qualquer criatura por perto). */
     public static boolean isFrog(LivingEntity entity) {
         EntityAttributeInstance scale = entity.getAttributeInstance(EntityAttributes.GENERIC_SCALE);
-        return scale != null && scale.hasModifier(FrogEffect.SCALE_ID);
+        return scale != null && scale.hasModifier(BatraquizadoEffect.SCALE_ID);
     }
 
     @Override

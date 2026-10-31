@@ -14,7 +14,7 @@ No suporte de poções:
 
 Também dá para fazer a **Flecha do Batraquizador** com o Batraquizador Persistente, como as outras flechas com efeito. No criativo, ele aparece nas abas de poções junto com as outras poções.
 
-## O que acontece com quem vira sapo
+## O que acontece com quem vira sapo (efeito **Batraquizado**)
 
 - **Vira sapo de verdade** para todo mundo: o jogador (ou qualquer criatura atingida) é desenhado como um sapo, que anda e pula junto com ele e **coaxa** de vez em quando. O nome do jogador continua aparecendo em cima do sapo.
 - **Fica pequeno** (30% do tamanho, uns 0,5 bloco de altura): passa por buracos de 1 bloco e a câmera fica lá embaixo.

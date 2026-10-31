@@ -11,7 +11,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 
 /**
- * O efeito "Sapo". Tudo o que muda no corpo são modificadores de atributo, que o próprio jogo coloca
+ * O efeito "Batraquizado". Tudo o que muda no corpo são modificadores de atributo, que o próprio jogo coloca
  * quando o efeito começa e tira quando acaba (ou quando a pessoa bebe leite ou morre):
  * <ul>
  *   <li>tamanho 30% do normal: o jogador fica com ~0,5 bloco de altura, como um sapo;</li>
@@ -19,19 +19,19 @@ import net.minecraft.util.Identifier;
  *   <li>cai de até 3 blocos a mais sem se machucar.</li>
  * </ul>
  */
-public class FrogEffect extends StatusEffect {
+public class BatraquizadoEffect extends StatusEffect {
     /** O cliente reconhece quem é sapo por este modificador de tamanho (veja {@link Batraquizar#isFrog}). */
-    public static final Identifier SCALE_ID = Batraquizar.id("frog_scale");
+    public static final Identifier SCALE_ID = Batraquizar.id("batraquizado_scale");
 
     private static final int COLOR = 0x5BA03A;
 
-    public FrogEffect() {
+    public BatraquizadoEffect() {
         super(StatusEffectCategory.HARMFUL, COLOR);
         addAttributeModifier(EntityAttributes.GENERIC_SCALE, SCALE_ID, -0.7,
                 EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        addAttributeModifier(EntityAttributes.GENERIC_JUMP_STRENGTH, Batraquizar.id("frog_jump"), 0.15,
+        addAttributeModifier(EntityAttributes.GENERIC_JUMP_STRENGTH, Batraquizar.id("batraquizado_jump"), 0.15,
                 EntityAttributeModifier.Operation.ADD_VALUE);
-        addAttributeModifier(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE, Batraquizar.id("frog_fall"), 3.0,
+        addAttributeModifier(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE, Batraquizar.id("batraquizado_fall"), 3.0,
                 EntityAttributeModifier.Operation.ADD_VALUE);
     }
 
