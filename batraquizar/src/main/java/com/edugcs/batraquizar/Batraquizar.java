@@ -40,11 +40,11 @@ public class Batraquizar implements ModInitializer {
     public static final RegistryEntry<StatusEffect> FROG_EFFECT =
             Registry.registerReference(Registries.STATUS_EFFECT, id("frog"), new FrogEffect());
 
-    // As duas usam o nome "frog", então as traduções são as mesmas ("Batraquizador").
-    public static final RegistryEntry<Potion> FROG_POTION = Registry.registerReference(Registries.POTION, id("frog"),
-            new Potion("frog", new StatusEffectInstance(FROG_EFFECT, DURATION)));
-    public static final RegistryEntry<Potion> LONG_FROG_POTION = Registry.registerReference(Registries.POTION,
-            id("long_frog"), new Potion("frog", new StatusEffectInstance(FROG_EFFECT, LONG_DURATION)));
+    // As duas usam o nome "batraquizador", então as traduções são as mesmas ("Batraquizador").
+    public static final RegistryEntry<Potion> BATRAQUIZADOR = Registry.registerReference(Registries.POTION,
+            id("batraquizador"), new Potion("batraquizador", new StatusEffectInstance(FROG_EFFECT, DURATION)));
+    public static final RegistryEntry<Potion> LONG_BATRAQUIZADOR = Registry.registerReference(Registries.POTION,
+            id("long_batraquizador"), new Potion("batraquizador", new StatusEffectInstance(FROG_EFFECT, LONG_DURATION)));
 
     public static Identifier id(String path) {
         return Identifier.of(MOD_ID, path);
@@ -61,8 +61,8 @@ public class Batraquizar implements ModInitializer {
         // Poção estranha + bola de slime = Batraquizador; + redstone = dura mais. A arremessável (pólvora),
         // a persistente (bafo do dragão) e a flecha saem pelas receitas normais do jogo.
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
-            builder.registerPotionRecipe(Potions.AWKWARD, Items.SLIME_BALL, FROG_POTION);
-            builder.registerPotionRecipe(FROG_POTION, Items.REDSTONE, LONG_FROG_POTION);
+            builder.registerPotionRecipe(Potions.AWKWARD, Items.SLIME_BALL, BATRAQUIZADOR);
+            builder.registerPotionRecipe(BATRAQUIZADOR, Items.REDSTONE, LONG_BATRAQUIZADOR);
         });
 
         // Sapo não ataca nem quebra blocos. Usar itens continua valendo (comer, abrir portas e beber leite para desvirar).

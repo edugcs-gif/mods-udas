@@ -1,7 +1,7 @@
 {
   "effect.batraquizar.frog": "Frog",
-  "item.minecraft.potion.effect.frog": "Batraquizador",
-  "item.minecraft.splash_potion.effect.frog": "Splash Batraquizador",
-  "item.minecraft.lingering_potion.effect.frog": "Lingering Batraquizador",
-  "item.minecraft.tipped_arrow.effect.frog": "Arrow of Batraquizador"
+  "item.minecraft.potion.effect.batraquizador": "Batraquizador",
+  "item.minecraft.splash_potion.effect.batraquizador": "Splash Batraquizador",
+  "item.minecraft.lingering_potion.effect.batraquizador": "Lingering Batraquizador",
+  "item.minecraft.tipped_arrow.effect.batraquizador": "Arrow of Batraquizador"
 }

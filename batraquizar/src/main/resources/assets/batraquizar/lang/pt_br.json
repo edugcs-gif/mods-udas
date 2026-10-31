@@ -1,7 +1,7 @@
 {
   "effect.batraquizar.frog": "Sapo",
-  "item.minecraft.potion.effect.frog": "Batraquizador",
-  "item.minecraft.splash_potion.effect.frog": "Batraquizador Arremessável",
-  "item.minecraft.lingering_potion.effect.frog": "Batraquizador Persistente",
-  "item.minecraft.tipped_arrow.effect.frog": "Flecha do Batraquizador"
+  "item.minecraft.potion.effect.batraquizador": "Batraquizador",
+  "item.minecraft.splash_potion.effect.batraquizador": "Batraquizador Arremessável",
+  "item.minecraft.lingering_potion.effect.batraquizador": "Batraquizador Persistente",
+  "item.minecraft.tipped_arrow.effect.batraquizador": "Flecha do Batraquizador"
 }
