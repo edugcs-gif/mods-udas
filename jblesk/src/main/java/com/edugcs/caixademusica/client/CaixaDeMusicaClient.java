@@ -54,10 +54,10 @@ public class CaixaDeMusicaClient implements ClientModInitializer {
             }
         };
 
-        ClientPlayNetworking.registerGlobalReceiver(ClockSyncPayload.ID,
-                (payload, context) -> MusicBoxClientManager.setServerClock(payload.serverMillis()));
-        ClientPlayNetworking.registerGlobalReceiver(PortableSourcesPayload.ID,
-                (payload, context) -> MusicBoxClientManager.setPortableSources(payload.entries()));
+        ClientPlayNetworking.registerGlobalReceiver(ClockSyncPayload.TYPE,
+                (payload, player, sender) -> MusicBoxClientManager.setServerClock(payload.serverMillis()));
+        ClientPlayNetworking.registerGlobalReceiver(PortableSourcesPayload.TYPE,
+                (payload, player, sender) -> MusicBoxClientManager.setPortableSources(payload.entries()));
 
         // Tecla para abrir a tela da caixa do burro/barco por perto, ou da caixa portátil do inventário.
         openKey = KeyBindingHelper.registerKeyBinding(
@@ -94,7 +94,7 @@ public class CaixaDeMusicaClient implements ClientModInitializer {
             if (!stack.isOf(CaixaDeMusica.PORTABLE_ITEM)) {
                 continue;
             }
-            PlaybackState state = stack.get(CaixaDeMusica.PORTABLE_STATE);
+            PlaybackState state = PlaybackState.ofStack(stack);
             if (state != null && state.audible()) {
                 found = slot;
                 break;

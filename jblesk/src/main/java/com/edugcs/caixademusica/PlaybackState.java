@@ -1,11 +1,9 @@
 package com.edugcs.caixademusica;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.concurrent.TimeUnit;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 
 /**
  * O que uma caixa (bloco ou portátil) está tocando. É o estado inteiro, igual nos dois casos.
@@ -34,26 +32,8 @@ public record PlaybackState(String url, boolean playing, boolean paused, int sta
     /** A caixa embutida no baú de um burro, mula, lhama ou barco: alcance entre o do portátil e o do bloco. */
     public static final PlaybackState ENTITY_DEFAULT = new PlaybackState("", false, false, 0, 0L, 0L, 6, 48);
 
-    public static final Codec<PlaybackState> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.optionalFieldOf("url", "").forGetter(PlaybackState::url),
-            Codec.BOOL.optionalFieldOf("playing", false).forGetter(PlaybackState::playing),
-            Codec.BOOL.optionalFieldOf("paused", false).forGetter(PlaybackState::paused),
-            Codec.INT.optionalFieldOf("start_index", 0).forGetter(PlaybackState::startIndex),
-            Codec.LONG.optionalFieldOf("started_at", 0L).forGetter(PlaybackState::startedAt),
-            Codec.LONG.optionalFieldOf("paused_elapsed", 0L).forGetter(PlaybackState::pausedElapsed),
-            Codec.INT.optionalFieldOf("near", PORTABLE_DEFAULT.near()).forGetter(PlaybackState::near),
-            Codec.INT.optionalFieldOf("far", PORTABLE_DEFAULT.far()).forGetter(PlaybackState::far)
-    ).apply(instance, PlaybackState::new));
-
-    /** Vai pela rede em 6 campos (o limite do PacketCodec.tuple): os booleanos e o alcance viajam juntos. */
-    public static final PacketCodec<RegistryByteBuf, PlaybackState> PACKET_CODEC = PacketCodec.tuple(
-            PacketCodecs.string(CaixaDeMusica.MAX_URL_LENGTH), PlaybackState::url,
-            PacketCodecs.VAR_INT, PlaybackState::flags,
-            PacketCodecs.VAR_INT, PlaybackState::startIndex,
-            PacketCodecs.VAR_LONG, PlaybackState::startedAt,
-            PacketCodecs.VAR_LONG, PlaybackState::pausedElapsed,
-            PacketCodecs.VAR_INT, PlaybackState::rangeBits,
-            PlaybackState::fromPacket);
+    /** Onde o estado da caixa portátil fica guardado no item (NBT). */
+    private static final String ITEM_KEY = "CaixaDeMusica";
 
     public PlaybackState {
         url = url == null ? "" : url;
@@ -61,6 +41,59 @@ public record PlaybackState(String url, boolean playing, boolean paused, int sta
         pausedElapsed = Math.max(0L, pausedElapsed);
         far = Math.max(MIN_FAR, Math.min(MAX_FAR, far));
         near = Math.max(0, Math.min(far, near));
+    }
+
+    // ---------------------------------------------------------------- NBT (bloco, item e entidade) e rede
+
+    public void writeNbt(NbtCompound nbt) {
+        nbt.putString("Url", url);
+        nbt.putBoolean("Playing", playing);
+        nbt.putBoolean("Paused", paused);
+        nbt.putInt("StartIndex", startIndex);
+        nbt.putLong("StartedAt", startedAt);
+        nbt.putLong("PausedElapsed", pausedElapsed);
+        nbt.putInt("Near", near);
+        nbt.putInt("Far", far);
+    }
+
+    /** Lê o estado; o que faltar (salvo por versões antigas, por exemplo) fica com o de {@code defaults}. */
+    public static PlaybackState fromNbt(NbtCompound nbt, PlaybackState defaults) {
+        return new PlaybackState(
+                nbt.getString("Url"),
+                nbt.getBoolean("Playing"),
+                nbt.getBoolean("Paused"),
+                nbt.getInt("StartIndex"),
+                nbt.getLong("StartedAt"),
+                nbt.getLong("PausedElapsed"),
+                nbt.contains("Near") ? nbt.getInt("Near") : defaults.near(),
+                nbt.contains("Far") ? nbt.getInt("Far") : defaults.far());
+    }
+
+    /** O estado guardado na caixa portátil, ou {@code null} se ela nunca tocou nada. */
+    public static PlaybackState ofStack(ItemStack stack) {
+        NbtCompound nbt = stack.getSubNbt(ITEM_KEY);
+        return nbt == null ? null : fromNbt(nbt, PORTABLE_DEFAULT);
+    }
+
+    public void writeTo(ItemStack stack) {
+        NbtCompound nbt = new NbtCompound();
+        writeNbt(nbt);
+        stack.setSubNbt(ITEM_KEY, nbt);
+    }
+
+    /** Vai pela rede em 6 campos: os booleanos e o alcance viajam juntos. */
+    public void write(PacketByteBuf buf) {
+        buf.writeString(url, CaixaDeMusica.MAX_URL_LENGTH);
+        buf.writeVarInt(flags());
+        buf.writeVarInt(startIndex);
+        buf.writeVarLong(startedAt);
+        buf.writeVarLong(pausedElapsed);
+        buf.writeVarInt(rangeBits());
+    }
+
+    public static PlaybackState read(PacketByteBuf buf) {
+        return fromPacket(buf.readString(CaixaDeMusica.MAX_URL_LENGTH), buf.readVarInt(), buf.readVarInt(),
+                buf.readVarLong(), buf.readVarLong(), buf.readVarInt());
     }
 
     private int flags() {

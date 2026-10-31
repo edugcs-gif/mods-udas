@@ -29,7 +29,7 @@ import net.minecraft.world.World;
  *   <li>a <b>caixa de som portátil</b> (item) guardada no inventário de um jogador (mão, barra ou
  *       mochila): só uma por jogador, a primeira que estiver tocando;</li>
  *   <li>a <b>caixa embutida</b> no baú de um burro, mula, lhama ou barco com baú: ela fica guardada na
- *       própria entidade ({@link CaixaDeMusica#ENTITY_BOX}), sem item nenhum.</li>
+ *       própria entidade ({@link BoxHolder}), sem item nenhum.</li>
  * </ul>
  *
  * <p>A varredura roda a cada meio segundo e logo depois de qualquer botão apertado na tela. Cada
@@ -120,7 +120,7 @@ public final class PortableTracker {
             if (entity instanceof PlayerEntity || entity.isRemoved() || !isSpeakerCarrier(entity)) {
                 continue;
             }
-            PlaybackState state = entity.getAttached(CaixaDeMusica.ENTITY_BOX);
+            PlaybackState state = ((BoxHolder) entity).caixademusica$getBox();
             if (state != null) {
                 sources.add(new Source(entity, state));
             }
@@ -148,7 +148,7 @@ public final class PortableTracker {
         if (stack.isEmpty() || !stack.isOf(CaixaDeMusica.PORTABLE_ITEM)) {
             return null;
         }
-        PlaybackState state = stack.get(CaixaDeMusica.PORTABLE_STATE);
+        PlaybackState state = PlaybackState.ofStack(stack);
         return state != null && state.playing() && !state.url().isBlank() ? state : null;
     }
 }

@@ -9,7 +9,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -48,32 +47,16 @@ public class MusicBoxBlockEntity extends BlockEntity {
     // ---------------------------------------------------------------- NBT / sincronização
 
     @Override
-    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
-        super.writeNbt(nbt, registries);
-        nbt.putString("Url", state.url());
-        nbt.putBoolean("Playing", state.playing());
-        nbt.putBoolean("Paused", state.paused());
-        nbt.putInt("StartIndex", state.startIndex());
-        nbt.putLong("StartedAt", state.startedAt());
-        nbt.putLong("PausedElapsed", state.pausedElapsed());
-        nbt.putInt("Near", state.near());
-        nbt.putInt("Far", state.far());
+    protected void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+        state.writeNbt(nbt);
     }
 
     @Override
-    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
-        super.readNbt(nbt, registries);
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
         // Caixas salvas por versões antigas não têm "Paused", "Near" etc.: ficam com os valores padrão.
-        PlaybackState defaults = PlaybackState.BLOCK_DEFAULT;
-        state = new PlaybackState(
-                nbt.getString("Url"),
-                nbt.getBoolean("Playing"),
-                nbt.getBoolean("Paused"),
-                nbt.getInt("StartIndex"),
-                nbt.getLong("StartedAt"),
-                nbt.getLong("PausedElapsed"),
-                nbt.contains("Near") ? nbt.getInt("Near") : defaults.near(),
-                nbt.contains("Far") ? nbt.getInt("Far") : defaults.far());
+        state = PlaybackState.fromNbt(nbt, PlaybackState.BLOCK_DEFAULT);
         if (nbt.contains("Elapsed")) {
             // Só vem nos pacotes para o cliente: quanto tempo já passou desde o início.
             clientStartMs = System.currentTimeMillis() - nbt.getLong("Elapsed");
@@ -81,8 +64,8 @@ public class MusicBoxBlockEntity extends BlockEntity {
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
-        NbtCompound nbt = createNbt(registries);
+    public NbtCompound toInitialChunkDataNbt() {
+        NbtCompound nbt = createNbt();
         nbt.putLong("Elapsed", Math.max(0L, System.currentTimeMillis() - state.startedAt()));
         return nbt;
     }

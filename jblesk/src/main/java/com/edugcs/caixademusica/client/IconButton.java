@@ -120,7 +120,7 @@ final class IconButton extends ClickableWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         boolean on = enabled.getAsBoolean();
         this.active = on;
         int x = getX();

@@ -1,4 +1,4 @@
-# jblesk (Fabric 1.21.1)
+# jblesk (Fabric 1.20.1)
 
 > O mod se chama **jblesk**. O id interno continua `caixademusica` (assim as caixas e os itens já criados nos mundos não somem), e o bloco se chama **jbleskão** (cubo preto com o alto-falante verde e ciano na frente, virado para quem o coloca).
 

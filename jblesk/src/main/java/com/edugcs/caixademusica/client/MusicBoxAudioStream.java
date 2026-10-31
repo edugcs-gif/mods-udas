@@ -33,7 +33,11 @@ final class MusicBoxAudioStream implements AudioStream {
         return FORMAT;
     }
 
-    @Override
+    /** O pedaço de áudio que o Minecraft pede (na 1.20.1 o método se chama {@code getBuffer}). */
+    public ByteBuffer getBuffer(int size) {
+        return read(size);
+    }
+
     public ByteBuffer read(int size) {
         if (session.isFinished() && buffer.available() == 0) {
             return null;

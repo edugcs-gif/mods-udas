@@ -207,7 +207,8 @@ public class MusicBoxScreen extends Screen {
         if (!stack.isOf(CaixaDeMusica.PORTABLE_ITEM)) {
             return null;
         }
-        return stack.getOrDefault(CaixaDeMusica.PORTABLE_STATE, PlaybackState.PORTABLE_DEFAULT);
+        PlaybackState state = PlaybackState.ofStack(stack);
+        return state != null ? state : PlaybackState.PORTABLE_DEFAULT;
     }
 
     private PlaybackState rangeState() {
@@ -407,20 +408,16 @@ public class MusicBoxScreen extends Screen {
         frameDisplay = null;
         inFrame = true;
         try {
+            // Atrás dos botões e barras: o fundo escurecido, o painel, a capa, o título e o tempo.
+            renderBackground(context);
+            drawPanel(context);
+            drawInfo(context);
             super.render(context, mouseX, mouseY, delta);
         } finally {
             inFrame = false;
             frameState = null;
             frameDisplay = null;
         }
-    }
-
-    /** Tudo o que é desenhado e fica atrás dos botões e barras (painel, capa, título, tempo). */
-    @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.renderBackground(context, mouseX, mouseY, delta);
-        drawPanel(context);
-        drawInfo(context);
     }
 
     private void drawPanel(DrawContext context) {

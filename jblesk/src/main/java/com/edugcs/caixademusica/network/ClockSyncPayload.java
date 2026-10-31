@@ -1,10 +1,9 @@
 package com.edugcs.caixademusica.network;
 
 import com.edugcs.caixademusica.CaixaDeMusica;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
+import net.minecraft.network.PacketByteBuf;
 
 /**
  * Pacote do servidor para o cliente, enviado ao entrar: o relógio do servidor (ms).
@@ -13,15 +12,17 @@ import net.minecraft.network.packet.CustomPayload;
  * cliente descobre a diferença entre o relógio dele e o do servidor e entra na música no
  * ponto certo, mesmo com os relógios dos PCs desencontrados.
  */
-public record ClockSyncPayload(long serverMillis) implements CustomPayload {
-    public static final CustomPayload.Id<ClockSyncPayload> ID = new CustomPayload.Id<>(CaixaDeMusica.id("clock_sync"));
-
-    public static final PacketCodec<RegistryByteBuf, ClockSyncPayload> CODEC = PacketCodec.tuple(
-            PacketCodecs.VAR_LONG, ClockSyncPayload::serverMillis,
-            ClockSyncPayload::new);
+public record ClockSyncPayload(long serverMillis) implements FabricPacket {
+    public static final PacketType<ClockSyncPayload> TYPE =
+            PacketType.create(CaixaDeMusica.id("clock_sync"), buf -> new ClockSyncPayload(buf.readVarLong()));
 
     @Override
-    public Id<? extends CustomPayload> getId() {
-        return ID;
+    public void write(PacketByteBuf buf) {
+        buf.writeVarLong(serverMillis);
+    }
+
+    @Override
+    public PacketType<?> getType() {
+        return TYPE;
     }
 }

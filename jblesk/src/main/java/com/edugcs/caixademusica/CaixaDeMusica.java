@@ -9,18 +9,16 @@ import com.edugcs.caixademusica.network.MusicBoxActionPayload;
 import com.edugcs.caixademusica.network.PortableActionPayload;
 import com.edugcs.caixademusica.network.PortableSourcesPayload;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
-import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.component.ComponentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
@@ -33,6 +31,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,21 +46,10 @@ public class CaixaDeMusica implements ModInitializer {
     public static final Block MUSIC_BOX = new MusicBoxBlock(AbstractBlock.Settings.copy(Blocks.JUKEBOX));
     public static final Item MUSIC_BOX_ITEM = new BlockItem(MUSIC_BOX, new Item.Settings());
     public static final BlockEntityType<MusicBoxBlockEntity> MUSIC_BOX_BLOCK_ENTITY =
-            BlockEntityType.Builder.create(MusicBoxBlockEntity::new, MUSIC_BOX).build(null);
+            FabricBlockEntityTypeBuilder.create(MusicBoxBlockEntity::new, MUSIC_BOX).build();
 
-    /** O que a caixa portátil está tocando, guardado no item. */
-    public static final ComponentType<PlaybackState> PORTABLE_STATE = ComponentType.<PlaybackState>builder()
-            .codec(PlaybackState.CODEC)
-            .packetCodec(PlaybackState.PACKET_CODEC)
-            .build();
+    /** A caixa portátil. O que ela está tocando fica guardado no NBT do item ({@link PlaybackState#ofStack}). */
     public static final Item PORTABLE_ITEM = new PortableMusicBoxItem(new Item.Settings().maxCount(1));
-
-    /**
-     * A caixa embutida no baú de um burro, mula, lhama ou barco com baú. Fica guardada na própria entidade
-     * (e salva junto com ela). Só o servidor mexe nisto; os clientes recebem o estado pelo {@link PortableTracker}.
-     */
-    public static final AttachmentType<PlaybackState> ENTITY_BOX =
-            AttachmentRegistry.createPersistent(id("entity_box"), PlaybackState.CODEC);
 
     /**
      * Ponte para o código que só existe no cliente (tela, áudio). No servidor dedicado
@@ -71,7 +59,7 @@ public class CaixaDeMusica implements ModInitializer {
     };
 
     public static Identifier id(String path) {
-        return Identifier.of(MOD_ID, path);
+        return new Identifier(MOD_ID, path);
     }
 
     @Override
@@ -79,7 +67,6 @@ public class CaixaDeMusica implements ModInitializer {
         Registry.register(Registries.BLOCK, id("music_box"), MUSIC_BOX);
         Registry.register(Registries.ITEM, id("music_box"), MUSIC_BOX_ITEM);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, id("music_box"), MUSIC_BOX_BLOCK_ENTITY);
-        Registry.register(Registries.DATA_COMPONENT_TYPE, id("portable_state"), PORTABLE_STATE);
         Registry.register(Registries.ITEM, id("portable_music_box"), PORTABLE_ITEM);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(entries -> {
@@ -87,20 +74,15 @@ public class CaixaDeMusica implements ModInitializer {
             entries.add(PORTABLE_ITEM);
         });
 
-        PayloadTypeRegistry.playC2S().register(MusicBoxActionPayload.ID, MusicBoxActionPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(MusicBoxActionPayload.ID, CaixaDeMusica::handleAction);
-
-        PayloadTypeRegistry.playC2S().register(PortableActionPayload.ID, PortableActionPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(PortableActionPayload.ID, CaixaDeMusica::handlePortableAction);
+        ServerPlayNetworking.registerGlobalReceiver(MusicBoxActionPayload.TYPE, CaixaDeMusica::handleAction);
+        ServerPlayNetworking.registerGlobalReceiver(PortableActionPayload.TYPE, CaixaDeMusica::handlePortableAction);
 
         // A caixa portátil toca de onde estiver (inventário, baú de burro, barco com baú): o servidor
         // procura quais estão tocando e avisa os jogadores por perto.
-        PayloadTypeRegistry.playS2C().register(PortableSourcesPayload.ID, PortableSourcesPayload.CODEC);
         PortableTracker.init();
 
         // O baú do burro/mula/lhama e do barco é uma caixa de som: ações da tela dela.
-        PayloadTypeRegistry.playC2S().register(EntityActionPayload.ID, EntityActionPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(EntityActionPayload.ID, CaixaDeMusica::handleEntityAction);
+        ServerPlayNetworking.registerGlobalReceiver(EntityActionPayload.TYPE, CaixaDeMusica::handleEntityAction);
 
         // Botão direito no animal/barco com a Caixa de Música (bloco) na mão: abre a tela da caixa do baú.
         // O clique normal continua montando, e o agachado continua abrindo o baú.
@@ -116,7 +98,6 @@ public class CaixaDeMusica implements ModInitializer {
         });
 
         // O relógio do servidor, para os clientes entrarem na música da caixa portátil no ponto certo.
-        PayloadTypeRegistry.playS2C().register(ClockSyncPayload.ID, ClockSyncPayload.CODEC);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 sender.sendPacket(new ClockSyncPayload(System.currentTimeMillis())));
     }
@@ -143,12 +124,11 @@ public class CaixaDeMusica implements ModInitializer {
     }
 
     /** Roda na thread do servidor quando alguém aperta um botão na tela da caixa. */
-    private static void handleAction(MusicBoxActionPayload payload, ServerPlayNetworking.Context context) {
-        ServerPlayerEntity player = context.player();
+    private static void handleAction(MusicBoxActionPayload payload, ServerPlayerEntity player, PacketSender sender) {
         World world = player.getWorld();
         BlockPos pos = payload.pos();
 
-        if (!world.isChunkLoaded(pos) || !player.canInteractWithBlockAt(pos, 2.0)) {
+        if (!world.isChunkLoaded(pos) || player.squaredDistanceTo(Vec3d.ofCenter(pos)) > 8.0 * 8.0) {
             return;
         }
         if (!(world.getBlockEntity(pos) instanceof MusicBoxBlockEntity box)) {
@@ -164,8 +144,8 @@ public class CaixaDeMusica implements ModInitializer {
     }
 
     /** Roda na thread do servidor quando alguém aperta um botão na tela da caixa portátil. */
-    private static void handlePortableAction(PortableActionPayload payload, ServerPlayNetworking.Context context) {
-        ServerPlayerEntity player = context.player();
+    private static void handlePortableAction(PortableActionPayload payload, ServerPlayerEntity player,
+                                             PacketSender sender) {
         PlayerInventory inventory = player.getInventory();
         int slot = payload.slot();
         if (slot < 0 || slot >= inventory.size()) {
@@ -175,7 +155,10 @@ public class CaixaDeMusica implements ModInitializer {
         if (!stack.isOf(PORTABLE_ITEM)) {
             return;
         }
-        PlaybackState current = stack.getOrDefault(PORTABLE_STATE, PlaybackState.PORTABLE_DEFAULT);
+        PlaybackState current = PlaybackState.ofStack(stack);
+        if (current == null) {
+            current = PlaybackState.PORTABLE_DEFAULT;
+        }
         PlaybackState next = applyAction(current, payload.action(), payload.index(), payload.extra(), payload.url());
         if (next.equals(current)) {
             return;
@@ -183,19 +166,18 @@ public class CaixaDeMusica implements ModInitializer {
         if (payload.action() == MusicBoxActionPayload.PLAY) {
             LOGGER.info("{} colocou \"{}\" na caixa de som portatil", player.getName().getString(), next.url());
         }
-        stack.set(PORTABLE_STATE, next);
+        next.writeTo(stack);
         // Avisa quem está por perto agora, sem esperar a próxima varredura.
         PortableTracker.update(player.getServerWorld());
     }
 
     /** Roda na thread do servidor quando alguém aperta um botão na tela da caixa do baú de um animal ou barco. */
-    private static void handleEntityAction(EntityActionPayload payload, ServerPlayNetworking.Context context) {
-        ServerPlayerEntity player = context.player();
+    private static void handleEntityAction(EntityActionPayload payload, ServerPlayerEntity player, PacketSender sender) {
         Entity entity = player.getServerWorld().getEntityById(payload.entityId());
         if (entity == null || !PortableTracker.isSpeakerCarrier(entity) || player.squaredDistanceTo(entity) > 12.0 * 12.0) {
             return;
         }
-        PlaybackState current = entity.getAttached(ENTITY_BOX);
+        PlaybackState current = ((BoxHolder) entity).caixademusica$getBox();
         if (current == null) {
             current = PlaybackState.ENTITY_DEFAULT;
         }
@@ -207,7 +189,7 @@ public class CaixaDeMusica implements ModInitializer {
             LOGGER.info("{} colocou \"{}\" na caixa de som de {}", player.getName().getString(), next.url(),
                     entity.getName().getString());
         }
-        entity.setAttached(ENTITY_BOX, next);
+        ((BoxHolder) entity).caixademusica$setBox(next);
         // Avisa quem está por perto agora, sem esperar a próxima varredura.
         PortableTracker.update(player.getServerWorld());
     }

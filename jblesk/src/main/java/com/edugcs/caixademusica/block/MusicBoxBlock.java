@@ -1,7 +1,6 @@
 package com.edugcs.caixademusica.block;
 
 import com.edugcs.caixademusica.CaixaDeMusica;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -15,6 +14,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.hit.BlockHitResult;
@@ -24,7 +24,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class MusicBoxBlock extends BlockWithEntity {
-    public static final MapCodec<MusicBoxBlock> CODEC = createCodec(MusicBoxBlock::new);
     /** Para onde a frente (o alto-falante) aponta. */
     public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
 
@@ -47,18 +46,13 @@ public class MusicBoxBlock extends BlockWithEntity {
     }
 
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
+    public BlockState rotate(BlockState state, BlockRotation rotation) {
         return state.with(FACING, rotation.rotate(state.get(FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
+    public BlockState mirror(BlockState state, BlockMirror mirror) {
         return state.rotate(mirror.getRotation(state.get(FACING)));
-    }
-
-    @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return CODEC;
     }
 
     @Override
@@ -67,12 +61,13 @@ public class MusicBoxBlock extends BlockWithEntity {
     }
 
     @Override
-    protected BlockRenderType getRenderType(BlockState state) {
+    public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
+                              BlockHitResult hit) {
         if (world.isClient) {
             CaixaDeMusica.bridge.openScreen(pos.toImmutable());
         }
@@ -84,7 +79,7 @@ public class MusicBoxBlock extends BlockWithEntity {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         // Só o cliente precisa "tickar": é ele que toca o áudio.
         return world.isClient
-                ? validateTicker(type, CaixaDeMusica.MUSIC_BOX_BLOCK_ENTITY, MusicBoxBlockEntity::clientTick)
+                ? checkType(type, CaixaDeMusica.MUSIC_BOX_BLOCK_ENTITY, MusicBoxBlockEntity::clientTick)
                 : null;
     }
 }

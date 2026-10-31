@@ -49,13 +49,13 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 21
+    it.options.release = 17
     it.options.encoding = 'UTF-8'
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 // Junta as bibliotecas de áudio no jar, renomeando os pacotes que o Minecraft
@@ -65,7 +65,7 @@ shadowJar {
     archiveClassifier = 'dev-shadow'
     destinationDirectory = layout.buildDirectory.dir('devlibs')
 
-    // Bibliotecas nativas do Lavaplayer: só as plataformas em que o Minecraft 1.21 roda no cliente (64 bits):
+    // Bibliotecas nativas do Lavaplayer: só as plataformas em que o Minecraft roda no cliente (64 bits):
     // Windows x64, Linux x64, Linux ARM64 e macOS. As de 32 bits, ARM de 32 bits e musl (Alpine) nunca são
     // usadas, e o servidor não decodifica áudio. São ~15 MB a menos no jar.
     exclude 'natives/win-x86/**', 'natives/linux-x86/**', 'natives/linux-arm/**', 'natives/linux-armhf/**',
