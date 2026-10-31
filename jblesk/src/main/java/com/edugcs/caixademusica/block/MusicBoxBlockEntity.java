@@ -2,6 +2,7 @@ package com.edugcs.caixademusica.block;
 
 import com.edugcs.caixademusica.CaixaDeMusica;
 import com.edugcs.caixademusica.PlaybackState;
+import com.edugcs.caixademusica.SpeakerGroups;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -85,6 +86,13 @@ public class MusicBoxBlockEntity extends BlockEntity {
 
     public static void clientTick(World world, BlockPos pos, BlockState blockState, MusicBoxBlockEntity box) {
         CaixaDeMusica.bridge.clientTick(box);
+    }
+
+    /** No servidor: se a caixa está conectada a um grupo, copia o que o grupo está tocando (confere a cada 4 ticks). */
+    public static void serverTick(World world, BlockPos pos, BlockState blockState, MusicBoxBlockEntity box) {
+        if (box.state.group() != 0 && world.getTime() % 4 == 0) {
+            box.setState(SpeakerGroups.adopt(box.state));
+        }
     }
 
     // ---------------------------------------------------------------- getters

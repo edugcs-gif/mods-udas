@@ -11,7 +11,8 @@ import net.minecraft.util.math.BlockPos;
  *
  * <p>{@code index} e {@code extra} dependem da ação: {@link #JUMP} usa o número da música,
  * {@link #SEEK} usa quantos ms avançar (ou voltar, se negativo) e {@link #RANGE} usa
- * {@code index} = perto e {@code extra} = longe, em blocos.
+ * {@code index} = perto e {@code extra} = longe, em blocos. {@link #GROUP} usa {@code index} = o grupo de
+ * conexão (0 = desconectar).
  */
 public record MusicBoxActionPayload(BlockPos pos, int action, int index, int extra, String url) implements FabricPacket {
     public static final int PLAY = 0;
@@ -21,6 +22,7 @@ public record MusicBoxActionPayload(BlockPos pos, int action, int index, int ext
     public static final int RESUME = 4;
     public static final int SEEK = 5;
     public static final int RANGE = 6;
+    public static final int GROUP = 7;
 
     public static final PacketType<MusicBoxActionPayload> TYPE = PacketType.create(CaixaDeMusica.id("action"),
             buf -> new MusicBoxActionPayload(buf.readBlockPos(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(),

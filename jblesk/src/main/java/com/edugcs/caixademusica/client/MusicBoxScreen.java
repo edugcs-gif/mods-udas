@@ -11,6 +11,8 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -29,7 +31,7 @@ import org.lwjgl.glfw.GLFW;
  */
 public class MusicBoxScreen extends Screen {
     private static final int PANEL_WIDTH = 300;
-    private static final int PANEL_HEIGHT = 152;
+    private static final int PANEL_HEIGHT = 176;
 
     private static final int PANEL_FILL = 0xFFC6C6C6;
     private static final int PANEL_LIGHT = 0xFFFFFFFF;
@@ -45,6 +47,10 @@ public class MusicBoxScreen extends Screen {
     private static final int ORANGE_TEXT = 0xFFB86B00;
     private static final int BAR_GREEN = 0xFF3DDC3D;
     private static final int RANGE_GREEN = 0xFF2F9E44;
+
+    /** A fileira da conexão (botões - e + e o texto do grupo no meio), logo abaixo das barras de alcance. */
+    private static final int LINK_ROW_Y = 148;
+    private static final int LINK_BUTTON_WIDTH = 20;
 
     private static final int THUMB_WIDTH = 64;
     private static final int THUMB_HEIGHT = 36;
@@ -164,6 +170,17 @@ public class MusicBoxScreen extends Screen {
                 RANGE_GREEN, false, () -> true, value -> sendRange(rangeState().near(), (int) Math.round(value)));
         addDrawableChild(nearBar);
         addDrawableChild(farBar);
+
+        // Conexão: caixas no mesmo grupo tocam a mesma música juntas. [-] Conectada: grupo N [+]
+        int linkY = panelY + LINK_ROW_Y;
+        addDrawableChild(ButtonWidget.builder(Text.literal("-"), button -> changeGroup(-1))
+                .dimensions(panelX + 8, linkY, LINK_BUTTON_WIDTH, 20)
+                .tooltip(Tooltip.of(tip("link_prev")))
+                .build());
+        addDrawableChild(ButtonWidget.builder(Text.literal("+"), button -> changeGroup(1))
+                .dimensions(panelX + PANEL_WIDTH - 8 - LINK_BUTTON_WIDTH, linkY, LINK_BUTTON_WIDTH, 20)
+                .tooltip(Tooltip.of(tip("link_next")))
+                .build());
     }
 
     private static Text tip(String key) {
@@ -357,6 +374,13 @@ public class MusicBoxScreen extends Screen {
         send(MusicBoxActionPayload.RANGE, near, far, "");
     }
 
+    /** Troca o grupo de conexão desta caixa (0 = desconectada; dá a volta de 99 para 0). */
+    private void changeGroup(int delta) {
+        int next = Math.floorMod(rangeState().group() + delta, PlaybackState.MAX_GROUP + 1);
+        localMessage = null;
+        send(MusicBoxActionPayload.GROUP, next, 0, "");
+    }
+
     // ---------------------------------------------------------------- teclado e mouse
 
     @Override
@@ -408,10 +432,11 @@ public class MusicBoxScreen extends Screen {
         frameDisplay = null;
         inFrame = true;
         try {
-            // Atrás dos botões e barras: o fundo escurecido, o painel, a capa, o título e o tempo.
+            // Atrás dos botões e barras: o fundo escurecido, o painel, a capa, o título, o tempo e a conexão.
             renderBackground(context);
             drawPanel(context);
             drawInfo(context);
+            drawLink(context);
             super.render(context, mouseX, mouseY, delta);
         } finally {
             inFrame = false;
@@ -477,6 +502,19 @@ public class MusicBoxScreen extends Screen {
                 : Text.translatable("gui.caixademusica.volume", ClientSettings.volume()).getString();
         context.drawText(textRenderer, volume, x + w - 4 - textRenderer.getWidth(volume), rowY,
                 ClientSettings.muted() ? RED_TEXT : GREEN_TEXT, false);
+    }
+
+    /** O texto da conexão, entre os botões - e +. */
+    private void drawLink(DrawContext context) {
+        PlaybackState state = rangeState();
+        boolean linked = state.group() != 0;
+        Text label = linked
+                ? Text.translatable("gui.caixademusica.link.group", state.group())
+                : Text.translatable("gui.caixademusica.link.off");
+        int areaX = panelX + 8 + LINK_BUTTON_WIDTH + 4;
+        int areaWidth = PANEL_WIDTH - 16 - 2 * (LINK_BUTTON_WIDTH + 4);
+        context.drawText(textRenderer, label, areaX + (areaWidth - textRenderer.getWidth(label)) / 2,
+                panelY + LINK_ROW_Y + 6, linked ? GREEN_TEXT : GRAY_TEXT, false);
     }
 
     /** O que mostrar no painel branco agora. */

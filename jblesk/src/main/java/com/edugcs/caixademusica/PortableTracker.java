@@ -122,6 +122,12 @@ public final class PortableTracker {
             }
             PlaybackState state = ((BoxHolder) entity).caixademusica$getBox();
             if (state != null) {
+                // Conectada a um grupo: copia o que o grupo está tocando (se mudou).
+                PlaybackState synced = SpeakerGroups.adopt(state);
+                if (!synced.equals(state)) {
+                    ((BoxHolder) entity).caixademusica$setBox(synced);
+                    state = synced;
+                }
                 sources.add(new Source(entity, state));
             }
         }
@@ -149,6 +155,15 @@ public final class PortableTracker {
             return null;
         }
         PlaybackState state = PlaybackState.ofStack(stack);
-        return state != null && state.playing() && !state.url().isBlank() ? state : null;
+        if (state == null) {
+            return null;
+        }
+        // Conectada a um grupo: copia o que o grupo está tocando (se mudou), mesmo que esta ainda esteja parada.
+        PlaybackState synced = SpeakerGroups.adopt(state);
+        if (!synced.equals(state)) {
+            synced.writeTo(stack);
+            state = synced;
+        }
+        return state.playing() && !state.url().isBlank() ? state : null;
     }
 }

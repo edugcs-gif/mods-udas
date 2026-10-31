@@ -80,6 +80,7 @@ public class CaixaDeMusica implements ModInitializer {
         // A caixa portátil toca de onde estiver (inventário, baú de burro, barco com baú): o servidor
         // procura quais estão tocando e avisa os jogadores por perto.
         PortableTracker.init();
+        SpeakerGroups.init();
 
         // O baú do burro/mula/lhama e do barco é uma caixa de som: ações da tela dela.
         ServerPlayNetworking.registerGlobalReceiver(EntityActionPayload.TYPE, CaixaDeMusica::handleEntityAction);
@@ -119,6 +120,7 @@ public class CaixaDeMusica implements ModInitializer {
             case MusicBoxActionPayload.RESUME -> state.resume(now);
             case MusicBoxActionPayload.SEEK -> state.seek(index, now);
             case MusicBoxActionPayload.RANGE -> state.range(index, extra);
+            case MusicBoxActionPayload.GROUP -> SpeakerGroups.join(state, index);
             default -> state;
         };
     }
@@ -141,6 +143,10 @@ public class CaixaDeMusica implements ModInitializer {
                     player.getName().getString(), next.url(), pos.toShortString());
         }
         box.setState(next);
+        // Se a caixa está conectada, as outras do grupo passam a tocar o mesmo (o alcance não é copiado).
+        if (payload.action() != MusicBoxActionPayload.RANGE) {
+            SpeakerGroups.publish(next, player.getServer());
+        }
     }
 
     /** Roda na thread do servidor quando alguém aperta um botão na tela da caixa portátil. */
@@ -167,6 +173,9 @@ public class CaixaDeMusica implements ModInitializer {
             LOGGER.info("{} colocou \"{}\" na caixa de som portatil", player.getName().getString(), next.url());
         }
         next.writeTo(stack);
+        if (payload.action() != MusicBoxActionPayload.RANGE) {
+            SpeakerGroups.publish(next, player.getServer());
+        }
         // Avisa quem está por perto agora, sem esperar a próxima varredura.
         PortableTracker.update(player.getServerWorld());
     }
@@ -190,6 +199,9 @@ public class CaixaDeMusica implements ModInitializer {
                     entity.getName().getString());
         }
         ((BoxHolder) entity).caixademusica$setBox(next);
+        if (payload.action() != MusicBoxActionPayload.RANGE) {
+            SpeakerGroups.publish(next, player.getServer());
+        }
         // Avisa quem está por perto agora, sem esperar a próxima varredura.
         PortableTracker.update(player.getServerWorld());
     }

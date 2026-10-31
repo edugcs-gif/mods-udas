@@ -60,5 +60,9 @@ public class PortableMusicBoxItem extends Item {
             tooltip.add(Text.translatable("item.caixademusica.portable_music_box.hint").formatted(Formatting.GRAY));
             tooltip.add(Text.translatable("item.caixademusica.portable_music_box.hint2").formatted(Formatting.GRAY));
         }
+        if (state != null && state.group() != 0) {
+            tooltip.add(Text.translatable("item.caixademusica.portable_music_box.group", state.group())
+                    .formatted(Formatting.GREEN));
+        }
     }
 }

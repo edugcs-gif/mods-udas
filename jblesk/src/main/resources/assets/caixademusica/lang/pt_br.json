@@ -36,5 +36,10 @@
   "gui.caixademusica.status.loading": "Carregando...",
   "gui.caixademusica.status.buffering": "Preparando o áudio...",
   "gui.caixademusica.status.error": "Não deu para tocar:",
-  "gui.caixademusica.status.position": "Música %s de %s"
+  "gui.caixademusica.status.position": "Música %s de %s",
+  "gui.caixademusica.link.off": "Conexão: desligada",
+  "gui.caixademusica.link.group": "Conectada: grupo %s",
+  "gui.caixademusica.tip.link_prev": "Grupo anterior (0 = desconectar). Caixas no mesmo grupo tocam a mesma música juntas",
+  "gui.caixademusica.tip.link_next": "Próximo grupo. Caixas no mesmo grupo tocam a mesma música juntas",
+  "item.caixademusica.portable_music_box.group": "Conectada: grupo %s"
 }

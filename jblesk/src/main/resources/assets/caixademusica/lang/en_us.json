@@ -36,5 +36,10 @@
   "gui.caixademusica.status.loading": "Loading...",
   "gui.caixademusica.status.buffering": "Buffering...",
   "gui.caixademusica.status.error": "Couldn't play:",
-  "gui.caixademusica.status.position": "Track %s of %s"
+  "gui.caixademusica.status.position": "Track %s of %s",
+  "gui.caixademusica.link.off": "Link: off",
+  "gui.caixademusica.link.group": "Linked: group %s",
+  "gui.caixademusica.tip.link_prev": "Previous group (0 = unlink). Speakers in the same group play the same music together",
+  "gui.caixademusica.tip.link_next": "Next group. Speakers in the same group play the same music together",
+  "item.caixademusica.portable_music_box.group": "Linked: group %s"
 }

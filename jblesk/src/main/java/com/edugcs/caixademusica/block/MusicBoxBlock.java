@@ -77,9 +77,9 @@ public class MusicBoxBlock extends BlockWithEntity {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        // Só o cliente precisa "tickar": é ele que toca o áudio.
+        // O cliente "ticka" porque é ele que toca o áudio; o servidor, para copiar o grupo a que a caixa está conectada.
         return world.isClient
                 ? checkType(type, CaixaDeMusica.MUSIC_BOX_BLOCK_ENTITY, MusicBoxBlockEntity::clientTick)
-                : null;
+                : checkType(type, CaixaDeMusica.MUSIC_BOX_BLOCK_ENTITY, MusicBoxBlockEntity::serverTick);
     }
 }

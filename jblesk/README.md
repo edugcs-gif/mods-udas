@@ -53,6 +53,18 @@ Uma versão da caixa que você leva com você. O item se chama **jblesk** e a im
 - A tecla B procura primeiro o burro/barco em que você está montado ou o mais perto (até 4 blocos); se não houver, abre a caixa portátil do inventário.
 - A caixa fica guardada no próprio animal ou barco (some se ele morrer ou for quebrado). Padrão do alcance: perto 6, longe 48.
 
+## Conectar uma jblesk em outra (grupos)
+
+Na tela de qualquer caixa (jbleskão, jblesk portátil ou baú de burro/barco) a última fileira é a **conexão**: os botões **-** e **+** escolhem o número do **grupo** (de 1 a 99; **0 = desconectada**).
+
+- Caixas com o **mesmo grupo** tocam **a mesma música, no mesmo ponto**, cada uma saindo do seu lugar: dá para espalhar vários jbleskões pela casa, ou andar com a sua jblesk enquanto outra toca na base.
+- Qualquer caixa do grupo controla todas: tocar, pausar, parar, anterior/próxima e pular na barra valem para o grupo inteiro.
+- O alcance (**Perto/Longe**) e o volume pessoal continuam de cada caixa.
+- Ao entrar num grupo que já está tocando, a caixa passa a tocar o mesmo que o grupo. Se o grupo estava parado, a música dela é que vira a do grupo.
+- Ao voltar para **0**, a caixa sai do grupo e continua tocando o que estava tocando, sozinha.
+- Funciona entre blocos, portáteis e baús de animais/barcos misturados, e o grupo fica salvo em cada caixa (sobrevive a reiniciar o servidor). Caixas descarregadas (longe) ou guardadas fora de um inventário de jogador (por exemplo, dentro de um baú) só se atualizam quando carregarem/voltarem ao inventário.
+- Quem fica entre duas caixas do mesmo grupo escuta as duas; como cada PC toca o áudio por conta própria, pode haver um eco bem leve (fração de segundo) entre elas.
+
 ## Instalação
 
 O `.jar` precisa estar **no servidor e no cliente de todos os jogadores** (precisa do Fabric API).
@@ -74,17 +86,17 @@ O `.jar` precisa estar **no servidor e no cliente de todos os jogadores** (preci
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `jblesk/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **jblesk - gerar o .jar**. Ele roda sozinho a cada alteração em `jblesk/` (uns 3 a 5 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **jblesk**. Dentro do zip está o `jblesk-1.6.2.jar`.
+2. Clique no build que terminou e baixe o artefato **jblesk**. Dentro do zip está o `jblesk-2.1.0.jar`.
 
 ### Opção 2: no seu PC
 
-Precisa do **JDK 21** (por exemplo, o Temurin 21). Na pasta `jblesk/` do projeto:
+Precisa do **JDK 17 ou mais novo** (por exemplo, o Temurin 21). Na pasta `jblesk/` do projeto:
 
 ```bash
 ./gradlew build        # Git Bash / Linux / Mac
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/jblesk-1.6.2.jar`.
+O jar fica em `build/libs/jblesk-2.1.0.jar`.
 
 Para testar sem montar o modpack, use `./gradlew runClient`.
