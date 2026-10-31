@@ -62,7 +62,7 @@ public final class BencaoDoPrincipe {
 
     /** O efeito Batraquizado saiu de alguém (acabou o tempo, leite, totem...): se for um jogador, ganha a bênção. */
     public static void onEffectRemoved(LivingEntity entity, StatusEffectInstance effect) {
-        if (entity instanceof ServerPlayerEntity player && effect.getEffectType().value() == Batraquizar.BATRAQUIZADO.value()
+        if (entity instanceof ServerPlayerEntity player && effect.getEffectType() == Batraquizar.BATRAQUIZADO
                 && player.isAlive() && !PENDING.contains(player)) {
             PENDING.add(player);
         }
@@ -70,7 +70,7 @@ public final class BencaoDoPrincipe {
 
     /** Quem tem a bênção não pode receber o efeito Batraquizado (a poção "escorrega"). */
     public static boolean blocks(LivingEntity entity, StatusEffectInstance effect) {
-        if (effect.getEffectType().value() != Batraquizar.BATRAQUIZADO.value()
+        if (effect.getEffectType() != Batraquizar.BATRAQUIZADO
                 || !entity.hasStatusEffect(Batraquizar.BENCAO_DO_PRINCIPE)) {
             return false;
         }

@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * A poção de Dano instantâneo (arremessável ou persistente) não vira um efeito na criatura: ela age na hora,
  * por aqui. A Retorsão também a devolve.
  */
-@Mixin(targets = "net.minecraft.entity.effect.InstantHealthOrDamageStatusEffect")
-public abstract class InstantHealthOrDamageStatusEffectMixin {
+@Mixin(StatusEffect.class)
+public abstract class StatusEffectMixin {
     @Inject(method = "applyInstantEffect", at = @At("HEAD"), cancellable = true)
     private void batraquizar$retorsao(Entity source, Entity attacker, LivingEntity target, int amplifier,
                                       double proximity, CallbackInfo ci) {

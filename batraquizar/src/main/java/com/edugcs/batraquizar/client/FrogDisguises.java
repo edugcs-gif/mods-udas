@@ -3,21 +3,22 @@ package com.edugcs.batraquizar.client;
 import com.edugcs.batraquizar.Batraquizar;
 import com.edugcs.batraquizar.mixin.client.LimbAnimatorAccessor;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.FrogEntity;
 import net.minecraft.entity.passive.FrogVariant;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.random.Random;
 
@@ -29,7 +30,7 @@ import net.minecraft.util.math.random.Random;
  * balanço das pernas, o piscar vermelho de dano e a animação de morte de quem ele representa.
  */
 public final class FrogDisguises {
-    private static final List<RegistryKey<FrogVariant>> VARIANTS =
+    private static final List<FrogVariant> VARIANTS =
             List.of(FrogVariant.TEMPERATE, FrogVariant.WARM, FrogVariant.COLD);
     /** Some o sapo de mentira de quem não foi desenhado por este tanto de ticks (saiu da tela ou de perto). */
     private static final int FORGET_AFTER_TICKS = 100;
@@ -39,6 +40,9 @@ public final class FrogDisguises {
     private static final int CROAK_CHANCE = 200;
 
     private static final Map<Integer, Disguise> DISGUISES = new HashMap<>();
+    /** Quem era sapo no tick passado (e o da vez), para refazer o tamanho de quem virou ou desvirou neste PC. */
+    private static Set<Integer> frogIds = new HashSet<>();
+    private static Set<Integer> nextFrogIds = new HashSet<>();
     private static final Random RANDOM = Random.create();
     private static ClientWorld lastWorld;
 
@@ -60,8 +64,7 @@ public final class FrogDisguises {
             if (frog == null) {
                 return false;
             }
-            frog.setVariant(Registries.FROG_VARIANT.entryOf(
-                    VARIANTS.get(Math.floorMod(entity.getUuid().hashCode(), VARIANTS.size()))));
+            frog.setVariant(VARIANTS.get(Math.floorMod(entity.getUuid().hashCode(), VARIANTS.size())));
             disguise = new Disguise(entity, frog);
             DISGUISES.put(entity.getId(), disguise);
             updateName(disguise);
@@ -108,9 +111,14 @@ public final class FrogDisguises {
     static void tick(MinecraftClient client) {
         if (client.world != lastWorld) {
             DISGUISES.clear();
+            frogIds.clear();
             lastWorld = client.world;
         }
-        if (DISGUISES.isEmpty() || client.world == null) {
+        if (client.world == null) {
+            return;
+        }
+        updateSizes(client.world);
+        if (DISGUISES.isEmpty()) {
             return;
         }
         Iterator<Disguise> it = DISGUISES.values().iterator();
@@ -129,6 +137,28 @@ public final class FrogDisguises {
             updateName(disguise);
             croak(client.world, disguise);
         }
+    }
+
+    /**
+     * O tamanho de cada criatura é calculado também neste PC (o do próprio jogador decide por onde ele passa), mas
+     * o jogo não refaz a conta quando o efeito chega pela rede: refaz aqui, para quem virou ou desvirou sapo.
+     */
+    private static void updateSizes(ClientWorld world) {
+        nextFrogIds.clear();
+        for (Entity entity : world.getEntities()) {
+            if (entity instanceof LivingEntity living) {
+                boolean frog = Batraquizar.isFrog(living);
+                if (frog) {
+                    nextFrogIds.add(living.getId());
+                }
+                if (frog != frogIds.contains(living.getId())) {
+                    living.calculateDimensions();
+                }
+            }
+        }
+        Set<Integer> swap = frogIds;
+        frogIds = nextFrogIds;
+        nextFrogIds = swap;
     }
 
     private static void croak(ClientWorld world, Disguise disguise) {

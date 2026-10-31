@@ -1,4 +1,4 @@
-# Batraquizar (Fabric 1.21.1)
+# Batraquizar (Fabric 1.20.1)
 
 Duas poções: o **Batraquizador** e a **Poção de Retorsão**.
 
@@ -59,7 +59,7 @@ Como funciona:
 
 ## Instalar
 
-1. Instale o [Fabric Loader](https://fabricmc.net/use/) para o Minecraft 1.21.1 e o [Fabric API](https://modrinth.com/mod/fabric-api).
+1. Instale o [Fabric Loader](https://fabricmc.net/use/) para o Minecraft 1.20.1 e o [Fabric API](https://modrinth.com/mod/fabric-api).
 2. Coloque o `batraquizar-*.jar` na pasta `mods`.
 3. Num servidor, o mod precisa estar **no servidor e em todos os jogadores**.
 
