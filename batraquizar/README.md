@@ -7,10 +7,12 @@ O **Batraquizador** é uma poção que **transforma em sapo** quem for atingido 
 No suporte de poções:
 
 1. **Garrafa de água** + verruga do Nether = Poção Estranha
-2. **Poção Estranha** + **bola de slime** = **Batraquizador** (1 minuto)
+2. **Poção Estranha** + **froglight** (qualquer cor: ocre, verdejante ou perolada) = **Batraquizador** (1 minuto)
 3. *(opcional)* + pó de redstone = Batraquizador prolongado (3 minutos)
 4. **+ pólvora** = **Batraquizador Arremessável** (esse é o de jogar nos outros)
 5. *(opcional)* + bafo do dragão = Batraquizador Persistente (deixa uma nuvem no chão)
+
+A froglight sai quando um sapo come um cubo de magma pequeno (a cor depende do tipo de sapo).
 
 Também dá para fazer a **Flecha do Batraquizador** com o Batraquizador Persistente, como as outras flechas com efeito. No criativo, ele aparece nas abas de poções junto com as outras poções.
 

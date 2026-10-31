@@ -1,5 +1,6 @@
 package com.edugcs.batraquizar;
 
+import java.util.List;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
@@ -9,6 +10,7 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
@@ -59,10 +61,12 @@ public class Batraquizar implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // Poção estranha + bola de slime = Batraquizador; + redstone = dura mais. A arremessável (pólvora),
-        // a persistente (bafo do dragão) e a flecha saem pelas receitas normais do jogo.
+        // Poção estranha + froglight (qualquer uma das três cores) = Batraquizador; + redstone = dura mais.
+        // A arremessável (pólvora), a persistente (bafo do dragão) e a flecha saem pelas receitas normais do jogo.
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
-            builder.registerPotionRecipe(Potions.AWKWARD, Items.SLIME_BALL, BATRAQUIZADOR);
+            for (Item froglight : List.of(Items.OCHRE_FROGLIGHT, Items.VERDANT_FROGLIGHT, Items.PEARLESCENT_FROGLIGHT)) {
+                builder.registerPotionRecipe(Potions.AWKWARD, froglight, BATRAQUIZADOR);
+            }
             builder.registerPotionRecipe(BATRAQUIZADOR, Items.REDSTONE, LONG_BATRAQUIZADOR);
         });
 
