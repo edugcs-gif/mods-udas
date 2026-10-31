@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "WNW",
+    "WJW",
+    "WRW"
+  ],
+  "key": {
+    "W": { "tag": "minecraft:planks" },
+    "N": { "item": "minecraft:note_block" },
+    "J": { "item": "minecraft:jukebox" },
+    "R": { "item": "minecraft:redstone" }
+  },
+  "result": {
+    "id": "caixademusica:music_box",
+    "count": 1
+  }
+}

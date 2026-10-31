@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "particle": "caixademusica:block/music_box_side",
+    "front": "caixademusica:block/music_box_front",
+    "side": "caixademusica:block/music_box_side",
+    "top": "caixademusica:block/music_box_top",
+    "bottom": "caixademusica:block/music_box_bottom"
+  }
+}

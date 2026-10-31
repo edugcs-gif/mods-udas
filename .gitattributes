@@ -1,0 +1,7 @@
+# Fins de linha: texto normalizado no repositório; o gradlew precisa ser LF para rodar no Linux (GitHub Actions).
+* text=auto
+gradlew text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.png binary
+*.jar binary

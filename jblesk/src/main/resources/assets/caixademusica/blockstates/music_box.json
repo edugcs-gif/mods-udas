@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "caixademusica:block/music_box" },
+    "facing=east": { "model": "caixademusica:block/music_box", "y": 90 },
+    "facing=south": { "model": "caixademusica:block/music_box", "y": 180 },
+    "facing=west": { "model": "caixademusica:block/music_box", "y": 270 }
+  }
+}

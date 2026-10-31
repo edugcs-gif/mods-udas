@@ -1,0 +1,97 @@
+plugins {
+    id 'fabric-loom' version "${loom_version}"
+    id 'com.gradleup.shadow' version '8.3.9'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    mavenCentral()
+    // youtube-source (fonte do YouTube para o Lavaplayer)
+    maven { url = 'https://maven.lavalink.dev/releases' }
+    // Só para versões de teste do youtube-source (o nome do snapshot é o hash do commit, então é fixo).
+    maven { url = 'https://maven.lavalink.dev/snapshots' }
+}
+
+// Tudo que estiver em "shade" vai embutido dentro do .jar final do mod.
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // O Minecraft já traz slf4j e as anotações da JetBrains, então não embutimos de novo.
+    shade("dev.arbjerg:lavaplayer:${project.lavaplayer_version}") {
+        exclude group: 'org.slf4j'
+        exclude group: 'org.jetbrains'
+    }
+    shade("dev.lavalink.youtube:common:${project.youtube_source_version}") {
+        exclude group: 'org.slf4j'
+        exclude group: 'org.jetbrains'
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+    it.options.encoding = 'UTF-8'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+// Junta as bibliotecas de áudio no jar, renomeando os pacotes que o Minecraft
+// (ou outros mods) também usam, para não dar conflito de versão.
+shadowJar {
+    configurations = [project.configurations.shade]
+    archiveClassifier = 'dev-shadow'
+    destinationDirectory = layout.buildDirectory.dir('devlibs')
+
+    // Bibliotecas nativas do Lavaplayer: só as plataformas em que o Minecraft 1.21 roda no cliente (64 bits):
+    // Windows x64, Linux x64, Linux ARM64 e macOS. As de 32 bits, ARM de 32 bits e musl (Alpine) nunca são
+    // usadas, e o servidor não decodifica áudio. São ~15 MB a menos no jar.
+    exclude 'natives/win-x86/**', 'natives/linux-x86/**', 'natives/linux-arm/**', 'natives/linux-armhf/**',
+            'natives/linux-aarch32/**', 'natives/linux-musl-*/**'
+
+    exclude 'module-info.class'
+    exclude 'META-INF/versions/**'
+    exclude 'META-INF/maven/**'
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
+
+    def libs = 'com.edugcs.caixademusica.libs'
+    relocate 'org.apache.http', "${libs}.apache.http"
+    relocate 'org.apache.commons.io', "${libs}.commons.io"
+    relocate 'org.apache.commons.logging', "${libs}.commons.logging"
+    relocate 'org.apache.commons.codec', "${libs}.commons.codec"
+    relocate 'com.fasterxml.jackson', "${libs}.jackson"
+    relocate 'org.jsoup', "${libs}.jsoup"
+    relocate 'org.json', "${libs}.json"
+    relocate 'net.iharder', "${libs}.iharder"
+    relocate 'com.grack.nanojson', "${libs}.nanojson"
+
+    mergeServiceFiles()
+}
+
+// O jar final (build/libs) é o shadowJar remapeado para os nomes do jogo.
+remapJar {
+    inputFile = shadowJar.archiveFile
+    dependsOn shadowJar
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "caixademusica",
+  "version": "${version}",
+  "name": "jblesk",
+  "description": "jbleskão (bloco) e jblesk (caixa de som portátil): tocam músicas e playlists do YouTube, SoundCloud ou links diretos de áudio para todo mundo que estiver perto.",
+  "authors": ["edugcs"],
+  "license": "MIT",
+  "icon": "assets/caixademusica/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.edugcs.caixademusica.CaixaDeMusica"],
+    "client": ["com.edugcs.caixademusica.client.CaixaDeMusicaClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
