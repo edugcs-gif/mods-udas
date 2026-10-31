@@ -9,12 +9,20 @@ import net.minecraft.util.math.random.Random;
  *
  * <p>Como nas máquinas de verdade, primeiro se sorteia o resultado e depois se montam os rolos para mostrá-lo:
  * <ul>
- *   <li>{@link #WIN_CHANCE} (40%) das giradas ganham e 60% perdem;</li>
+ *   <li>com a casa no positivo (ou até 63 fichas no negativo), 40% das giradas ganham e 60% perdem;</li>
  *   <li>numa vitória, o prêmio sai de {@link #WINS}: quase sempre 3 pás ou 3 esmeraldas (o dobro da aposta), e os
  *       prêmios maiores são cada vez mais raros; o jackpot (cinco 7, 100x) sai uma vez a cada ~25.000 giradas.</li>
  * </ul>
  * Toda vitória paga pelo menos o dobro da aposta, mas no total a máquina devolve uns 88% do que é apostado: quem
  * joga perde mais do que ganha, e a casa lucra no longo prazo.
+ *
+ * <p>O saldo da casa ({@link CassinoState}) segura quantas fichas o cassino cria no servidor:
+ * <ul>
+ *   <li>a cada 64 fichas que a casa fica no negativo, a chance de ganhar cai um pouco ({@link #WIN_CHANCE_BY_DEBT}:
+ *       40%, 37%, 34%... até 10%), e a máquina passa a devolver menos, até a casa se recuperar;</li>
+ *   <li>e nenhum prêmio pode deixar a casa abaixo de -{@value CassinoState#MAX_HOUSE_DEBT}: se o prêmio sorteado
+ *       passar disso, sai um menor que caiba; se nem o menor couber, a girada perde.</li>
+ * </ul>
  */
 public final class SlotMachine {
     public static final int REELS = 5;
@@ -41,8 +49,14 @@ public final class SlotMachine {
             {2, 3, 6},     // pá
     };
 
-    /** Chance de uma girada ganhar alguma coisa. */
-    public static final float WIN_CHANCE = 0.40F;
+    /** Fichas no negativo da casa para cada degrau de {@link #WIN_CHANCE_BY_DEBT}. */
+    public static final int DEBT_STEP = 64;
+    /**
+     * Chance de uma girada ganhar alguma coisa, conforme o quanto a casa está no negativo: até -63, 40%; de -64 a
+     * -127, 37%; de -128 a -191, 34%; e assim por diante, até 10% de -640 para baixo.
+     */
+    public static final float[] WIN_CHANCE_BY_DEBT = {0.40F, 0.37F, 0.34F, 0.31F, 0.28F, 0.25F, 0.22F, 0.19F, 0.16F,
+            0.13F, 0.10F};
     /**
      * Os prêmios possíveis numa vitória: {símbolo, quantos seguidos, peso}. Os pesos somam 100.000; a chance de
      * cada um por girada é {@code 40% × peso / 100.000} (anotada ao lado).
@@ -104,11 +118,24 @@ public final class SlotMachine {
         return symbol;
     }
 
-    /** Gira os rolos: os 15 símbolos à mostra (veja {@link #cell}). Só a linha do meio vale; as outras enfeitam. */
-    public static int[] spin(Random random) {
+    /** A chance de ganhar com a casa neste saldo. */
+    public static float winChance(long house) {
+        int step = house >= 0 ? 0 : (int) Math.min(WIN_CHANCE_BY_DEBT.length - 1, -house / DEBT_STEP);
+        return WIN_CHANCE_BY_DEBT[step];
+    }
+
+    /**
+     * Gira os rolos: os 15 símbolos à mostra (veja {@link #cell}). Só a linha do meio vale; as outras enfeitam.
+     *
+     * @param bet   a aposta desta girada
+     * @param house o saldo da casa antes dela (veja {@link CassinoState})
+     */
+    public static int[] spin(Random random, int bet, long house) {
+        // O maior prêmio (em vezes a aposta) que não deixa a casa abaixo do limite.
+        long maxMultiplier = (house + CassinoState.MAX_HOUSE_DEBT + bet) / bet;
+        int[] prize = random.nextFloat() < winChance(house) ? pickWin(random, maxMultiplier) : null;
         int[] payline = new int[REELS];
-        if (random.nextFloat() < WIN_CHANCE) {
-            int[] prize = pickWin(random);
+        if (prize != null) {
             int symbol = prize[0];
             int length = prize[1];
             for (int reel = 0; reel < REELS; reel++) {
@@ -132,15 +159,40 @@ public final class SlotMachine {
         return cells;
     }
 
-    private static int[] pickWin(Random random) {
-        int roll = random.nextInt(WINS_TOTAL);
+    /** Sorteia um prêmio de {@link #WINS} entre os que pagam até {@code maxMultiplier}; {@code null} se nenhum couber. */
+    private static int[] pickWin(Random random, long maxMultiplier) {
+        int total = 0;
         for (int[] win : WINS) {
-            if (roll < win[2]) {
-                return win;
+            if (payout(win) <= maxMultiplier) {
+                total += win[2];
             }
-            roll -= win[2];
         }
-        return WINS[0];
+        if (total == 0) {
+            return null;
+        }
+        int roll = random.nextInt(total);
+        for (int[] win : WINS) {
+            if (payout(win) <= maxMultiplier) {
+                if (roll < win[2]) {
+                    return win;
+                }
+                roll -= win[2];
+            }
+        }
+        return null;
+    }
+
+    private static int payout(int[] win) {
+        return PAYOUT[win[0]][win[1] - 3];
+    }
+
+    /** Símbolos sem valer nada, para os rolos não abrirem vazios. */
+    public static int[] idle(Random random) {
+        int[] cells = new int[CELLS];
+        for (int i = 0; i < CELLS; i++) {
+            cells[i] = draw(random);
+        }
+        return cells;
     }
 
     /** Quantos símbolos iguais ao do primeiro rolo aparecem seguidos na linha do meio (1 a 5). */

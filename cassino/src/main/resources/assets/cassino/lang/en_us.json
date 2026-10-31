@@ -12,12 +12,8 @@
   "gui.cassino.slot.spin": "SPIN!",
   "gui.cassino.slot.bet": "BET: %s",
   "gui.cassino.slot.credits": "CREDITS: %s",
-  "gui.cassino.slot.coins": "COINS",
-  "gui.cassino.slot.card": "CARD",
   "gui.cassino.slot.tip.bet_up": "Raise the bet",
   "gui.cassino.slot.tip.bet_down": "Lower the bet",
-  "gui.cassino.slot.tip.coins": "Turns the chips in the slot next to it into credits (1 chip = 1 credit)",
-  "gui.cassino.slot.tip.card": "Cashes out all credits as chips. Closing the machine also gives back what is left",
   "gui.cassino.slot.paytable": "Pays on the middle line: 3, 4 or 5 in a row from the left (times the bet)",
   "gui.cassino.slot.paytable.line": "%s: %sx / %sx / %sx",
   "gui.cassino.slot.symbol.0": "7",
@@ -29,5 +25,9 @@
   "gui.cassino.slot.win": "You won %s chips!",
   "gui.cassino.slot.jackpot": "JACKPOT! %s chips!",
   "gui.cassino.slot.lose": "Not this time.",
-  "gui.cassino.slot.no_credits": "Put chips in COINS."
+  "gui.cassino.slot.no_credits": "No credits: deposit.",
+  "gui.cassino.slot.deposit": "DEPOSIT",
+  "gui.cassino.slot.withdraw": "WITHDRAW",
+  "gui.cassino.slot.tip.deposit": "Deposits the chips in the slot next to it: each chip becomes 1 credit. Credits are yours only, work on any slot machine and stay saved when you close it",
+  "gui.cassino.slot.tip.withdraw": "Cashes out all your credits as chips"
 }

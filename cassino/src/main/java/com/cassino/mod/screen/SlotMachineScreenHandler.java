@@ -1,6 +1,7 @@
 package com.cassino.mod.screen;
 
 import com.cassino.mod.Cassino;
+import com.cassino.mod.machine.CassinoState;
 import com.cassino.mod.machine.SlotMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -11,6 +12,7 @@ import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -20,9 +22,10 @@ import net.minecraft.util.Formatting;
 /**
  * A tela do caça-níquel, do lado do servidor (é ele quem sorteia e guarda os créditos).
  *
- * <p>As fichas colocadas no espaço ao lado de MOEDAS viram créditos (1 ficha = 1 crédito); cada girada gasta a
- * aposta em créditos e os prêmios voltam como créditos. CARTÃO saca todos os créditos em fichas. Os créditos
- * valem só enquanto a tela está aberta: ao fechar, o que sobrou volta em fichas (nada se perde).
+ * <p>DEPÓSITO transforma as fichas do espaço ao lado em créditos (1 ficha = 1 crédito); cada girada gasta a aposta
+ * em créditos e os prêmios voltam como créditos; RETIRADA saca todos os créditos em fichas. Os créditos são do
+ * jogador, guardados no {@link CassinoState}: valem em qualquer máquina, continuam lá depois de fechar a tela, e
+ * ninguém mais mexe neles.
  *
  * <p>Os botões chegam pelo {@link #onButtonClick} (o mesmo caminho da mesa de encantamento), e o estado vai para
  * a tela pelas propriedades da tela (números de 16 bits; os créditos vão em duas partes).
@@ -31,11 +34,8 @@ public class SlotMachineScreenHandler extends ScreenHandler {
     public static final int BUTTON_SPIN = 0;
     public static final int BUTTON_BET_UP = 1;
     public static final int BUTTON_BET_DOWN = 2;
-    public static final int BUTTON_COINS = 3;
-    public static final int BUTTON_CARD = 4;
-
-    /** Máximo de créditos numa máquina. */
-    public static final int MAX_CREDITS = 1_000_000;
+    public static final int BUTTON_DEPOSIT = 3;
+    public static final int BUTTON_WITHDRAW = 4;
     /** Quanto tempo a tela leva para parar os rolos (o aviso do jackpot espera isso para não estragar a surpresa). */
     public static final int SPIN_TICKS = 40;
 
@@ -43,9 +43,9 @@ public class SlotMachineScreenHandler extends ScreenHandler {
 
     public static final int WIDTH = 276;
     public static final int HEIGHT = 214;
-    /** O espaço das fichas, ao lado do botão MOEDAS (o fundo do espaço; o item fica 1 pixel para dentro). */
-    public static final int COIN_SLOT_X = 205;
-    public static final int COIN_SLOT_Y = 97;
+    /** O espaço das fichas, antes do botão DEPÓSITO (o fundo do espaço; o item fica 1 pixel para dentro). */
+    public static final int COIN_SLOT_X = 154;
+    public static final int COIN_SLOT_Y = 83;
     public static final int INVENTORY_X = 57;
     public static final int INVENTORY_Y = 131;
     public static final int HOTBAR_Y = 189;
@@ -62,6 +62,7 @@ public class SlotMachineScreenHandler extends ScreenHandler {
     private static final int P_COUNT = P_SPINS + 1;
 
     private final ScreenHandlerContext context;
+    private final PlayerEntity player;
     private final Inventory coins = new SimpleInventory(1);
 
     private int credits;
@@ -78,8 +79,12 @@ public class SlotMachineScreenHandler extends ScreenHandler {
     public SlotMachineScreenHandler(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(Cassino.SLOT_MACHINE_HANDLER, syncId);
         this.context = context;
+        this.player = playerInventory.player;
         // Já abre com símbolos nos rolos (só enfeite; não paga nada).
-        this.cells = SlotMachine.spin(playerInventory.player.getRandom());
+        this.cells = SlotMachine.idle(player.getRandom());
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            credits = CassinoState.get(serverPlayer.getServer()).balance(player.getUuid());
+        }
 
         addSlot(new Slot(coins, 0, COIN_SLOT_X + 1, COIN_SLOT_Y + 1) {
             @Override
@@ -168,7 +173,7 @@ public class SlotMachineScreenHandler extends ScreenHandler {
         return spins;
     }
 
-    /** Quantas fichas estão no espaço ao lado de MOEDAS. */
+    /** Quantas fichas estão no espaço ao lado de DEPÓSITO. */
     public int coinsWaiting() {
         return coins.getStack(0).getCount();
     }
@@ -181,8 +186,8 @@ public class SlotMachineScreenHandler extends ScreenHandler {
             case BUTTON_SPIN -> spin(player);
             case BUTTON_BET_UP -> betIndex = Math.min(betIndex + 1, SlotMachine.BETS.length - 1);
             case BUTTON_BET_DOWN -> betIndex = Math.max(betIndex - 1, 0);
-            case BUTTON_COINS -> depositCoins();
-            case BUTTON_CARD -> cashOut(player);
+            case BUTTON_DEPOSIT -> deposit();
+            case BUTTON_WITHDRAW -> withdraw(player);
             default -> {
                 return false;
             }
@@ -190,31 +195,44 @@ public class SlotMachineScreenHandler extends ScreenHandler {
         return true;
     }
 
+    /** O cofre do servidor (só no servidor). */
+    private CassinoState state() {
+        return CassinoState.get(((ServerPlayerEntity) player).getServer());
+    }
+
+    /** Guarda o saldo deste jogador no cofre (é ele que vale; o campo aqui é só o que a tela mostra). */
+    private void saveCredits() {
+        state().setBalance(player.getUuid(), credits);
+    }
+
     /** As fichas do espaço viram créditos. */
-    private void depositCoins() {
+    private void deposit() {
         ItemStack stack = coins.getStack(0);
         if (stack.isEmpty() || !stack.isOf(Cassino.CHIP)) {
             return;
         }
-        int accepted = Math.min(stack.getCount(), MAX_CREDITS - credits);
+        int accepted = Math.min(stack.getCount(), CassinoState.MAX_BALANCE - credits);
         credits += accepted;
         stack.decrement(accepted);
         coins.markDirty();
+        saveCredits();
     }
 
     private void spin(PlayerEntity player) {
         int bet = bet();
         if (credits < bet) {
-            depositCoins(); // colocou fichas e já mandou girar: troca antes
+            deposit(); // colocou fichas e já mandou girar: deposita antes
         }
         if (credits < bet) {
             return;
         }
-        credits -= bet;
-        int[] result = SlotMachine.spin(player.getRandom());
+        CassinoState state = state();
+        int[] result = SlotMachine.spin(player.getRandom(), bet, state.house());
         System.arraycopy(result, 0, cells, 0, cells.length);
         lastWin = bet * SlotMachine.multiplier(result);
-        credits = Math.min(MAX_CREDITS, credits + lastWin);
+        state.settle(bet, lastWin);
+        credits = Math.min(CassinoState.MAX_BALANCE, credits - bet + lastWin);
+        saveCredits();
         spins++;
 
         boolean jackpot = SlotMachine.isJackpot(result);
@@ -231,10 +249,12 @@ public class SlotMachineScreenHandler extends ScreenHandler {
     }
 
     /** Todos os créditos voltam em fichas. */
-    private void cashOut(PlayerEntity player) {
+    private void withdraw(PlayerEntity player) {
         if (credits > 0) {
-            giveChips(player, credits);
+            int amount = credits;
             credits = 0;
+            saveCredits();
+            giveChips(player, amount);
         }
     }
 
@@ -257,9 +277,8 @@ public class SlotMachineScreenHandler extends ScreenHandler {
         if (player.getWorld().isClient) {
             return;
         }
-        // Nada se perde: as fichas do espaço e os créditos que sobraram voltam para o jogador.
+        // As fichas que ficaram no espaço (sem depositar) voltam; os créditos continuam guardados no cofre.
         dropInventory(player, coins);
-        cashOut(player);
     }
 
     @Override
@@ -267,7 +286,7 @@ public class SlotMachineScreenHandler extends ScreenHandler {
         return canUse(context, player, Cassino.SLOT_MACHINE);
     }
 
-    /** Shift + clique: fichas do inventário vão para o espaço de MOEDAS, e as do espaço voltam para o inventário. */
+    /** Shift + clique: fichas do inventário vão para o espaço de DEPÓSITO, e as do espaço voltam para o inventário. */
     @Override
     public ItemStack quickMove(PlayerEntity player, int index) {
         Slot slot = slots.get(index);

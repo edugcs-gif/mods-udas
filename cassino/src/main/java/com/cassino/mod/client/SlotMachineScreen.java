@@ -23,8 +23,8 @@ import net.minecraft.util.math.MathHelper;
 
 /**
  * A tela do caça-níquel: os 5 rolos à esquerda (a linha do meio, em amarelo, é a que paga), o botão GIRAR!, a
- * aposta, os créditos, MOEDAS (troca as fichas do espaço ao lado por créditos) e CARTÃO (saca os créditos em
- * fichas), e o inventário embaixo.
+ * aposta, os créditos do jogador, DEPÓSITO (as fichas do espaço ao lado viram créditos) e RETIRADA (saca os
+ * créditos em fichas), e o inventário embaixo.
  *
  * <p>Quem sorteia é o servidor. Quando o resultado chega, a tela gira os rolos e os para um a um, da esquerda
  * para a direita; só então mostra o prêmio e o saldo novo.
@@ -60,6 +60,9 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
     private static final int CELL_STEP_Y = 26;
     private static final int RIGHT_X = 154;
     private static final int RIGHT_WIDTH = 114;
+    private static final int BET_Y = 52;
+    private static final int CREDITS_Y = 70;
+    private static final int WITHDRAW_Y = 105;
     private static final int MESSAGE_Y = 108;
 
     /** O primeiro rolo para depois disso; cada um dos outros, {@link #STOP_STEP_MS} depois do anterior. */
@@ -121,25 +124,28 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
                 Text.translatable("gui.cassino.slot.spin"), this::spin));
         spinButton.setTooltip(Tooltip.of(payTable()));
 
+        // + e - na linha da aposta; o espaço das fichas, DEPÓSITO e, embaixo, RETIRADA.
         addDrawableChild(ButtonWidget.builder(Text.literal("+"),
                         button -> click(SlotMachineScreenHandler.BUTTON_BET_UP))
-                .dimensions(x + RIGHT_X, y + 60, 20, 20)
+                .dimensions(x + RIGHT_X + RIGHT_WIDTH - 42, y + BET_Y - 4, 20, 16)
                 .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.bet_up")))
                 .build());
         addDrawableChild(ButtonWidget.builder(Text.literal("-"),
                         button -> click(SlotMachineScreenHandler.BUTTON_BET_DOWN))
-                .dimensions(x + RIGHT_X + RIGHT_WIDTH - 20, y + 60, 20, 20)
+                .dimensions(x + RIGHT_X + RIGHT_WIDTH - 20, y + BET_Y - 4, 20, 16)
                 .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.bet_down")))
                 .build());
-        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.cassino.slot.coins"),
-                        button -> click(SlotMachineScreenHandler.BUTTON_COINS))
-                .dimensions(x + RIGHT_X, y + 96, 50, 20)
-                .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.coins")))
+        int depositX = SlotMachineScreenHandler.COIN_SLOT_X + 21;
+        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.cassino.slot.deposit"),
+                        button -> click(SlotMachineScreenHandler.BUTTON_DEPOSIT))
+                .dimensions(x + depositX, y + SlotMachineScreenHandler.COIN_SLOT_Y - 1,
+                        RIGHT_X + RIGHT_WIDTH - depositX, 20)
+                .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.deposit")))
                 .build());
-        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.cassino.slot.card"),
-                        button -> click(SlotMachineScreenHandler.BUTTON_CARD))
-                .dimensions(x + RIGHT_X + RIGHT_WIDTH - 42, y + 96, 42, 20)
-                .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.card")))
+        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.cassino.slot.withdraw"),
+                        button -> click(SlotMachineScreenHandler.BUTTON_WITHDRAW))
+                .dimensions(x + RIGHT_X, y + WITHDRAW_Y, RIGHT_WIDTH, 20)
+                .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.withdraw")))
                 .build());
     }
 
@@ -371,8 +377,8 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
         context.drawText(textRenderer, bigTitle, -textRenderer.getWidth(bigTitle) / 2, 0, TITLE, false);
         matrices.pop();
 
-        drawAmount(context, Text.translatable("gui.cassino.slot.bet", handler.bet()), RIGHT_X, 50);
-        drawAmount(context, Text.translatable("gui.cassino.slot.credits", shownCredits()), RIGHT_X, 86);
+        drawAmount(context, Text.translatable("gui.cassino.slot.bet", handler.bet()), RIGHT_X, BET_Y);
+        drawAmount(context, Text.translatable("gui.cassino.slot.credits", shownCredits()), RIGHT_X, CREDITS_Y);
 
         if (message != null) {
             context.drawText(textRenderer, message, REELS_X + (REELS_WIDTH - textRenderer.getWidth(message)) / 2,

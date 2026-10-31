@@ -6,7 +6,7 @@ Um mod de cassino para o Minecraft 1.20.1, com Fabric. É um mod original: o có
 
 | Item | O que faz |
 | --- | --- |
-| **Ficha** | A "moeda" do cassino. Receita: 1 barra de ouro = 8 fichas (sem forma). E 8 fichas = 1 barra de ouro, então não dá para lucrar só trocando. |
+| **Ficha** | A "moeda" do cassino, usada para apostar. Custa caro (8 barras de ouro + 1 diamante) e não volta a ser ouro. |
 | **Caça-níquel** (bloco) | Botão direito abre a máquina: 5 rolos, aposta de 1 a 50 fichas, créditos e prêmios de até 100x a aposta. |
 | **Dado** | Botão direito rola de 1 a 6; quem está até 16 blocos vê o resultado no chat. |
 | **Moeda** | Botão direito joga cara ou coroa; quem está até 16 blocos vê o resultado no chat. |
@@ -15,6 +15,7 @@ Tudo fica na aba **Cassino** do criativo.
 
 ## Receitas
 
+- **Ficha:** 8 barras de ouro em volta e 1 diamante no centro = 1 ficha.
 - **Caça-níquel:** fileira de cima 3 barras de ferro; no meio ferro, **ficha**, ferro; embaixo ferro, redstone, ferro.
 - **Dado:** 4 quartzos em quadrado (2x2).
 - **Moeda:** em cruz, 4 pepitas de ferro (em cima, embaixo e nos lados) e 1 pepita de ouro no centro.
@@ -24,10 +25,11 @@ Tudo fica na aba **Cassino** do criativo.
 Botão direito no caça-níquel abre a tela da máquina:
 
 - **5 rolos** à esquerda, com 3 símbolos cada: 7, estrela, diamante, coração, esmeralda e pá. Só a **linha do meio** (a destacada em amarelo) paga.
-- **MOEDAS:** ponha fichas no espaço ao lado e aperte MOEDAS; cada ficha vira 1 crédito. Shift + clique numa ficha do inventário já a coloca no espaço. Se apertar GIRAR! sem créditos, as fichas do espaço são trocadas sozinhas.
+- **DEPÓSITO:** ponha fichas no espaço ao lado e aperte DEPÓSITO; cada ficha vira 1 crédito. Shift + clique numa ficha do inventário já a coloca no espaço. Se apertar GIRAR! sem créditos, as fichas do espaço são depositadas sozinhas.
+- **Os créditos são só seus:** ficam guardados no servidor no seu nome, valem em qualquer caça-níquel e continuam lá depois de fechar a máquina. Outro jogador que abrir a mesma máquina vê só os créditos dele.
 - **APOSTA:** os botões **+** e **-** escolhem quanto cada girada custa: 1, 2, 5, 10, 20 ou 50 créditos.
 - **GIRAR!:** os rolos giram e param um a um, da esquerda para a direita. Passe o mouse no botão para ver a tabela de prêmios.
-- **CARTÃO:** saca todos os créditos em fichas. Ao fechar a máquina, os créditos que sobraram e as fichas do espaço também voltam para você: nada se perde.
+- **RETIRADA:** saca todos os seus créditos em fichas. Fichas deixadas no espaço sem depositar voltam para você ao fechar a máquina.
 
 ### Prêmios
 
@@ -44,7 +46,30 @@ Ganha quem tirar **3, 4 ou 5 símbolos iguais seguidos na linha do meio, a parti
 
 - **40% das giradas ganham e 60% perdem.** Quase todas as vitórias são 3 pás ou 3 esmeraldas (o dobro da aposta); os prêmios maiores são cada vez mais raros, e o jackpot sai uma vez a cada ~25.000 giradas (quem está até 32 blocos é avisado no chat).
 - No total a máquina devolve uns **88%** do que é apostado: quem joga perde mais do que ganha, e o caça-níquel não vira máquina de ouro.
-- Para mudar as chances ou os prêmios, edite `WIN_CHANCE`, `WINS` e `PAYOUT` em `machine/SlotMachine.java`.
+- Para mudar as chances ou os prêmios, edite `WIN_CHANCE_BY_DEBT`, `WINS` e `PAYOUT` em `machine/SlotMachine.java`.
+
+### Limite de prêmios da casa
+
+O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada aposta e **desce** com cada prêmio. Quando está negativo, quer dizer que o cassino já deu mais fichas do que recebeu.
+
+- A casa pode ficar **no máximo em -640**: o cassino nunca cria mais de 640 fichas a mais do que recebeu, no servidor todo. Um prêmio que passaria disso vira um prêmio menor que caiba; se nem o menor couber, a girada perde.
+- Quanto mais no negativo, menor a chance de ganhar, aos poucos:
+
+| Saldo da casa | Chance de ganhar | A máquina devolve |
+| --- | --- | --- |
+| 0 ou mais (até -63) | 40% | ~88% |
+| -64 a -127 | 37% | ~81% |
+| -128 a -191 | 34% | ~75% |
+| -192 a -255 | 31% | ~68% |
+| -256 a -319 | 28% | ~62% |
+| -320 a -383 | 25% | ~55% |
+| -384 a -447 | 22% | ~48% |
+| -448 a -511 | 19% | ~42% |
+| -512 a -575 | 16% | ~35% |
+| -576 a -639 | 13% | ~29% |
+| -640 | 10% (só prêmios que caibam) | menos ainda |
+
+Com as apostas dos jogadores a casa volta a subir, e a chance volta ao normal. O saldo da casa e os créditos de cada jogador ficam salvos no mundo (`data/cassino.dat`).
 
 ## Instalação
 
@@ -57,7 +82,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.1.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.2.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -68,7 +93,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.1.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.2.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 

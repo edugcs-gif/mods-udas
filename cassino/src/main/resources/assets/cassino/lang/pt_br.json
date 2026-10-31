@@ -12,12 +12,8 @@
   "gui.cassino.slot.spin": "GIRAR!",
   "gui.cassino.slot.bet": "APOSTA: %s",
   "gui.cassino.slot.credits": "CRÉDITOS: %s",
-  "gui.cassino.slot.coins": "MOEDAS",
-  "gui.cassino.slot.card": "CARTÃO",
   "gui.cassino.slot.tip.bet_up": "Aumenta a aposta",
   "gui.cassino.slot.tip.bet_down": "Diminui a aposta",
-  "gui.cassino.slot.tip.coins": "Troca as fichas do espaço ao lado por créditos (1 ficha = 1 crédito)",
-  "gui.cassino.slot.tip.card": "Saca todos os créditos em fichas. Ao fechar a máquina, o que sobrou também volta em fichas",
   "gui.cassino.slot.paytable": "Paga na linha do meio: 3, 4 ou 5 iguais seguidos a partir da esquerda (vezes a aposta)",
   "gui.cassino.slot.paytable.line": "%s: %sx / %sx / %sx",
   "gui.cassino.slot.symbol.0": "7",
@@ -29,5 +25,9 @@
   "gui.cassino.slot.win": "Ganhou %s fichas!",
   "gui.cassino.slot.jackpot": "JACKPOT! %s fichas!",
   "gui.cassino.slot.lose": "Não foi dessa vez.",
-  "gui.cassino.slot.no_credits": "Ponha fichas em MOEDAS."
+  "gui.cassino.slot.no_credits": "Sem créditos: deposite.",
+  "gui.cassino.slot.deposit": "DEPÓSITO",
+  "gui.cassino.slot.withdraw": "RETIRADA",
+  "gui.cassino.slot.tip.deposit": "Deposita as fichas do espaço ao lado: cada ficha vira 1 crédito. Os créditos são só seus, valem em qualquer caça-níquel e ficam guardados ao fechar a máquina",
+  "gui.cassino.slot.tip.withdraw": "Saca todos os seus créditos em fichas"
 }
