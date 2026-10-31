@@ -24,7 +24,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Batraquizar: a poção Batraquizador. Quem bebe, é atingido pela poção arremessável (ou persistente, ou pela flecha) vira
- * sapo até o efeito acabar. Leite desfaz, como qualquer efeito.
+ * sapo até o efeito acabar. Leite desfaz, como qualquer efeito. Quem volta ao normal ganha a Bênção do
+ * Príncipe, que impede de virar sapo de novo por 10 minutos.
  *
  * <p>Ser sapo é o efeito Batraquizado ({@link BatraquizadoEffect}): ele encolhe a pessoa (atributo de
  * tamanho), deixa pular mais alto e cair sem se machucar de alturas pequenas. O desenho de sapo é só no cliente
@@ -35,12 +36,15 @@ public class Batraquizar implements ModInitializer {
     public static final String MOD_ID = "batraquizar";
     public static final Logger LOGGER = LoggerFactory.getLogger("Batraquizar");
 
-    /** Duração da poção normal (1 minuto) e da prolongada com redstone (3 minutos), em ticks. */
-    private static final int DURATION = 60 * 20;
-    private static final int LONG_DURATION = 3 * 60 * 20;
+    /** Duração da poção normal (30 segundos) e da prolongada com redstone (1 minuto e meio), em ticks. */
+    private static final int DURATION = 30 * 20;
+    private static final int LONG_DURATION = 90 * 20;
 
     public static final RegistryEntry<StatusEffect> BATRAQUIZADO =
             Registry.registerReference(Registries.STATUS_EFFECT, id("batraquizado"), new BatraquizadoEffect());
+    /** Ganha quem volta de sapo: por um tempo, ninguém consegue transformar de novo (veja {@link BencaoDoPrincipe}). */
+    public static final RegistryEntry<StatusEffect> BENCAO_DO_PRINCIPE = Registry.registerReference(
+            Registries.STATUS_EFFECT, id("bencao_do_principe"), new BencaoDoPrincipeEffect());
 
     // As duas usam o nome "batraquizador", então as traduções são as mesmas ("Batraquizador").
     public static final RegistryEntry<Potion> BATRAQUIZADOR = Registry.registerReference(Registries.POTION,
@@ -69,6 +73,8 @@ public class Batraquizar implements ModInitializer {
             }
             builder.registerPotionRecipe(BATRAQUIZADOR, Items.REDSTONE, LONG_BATRAQUIZADOR);
         });
+
+        BencaoDoPrincipe.init();
 
         // Sapo não ataca nem quebra blocos. Usar itens continua valendo (comer, abrir portas e beber leite para desvirar).
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) ->

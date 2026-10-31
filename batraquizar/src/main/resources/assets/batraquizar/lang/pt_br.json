@@ -1,7 +1,9 @@
 {
   "effect.batraquizar.batraquizado": "Batraquizado",
+  "effect.batraquizar.bencao_do_principe": "Bênção do Príncipe",
   "item.minecraft.potion.effect.batraquizador": "Batraquizador",
   "item.minecraft.splash_potion.effect.batraquizador": "Batraquizador Arremessável",
   "item.minecraft.lingering_potion.effect.batraquizador": "Batraquizador Persistente",
-  "item.minecraft.tipped_arrow.effect.batraquizador": "Flecha do Batraquizador"
+  "item.minecraft.tipped_arrow.effect.batraquizador": "Flecha do Batraquizador",
+  "message.batraquizar.protected": "A Bênção do Príncipe te protegeu de virar sapo!"
 }

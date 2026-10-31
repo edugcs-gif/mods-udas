@@ -12,12 +12,14 @@ import net.minecraft.util.Identifier;
 
 /**
  * O efeito "Batraquizado". Tudo o que muda no corpo são modificadores de atributo, que o próprio jogo coloca
- * quando o efeito começa e tira quando acaba (ou quando a pessoa bebe leite ou morre):
+ * quando o efeito começa e tira quando acaba (ou quando a pessoa bebe leite ou morre). Quando acaba, o
+ * jogador ganha a {@link BencaoDoPrincipe Bênção do Príncipe}.
+ *
  * <ul>
  *   <li>tamanho 30% do normal: o jogador fica com ~0,5 bloco de altura, como um sapo;</li>
  *   <li>40% mais rápido (como a poção de Velocidade II);</li>
  *   <li>pulo mais forte (uns 2 blocos);</li>
- *   <li>cai de até 3 blocos a mais sem se machucar.</li>
+ *   <li>não toma dano de queda.</li>
  * </ul>
  */
 public class BatraquizadoEffect extends StatusEffect {
@@ -34,8 +36,8 @@ public class BatraquizadoEffect extends StatusEffect {
                 EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         addAttributeModifier(EntityAttributes.GENERIC_JUMP_STRENGTH, Batraquizar.id("batraquizado_jump"), 0.15,
                 EntityAttributeModifier.Operation.ADD_VALUE);
-        addAttributeModifier(EntityAttributes.GENERIC_SAFE_FALL_DISTANCE, Batraquizar.id("batraquizado_fall"), 3.0,
-                EntityAttributeModifier.Operation.ADD_VALUE);
+        addAttributeModifier(EntityAttributes.GENERIC_FALL_DAMAGE_MULTIPLIER, Batraquizar.id("batraquizado_fall"), -1.0,
+                EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
     }
 
     /** Na hora em que vira sapo: uma nuvem de gosma verde e um "croac" para todo mundo perto. */

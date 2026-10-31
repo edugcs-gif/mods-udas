@@ -7,8 +7,8 @@ O **Batraquizador** é uma poção que **transforma em sapo** quem for atingido 
 No suporte de poções:
 
 1. **Garrafa de água** + verruga do Nether = Poção Estranha
-2. **Poção Estranha** + **froglight** (qualquer cor: ocre, verdejante ou perolada) = **Batraquizador** (1 minuto)
-3. *(opcional)* + pó de redstone = Batraquizador prolongado (3 minutos)
+2. **Poção Estranha** + **froglight** (qualquer cor: ocre, verdejante ou perolada) = **Batraquizador** (30 segundos)
+3. *(opcional)* + pó de redstone = Batraquizador prolongado (1 minuto e 30 segundos)
 4. **+ pólvora** = **Batraquizador Arremessável** (esse é o de jogar nos outros)
 5. *(opcional)* + bafo do dragão = Batraquizador Persistente (deixa uma nuvem no chão)
 
@@ -21,10 +21,19 @@ Também dá para fazer a **Flecha do Batraquizador** com o Batraquizador Persist
 - **Vira sapo de verdade** para todo mundo: o jogador (ou qualquer criatura atingida) é desenhado como um sapo, que anda e pula junto com ele e **coaxa** de vez em quando. O nome do jogador continua aparecendo em cima do sapo.
 - **Fica pequeno** (30% do tamanho, uns 0,5 bloco de altura): passa por buracos de 1 bloco e a câmera fica lá embaixo.
 - **Fica 40% mais rápido** (como a poção de Velocidade II).
-- **Pula mais alto** (uns 2 blocos) e cai de até 3 blocos a mais sem se machucar.
+- **Pula mais alto** (uns 2 blocos) e **não toma dano de queda**.
 - **Não ataca nem quebra blocos** (sapo não tem mão: em primeira pessoa o braço some).
 - Ainda pode **usar itens**: comer, abrir portas e **beber leite**, que desfaz o feitiço na hora.
 - Quando o efeito acaba, sai uma nuvem de fumaça e a pessoa volta ao normal.
+
+Como em todas as poções do jogo, a persistente e a flecha duram menos que a poção normal.
+
+## Bênção do Príncipe
+
+Quem volta de sapo (o efeito acabou, bebeu leite ou morreu sapo) ganha o efeito **Bênção do Príncipe** por **10 minutos**:
+
+- Enquanto durar, **ninguém consegue te transformar em sapo de novo**: a poção não pega e aparece o aviso "A Bênção do Príncipe te protegeu de virar sapo!".
+- A bênção **não sai quando você morre** (nem com o totem da imortalidade): só sai com **leite** ou quando o **tempo acaba**.
 
 Cuidado: a poção arremessável pega em todo mundo perto de onde ela quebra, inclusive em quem jogou.
 

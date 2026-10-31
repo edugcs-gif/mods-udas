@@ -3,6 +3,9 @@
   "minVersion": "0.8",
   "package": "com.edugcs.batraquizar.mixin",
   "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LivingEntityMixin"
+  ],
   "client": [
     "client.HeldItemRendererMixin",
     "client.LimbAnimatorAccessor",
