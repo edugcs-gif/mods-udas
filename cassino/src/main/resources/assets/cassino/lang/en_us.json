@@ -1,0 +1,17 @@
+{
+  "itemGroup.cassino": "Casino",
+  "item.cassino.chip": "Chip",
+  "item.cassino.die": "Die",
+  "item.cassino.coin": "Coin",
+  "block.cassino.slot_machine": "Slot Machine",
+  "message.cassino.slot.no_chip": "Hold a chip to play.",
+  "message.cassino.slot.win": "You won %s chips!",
+  "message.cassino.slot.jackpot": "JACKPOT! %s chips!",
+  "message.cassino.slot.jackpot_broadcast": "%s hit the JACKPOT and won %s chips!",
+  "message.cassino.slot.pair": "A pair! Your chip is back.",
+  "message.cassino.slot.lose": "Better luck next time.",
+  "message.cassino.die": "%s rolled the die: %s",
+  "message.cassino.coin": "%s flipped the coin: %s",
+  "message.cassino.coin.heads": "heads",
+  "message.cassino.coin.tails": "tails"
+}

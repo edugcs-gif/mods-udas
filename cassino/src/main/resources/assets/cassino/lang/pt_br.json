@@ -1,0 +1,17 @@
+{
+  "itemGroup.cassino": "Cassino",
+  "item.cassino.chip": "Ficha",
+  "item.cassino.die": "Dado",
+  "item.cassino.coin": "Moeda",
+  "block.cassino.slot_machine": "Caça-níquel",
+  "message.cassino.slot.no_chip": "Segure uma ficha para jogar.",
+  "message.cassino.slot.win": "Ganhou %s fichas!",
+  "message.cassino.slot.jackpot": "JACKPOT! %s fichas!",
+  "message.cassino.slot.jackpot_broadcast": "%s acertou o JACKPOT e ganhou %s fichas!",
+  "message.cassino.slot.pair": "Par! A ficha voltou.",
+  "message.cassino.slot.lose": "Não foi dessa vez.",
+  "message.cassino.die": "%s rolou o dado: %s",
+  "message.cassino.coin": "%s jogou a moeda: %s",
+  "message.cassino.coin.heads": "cara",
+  "message.cassino.coin.tails": "coroa"
+}

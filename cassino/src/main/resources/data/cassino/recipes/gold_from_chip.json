@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "cassino:chip" }, { "item": "cassino:chip" }, { "item": "cassino:chip" }, { "item": "cassino:chip" },
+    { "item": "cassino:chip" }, { "item": "cassino:chip" }, { "item": "cassino:chip" }, { "item": "cassino:chip" }
+  ],
+  "result": { "item": "minecraft:gold_ingot", "count": 1 }
+}

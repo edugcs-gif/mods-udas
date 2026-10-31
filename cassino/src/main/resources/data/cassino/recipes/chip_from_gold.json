@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [ { "item": "minecraft:gold_ingot" } ],
+  "result": { "item": "cassino:chip", "count": 8 }
+}

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "QQ", "QQ" ],
+  "key": { "Q": { "item": "minecraft:quartz" } },
+  "result": { "item": "cassino:die", "count": 1 }
+}
