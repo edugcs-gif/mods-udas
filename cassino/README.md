@@ -57,11 +57,11 @@ O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada apost
 
 | Saldo da casa | Chance de ganhar | A máquina devolve |
 | --- | --- | --- |
-| +3.200 ou mais | 45% | ~99% |
-| +2.560 a +3.199 | 44% | ~97% |
-| +1.920 a +2.559 | 43% | ~95% |
-| +1.280 a +1.919 | 42% | ~92% |
-| +640 a +1.279 | 41% | ~90% |
+| +896 ou mais | 45% | ~99% |
+| +832 a +895 | 44% | ~97% |
+| +768 a +831 | 43% | ~95% |
+| +704 a +767 | 42% | ~92% |
+| +640 a +703 | 41% | ~90% |
 | -63 a +639 | 40% (o normal) | ~88% |
 | -64 a -127 | 37% | ~81% |
 | -128 a -191 | 34% | ~75% |
@@ -87,7 +87,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.3.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.3.1.jar`.
 
 ### Opção 2: no seu PC
 
@@ -98,7 +98,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.3.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.3.1.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 

@@ -20,8 +20,9 @@ import net.minecraft.util.math.random.Random;
  * <ul>
  *   <li>a cada 64 fichas que a casa fica no negativo, a chance de ganhar cai um pouco ({@link #WIN_CHANCE_BY_DEBT}:
  *       40%, 37%, 34%... até 10%), e a máquina passa a devolver menos, até a casa se recuperar;</li>
- *   <li>a cada 640 fichas que a casa fica no positivo, a chance sobe um pouco ({@link #WIN_CHANCE_BY_PROFIT}: 41%,
- *       42%... até 45%, com a máquina devolvendo ~99%): a casa continua ganhando, mas devolve mais aos jogadores;</li>
+ *   <li>a partir de +640 fichas no positivo, a chance sobe um ponto a cada 64 fichas ({@link #WIN_CHANCE_BY_PROFIT}:
+ *       41%, 42%... até 45% em +896, com a máquina devolvendo ~99%): a casa continua ganhando, mas devolve mais aos
+ *       jogadores;</li>
  *   <li>e nenhum prêmio pode deixar a casa abaixo de -{@value CassinoState#MAX_HOUSE_DEBT}: se o prêmio sorteado
  *       passar disso, sai um menor que caiba; se nem o menor couber, a girada perde.</li>
  * </ul>
@@ -59,11 +60,14 @@ public final class SlotMachine {
      */
     public static final float[] WIN_CHANCE_BY_DEBT = {0.40F, 0.37F, 0.34F, 0.31F, 0.28F, 0.25F, 0.22F, 0.19F, 0.16F,
             0.13F, 0.10F};
-    /** Fichas no positivo da casa para cada degrau de {@link #WIN_CHANCE_BY_PROFIT}. */
-    public static final int PROFIT_STEP = 640;
+    /** Saldo da casa a partir do qual a chance de ganhar começa a subir. */
+    public static final int PROFIT_START = 640;
+    /** Fichas no positivo da casa para cada degrau de {@link #WIN_CHANCE_BY_PROFIT}, depois de {@link #PROFIT_START}. */
+    public static final int PROFIT_STEP = 64;
     /**
-     * Chance de ganhar com a casa no positivo: até +639, 40% (o normal); de +640 a +1279, 41%; e assim por diante, até
-     * 45% de +3200 para cima. Para em 45% porque, a partir de uns 45,5%, a máquina passaria a pagar mais do que recebe.
+     * Chance de ganhar com a casa no positivo: até +639, 40% (o normal); de +640 a +703, 41%; de +704 a +767, 42%; e
+     * assim por diante, até 45% de +896 para cima. Para em 45% porque, a partir de uns 45,5%, a máquina passaria a
+     * pagar mais do que recebe.
      */
     public static final float[] WIN_CHANCE_BY_PROFIT = {0.40F, 0.41F, 0.42F, 0.43F, 0.44F, 0.45F};
     /**
@@ -129,8 +133,12 @@ public final class SlotMachine {
 
     /** A chance de ganhar com a casa neste saldo. */
     public static float winChance(long house) {
+        if (house >= PROFIT_START) {
+            long step = 1 + (house - PROFIT_START) / PROFIT_STEP;
+            return WIN_CHANCE_BY_PROFIT[(int) Math.min(WIN_CHANCE_BY_PROFIT.length - 1, step)];
+        }
         if (house >= 0) {
-            return WIN_CHANCE_BY_PROFIT[(int) Math.min(WIN_CHANCE_BY_PROFIT.length - 1, house / PROFIT_STEP)];
+            return WIN_CHANCE_BY_PROFIT[0];
         }
         return WIN_CHANCE_BY_DEBT[(int) Math.min(WIN_CHANCE_BY_DEBT.length - 1, -house / DEBT_STEP)];
     }
