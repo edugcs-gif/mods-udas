@@ -1,0 +1,397 @@
+package com.cassino.mod.client;
+
+import com.cassino.mod.Cassino;
+import com.cassino.mod.machine.SlotMachine;
+import com.cassino.mod.screen.SlotMachineScreenHandler;
+import java.util.Locale;
+import java.util.Random;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+
+/**
+ * A tela do caça-níquel: os 5 rolos à esquerda (a linha do meio, em amarelo, é a que paga), o botão GIRAR!, a
+ * aposta, os créditos, MOEDAS (troca as fichas do espaço ao lado por créditos) e CARTÃO (saca os créditos em
+ * fichas), e o inventário embaixo.
+ *
+ * <p>Quem sorteia é o servidor. Quando o resultado chega, a tela gira os rolos e os para um a um, da esquerda
+ * para a direita; só então mostra o prêmio e o saldo novo.
+ */
+public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
+    private static final int PANEL = 0xFFC6C6C6;
+    private static final int PANEL_LIGHT = 0xFFFFFFFF;
+    private static final int PANEL_DARK = 0xFF555555;
+    private static final int OUTLINE = 0xFF000000;
+    private static final int TEXT = 0xFF3F3F3F;
+    private static final int TITLE = 0xFF202020;
+    private static final int FRAME = 0xFF3A3A3A;
+    private static final int FRAME_LIGHT = 0xFF5C5C5C;
+    private static final int CELL_FILL = 0xFF8B8B8B;
+    private static final int CELL_LIGHT = 0xFFA9A9A9;
+    private static final int CELL_DARK = 0xFF6A6A6A;
+    private static final int PAYLINE = 0xFFF2D43A;
+    private static final int SLOT_DARK = 0xFF373737;
+    private static final int WIN_TEXT = 0xFF1E7A1E;
+    private static final int JACKPOT_TEXT = 0xFFC00000;
+    private static final int LOSE_TEXT = 0xFF555555;
+    private static final int ERROR_TEXT = 0xFFB02020;
+
+    // Posições a partir do canto da tela (as do espaço das fichas e do inventário estão no SlotMachineScreenHandler).
+    private static final int REELS_X = 8;
+    private static final int REELS_Y = 22;
+    private static final int REELS_WIDTH = 138;
+    private static final int REELS_HEIGHT = 82;
+    private static final int CELL_X = 11;
+    private static final int CELL_Y = 25;
+    private static final int CELL = 24;
+    private static final int CELL_STEP_X = 27;
+    private static final int CELL_STEP_Y = 26;
+    private static final int RIGHT_X = 154;
+    private static final int RIGHT_WIDTH = 114;
+    private static final int MESSAGE_Y = 108;
+
+    /** O primeiro rolo para depois disso; cada um dos outros, {@link #STOP_STEP_MS} depois do anterior. */
+    private static final long FIRST_STOP_MS = 700;
+    private static final long STOP_STEP_MS = 280;
+    /** Velocidade dos rolos girando, em símbolos por milissegundo. */
+    private static final double SCROLL_SPEED = 0.016;
+    /** Se o servidor não responder ao GIRAR! nesse tempo (sem créditos, por exemplo), o botão volta. */
+    private static final long WAIT_MS = 1_500;
+
+    private static final Identifier SEVEN_TEXTURE = Cassino.id("textures/gui/symbol_seven.png");
+    private static final Identifier HEART_TEXTURE = Cassino.id("textures/gui/symbol_heart.png");
+    /** O desenho de cada símbolo: um item do jogo, ou {@code null} para os desenhados pelo mod (7 e coração). */
+    private static final ItemStack[] SYMBOL_ITEMS = {
+            null, new ItemStack(Items.NETHER_STAR), new ItemStack(Items.DIAMOND), null, new ItemStack(Items.EMERALD),
+            new ItemStack(Items.DIAMOND_SHOVEL)
+    };
+    private static final ItemStack CHIP = new ItemStack(Cassino.CHIP);
+
+    /** O que passa em cada rolo enquanto ele gira (só enfeite; o resultado vem do servidor). */
+    private final int[][] strips = new int[SlotMachine.REELS][24];
+
+    private SpinButton spinButton;
+    private boolean initialized;
+    private int seenSpins;
+    /** Quando começou a girada que está sendo mostrada ({@code -1} = rolos parados). */
+    private long spinStartedAt = -1;
+    private int[] spinCells;
+    private int spinWin;
+    private int stoppedReels = SlotMachine.REELS;
+    private boolean waiting;
+    private long waitingSince;
+    /** Quantos símbolos seguidos ganharam na última girada mostrada (para piscar), ou 0. */
+    private int winningRun;
+    private Text message;
+    private int messageColor;
+
+    public SlotMachineScreen(SlotMachineScreenHandler handler, PlayerInventory inventory, Text title) {
+        super(handler, inventory, title);
+        backgroundWidth = SlotMachineScreenHandler.WIDTH;
+        backgroundHeight = SlotMachineScreenHandler.HEIGHT;
+        Random random = new Random(1234);
+        for (int[] strip : strips) {
+            for (int i = 0; i < strip.length; i++) {
+                strip[i] = random.nextInt(SlotMachine.SYMBOLS);
+            }
+        }
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        if (!initialized) {
+            // Abriu agora: não anima o que já estava nos rolos.
+            seenSpins = handler.spins();
+            initialized = true;
+        }
+        spinButton = addDrawableChild(new SpinButton(x + RIGHT_X, y + REELS_Y, RIGHT_WIDTH, 22,
+                Text.translatable("gui.cassino.slot.spin"), this::spin));
+        spinButton.setTooltip(Tooltip.of(payTable()));
+
+        addDrawableChild(ButtonWidget.builder(Text.literal("+"),
+                        button -> click(SlotMachineScreenHandler.BUTTON_BET_UP))
+                .dimensions(x + RIGHT_X, y + 60, 20, 20)
+                .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.bet_up")))
+                .build());
+        addDrawableChild(ButtonWidget.builder(Text.literal("-"),
+                        button -> click(SlotMachineScreenHandler.BUTTON_BET_DOWN))
+                .dimensions(x + RIGHT_X + RIGHT_WIDTH - 20, y + 60, 20, 20)
+                .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.bet_down")))
+                .build());
+        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.cassino.slot.coins"),
+                        button -> click(SlotMachineScreenHandler.BUTTON_COINS))
+                .dimensions(x + RIGHT_X, y + 96, 50, 20)
+                .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.coins")))
+                .build());
+        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.cassino.slot.card"),
+                        button -> click(SlotMachineScreenHandler.BUTTON_CARD))
+                .dimensions(x + RIGHT_X + RIGHT_WIDTH - 42, y + 96, 42, 20)
+                .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.card")))
+                .build());
+    }
+
+    /** A tabela de prêmios (aparece ao passar o mouse no GIRAR!). */
+    private static Text payTable() {
+        MutableText text = Text.translatable("gui.cassino.slot.paytable");
+        for (int symbol = 0; symbol < SlotMachine.SYMBOLS; symbol++) {
+            int[] pay = SlotMachine.PAYOUT[symbol];
+            text.append("\n").append(Text.translatable("gui.cassino.slot.paytable.line",
+                    Text.translatable("gui.cassino.slot.symbol." + symbol), pay[0], pay[1], pay[2]));
+        }
+        return text;
+    }
+
+    private void click(int button) {
+        if (client != null && client.interactionManager != null) {
+            client.interactionManager.clickButton(handler.syncId, button);
+        }
+    }
+
+    private void spin() {
+        if (spinStartedAt >= 0 || waiting) {
+            return;
+        }
+        if (handler.credits() + handler.coinsWaiting() < handler.bet()) {
+            showMessage(Text.translatable("gui.cassino.slot.no_credits"), ERROR_TEXT);
+            return;
+        }
+        waiting = true;
+        waitingSince = System.currentTimeMillis();
+        message = null;
+        winningRun = 0;
+        click(SlotMachineScreenHandler.BUTTON_SPIN);
+    }
+
+    private void showMessage(Text text, int color) {
+        message = text;
+        messageColor = color;
+    }
+
+    private void play(net.minecraft.sound.SoundEvent sound, float pitch, float volume) {
+        if (client != null) {
+            client.getSoundManager().play(PositionedSoundInstance.master(sound, pitch, volume));
+        }
+    }
+
+    // ---------------------------------------------------------------- animação
+
+    private long stopTime(int reel) {
+        return FIRST_STOP_MS + reel * STOP_STEP_MS;
+    }
+
+    /** Começa a animação quando chega uma girada nova, para os rolos na hora certa e mostra o prêmio no fim. */
+    private void updateSpin(long now) {
+        if (handler.spins() != seenSpins) {
+            seenSpins = handler.spins();
+            spinStartedAt = now;
+            spinCells = handler.cells().clone();
+            spinWin = handler.lastWin();
+            stoppedReels = 0;
+            waiting = false;
+            message = null;
+            winningRun = 0;
+        }
+        if (waiting && now - waitingSince > WAIT_MS) {
+            waiting = false;
+        }
+        if (spinStartedAt < 0) {
+            return;
+        }
+        long elapsed = now - spinStartedAt;
+        while (stoppedReels < SlotMachine.REELS && elapsed >= stopTime(stoppedReels)) {
+            stoppedReels++;
+            play(SoundEvents.BLOCK_LEVER_CLICK, 1.2F + stoppedReels * 0.1F, 0.5F);
+        }
+        if (stoppedReels == SlotMachine.REELS) {
+            spinStartedAt = -1;
+            if (spinWin > 0) {
+                winningRun = SlotMachine.runLength(spinCells);
+                boolean jackpot = SlotMachine.isJackpot(spinCells);
+                showMessage(Text.translatable(jackpot ? "gui.cassino.slot.jackpot" : "gui.cassino.slot.win", spinWin),
+                        jackpot ? JACKPOT_TEXT : WIN_TEXT);
+                if (jackpot) {
+                    play(SoundEvents.ENTITY_PLAYER_LEVELUP, 1.0F, 1.0F);
+                } else {
+                    play(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 0.8F);
+                }
+            } else {
+                showMessage(Text.translatable("gui.cassino.slot.lose"), LOSE_TEXT);
+            }
+        }
+    }
+
+    /** O saldo na tela: durante a animação, ainda sem o prêmio (ele entra quando os rolos param). */
+    private int shownCredits() {
+        return spinStartedAt >= 0 ? Math.max(0, handler.credits() - spinWin) : handler.credits();
+    }
+
+    // ---------------------------------------------------------------- desenho
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        long now = System.currentTimeMillis();
+        updateSpin(now);
+        spinButton.active = spinStartedAt < 0 && !waiting;
+        renderBackground(context);
+        super.render(context, mouseX, mouseY, delta);
+        drawMouseoverTooltip(context, mouseX, mouseY);
+    }
+
+    @Override
+    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
+        // Painel
+        context.fill(x, y, x + backgroundWidth, y + backgroundHeight, OUTLINE);
+        context.fill(x + 1, y + 1, x + backgroundWidth - 1, y + backgroundHeight - 1, PANEL);
+        context.fill(x + 1, y + 1, x + backgroundWidth - 1, y + 3, PANEL_LIGHT);
+        context.fill(x + 1, y + 1, x + 3, y + backgroundHeight - 1, PANEL_LIGHT);
+        context.fill(x + 1, y + backgroundHeight - 3, x + backgroundWidth - 1, y + backgroundHeight - 1, PANEL_DARK);
+        context.fill(x + backgroundWidth - 3, y + 1, x + backgroundWidth - 1, y + backgroundHeight - 1, PANEL_DARK);
+
+        drawReels(context);
+
+        // Espaço das fichas (com uma ficha "apagada" quando está vazio) e o inventário.
+        int coinX = x + SlotMachineScreenHandler.COIN_SLOT_X;
+        int coinY = y + SlotMachineScreenHandler.COIN_SLOT_Y;
+        drawSlot(context, coinX, coinY);
+        if (!handler.getSlot(0).hasStack()) {
+            context.drawItem(CHIP, coinX + 1, coinY + 1);
+            MatrixStack matrices = context.getMatrices();
+            matrices.push();
+            matrices.translate(0.0F, 0.0F, 300.0F);
+            context.fill(coinX + 1, coinY + 1, coinX + 17, coinY + 17, 0xA08B8B8B);
+            matrices.pop();
+        }
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 9; column++) {
+                drawSlot(context, x + SlotMachineScreenHandler.INVENTORY_X + column * 18,
+                        y + SlotMachineScreenHandler.INVENTORY_Y + row * 18);
+            }
+        }
+        for (int column = 0; column < 9; column++) {
+            drawSlot(context, x + SlotMachineScreenHandler.INVENTORY_X + column * 18,
+                    y + SlotMachineScreenHandler.HOTBAR_Y);
+        }
+    }
+
+    private void drawReels(DrawContext context) {
+        int left = x + REELS_X;
+        int top = y + REELS_Y;
+        context.fill(left, top, left + REELS_WIDTH, top + REELS_HEIGHT, FRAME);
+        context.drawBorder(left, top, REELS_WIDTH, REELS_HEIGHT, FRAME_LIGHT);
+
+        long elapsed = spinStartedAt >= 0 ? System.currentTimeMillis() - spinStartedAt : 0;
+        int[] cells = spinStartedAt >= 0 ? spinCells : handler.cells();
+        // Os símbolos vencedores piscam devagar.
+        int glow = 0x50 + (int) (0x40 * (1 + MathHelper.sin(System.currentTimeMillis() / 150.0F)) / 2);
+
+        for (int reel = 0; reel < SlotMachine.REELS; reel++) {
+            int cellX = x + CELL_X + reel * CELL_STEP_X;
+            for (int row = 0; row < SlotMachine.ROWS; row++) {
+                int cellY = y + CELL_Y + row * CELL_STEP_Y;
+                context.fill(cellX, cellY, cellX + CELL, cellY + CELL, CELL_FILL);
+                context.fill(cellX, cellY, cellX + CELL, cellY + 1, CELL_LIGHT);
+                context.fill(cellX, cellY, cellX + 1, cellY + CELL, CELL_LIGHT);
+                context.fill(cellX, cellY + CELL - 1, cellX + CELL, cellY + CELL, CELL_DARK);
+                context.fill(cellX + CELL - 1, cellY, cellX + CELL, cellY + CELL, CELL_DARK);
+                if (row == SlotMachine.PAYLINE_ROW) {
+                    if (reel < winningRun) {
+                        context.fill(cellX + 1, cellY + 1, cellX + CELL - 1, cellY + CELL - 1,
+                                (glow << 24) | (PAYLINE & 0xFFFFFF));
+                    }
+                    context.drawBorder(cellX - 1, cellY - 1, CELL + 2, CELL + 2, PAYLINE);
+                }
+            }
+
+            int columnTop = y + CELL_Y;
+            int columnBottom = columnTop + (SlotMachine.ROWS - 1) * CELL_STEP_Y + CELL;
+            context.enableScissor(cellX, columnTop, cellX + CELL, columnBottom);
+            if (spinStartedAt >= 0 && reel >= stoppedReels) {
+                // Girando: os símbolos da fita descem e somem embaixo.
+                double position = elapsed * SCROLL_SPEED + reel * 0.37;
+                int base = MathHelper.floor(position);
+                float offset = (float) (position - base) * CELL_STEP_Y;
+                int[] strip = strips[reel];
+                for (int row = -1; row < SlotMachine.ROWS; row++) {
+                    int symbol = strip[Math.floorMod(row - base, strip.length)];
+                    drawSymbol(context, symbol, cellX + 2, columnTop + row * CELL_STEP_Y + offset + 2);
+                }
+            } else {
+                for (int row = 0; row < SlotMachine.ROWS; row++) {
+                    drawSymbol(context, cells[SlotMachine.cell(reel, row)], cellX + 2,
+                            columnTop + row * CELL_STEP_Y + 2);
+                }
+            }
+            context.disableScissor();
+        }
+    }
+
+    /** Um símbolo em 20x20 (o desenho de 16x16 ampliado), com o canto de cima à esquerda em (px, py). */
+    private void drawSymbol(DrawContext context, int symbol, float px, float py) {
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(px, py, 0.0F);
+        matrices.scale(1.25F, 1.25F, 1.0F);
+        if (symbol == SlotMachine.SEVEN) {
+            context.drawTexture(SEVEN_TEXTURE, 0, 0, 0.0F, 0.0F, 16, 16, 16, 16);
+        } else if (symbol == SlotMachine.HEART) {
+            context.drawTexture(HEART_TEXTURE, 0, 0, 0.0F, 0.0F, 16, 16, 16, 16);
+        } else if (symbol >= 0 && symbol < SYMBOL_ITEMS.length && SYMBOL_ITEMS[symbol] != null) {
+            context.drawItem(SYMBOL_ITEMS[symbol], 0, 0);
+        }
+        matrices.pop();
+    }
+
+    private static void drawSlot(DrawContext context, int slotX, int slotY) {
+        context.fill(slotX, slotY, slotX + 18, slotY + 18, PANEL_LIGHT);
+        context.fill(slotX, slotY, slotX + 17, slotY + 17, SLOT_DARK);
+        context.fill(slotX + 1, slotY + 1, slotX + 17, slotY + 17, CELL_FILL);
+    }
+
+    /** Os textos, a partir do canto da tela: título, aposta, créditos, aviso e "INVENTÁRIO". */
+    @Override
+    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+        Text bigTitle = Text.literal(title.getString().toUpperCase(Locale.ROOT)).formatted(Formatting.BOLD);
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(backgroundWidth / 2.0F, 6.0F, 0.0F);
+        matrices.scale(1.5F, 1.5F, 1.0F);
+        context.drawText(textRenderer, bigTitle, -textRenderer.getWidth(bigTitle) / 2, 0, TITLE, false);
+        matrices.pop();
+
+        drawAmount(context, Text.translatable("gui.cassino.slot.bet", handler.bet()), RIGHT_X, 50);
+        drawAmount(context, Text.translatable("gui.cassino.slot.credits", shownCredits()), RIGHT_X, 86);
+
+        if (message != null) {
+            context.drawText(textRenderer, message, REELS_X + (REELS_WIDTH - textRenderer.getWidth(message)) / 2,
+                    MESSAGE_Y, messageColor, false);
+        }
+
+        Text inventory = Text.literal(Text.translatable("container.inventory").getString().toUpperCase(Locale.ROOT));
+        context.drawText(textRenderer, inventory, SlotMachineScreenHandler.INVENTORY_X,
+                SlotMachineScreenHandler.INVENTORY_Y - 10, TEXT, false);
+    }
+
+    /** "APOSTA: 5" ou "CRÉDITOS: 150", com uma ficha pequena do lado. */
+    private void drawAmount(DrawContext context, Text text, int textX, int textY) {
+        context.drawText(textRenderer, text, textX, textY, TEXT, false);
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(textX + textRenderer.getWidth(text) + 2, textY - 2, 0.0F);
+        matrices.scale(0.75F, 0.75F, 1.0F);
+        context.drawItem(CHIP, 0, 0);
+        matrices.pop();
+    }
+}

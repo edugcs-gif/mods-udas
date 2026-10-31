@@ -4,12 +4,19 @@
   "version": "${version}",
   "name": "Cassino",
   "description": "Um cassino para o Minecraft: fichas, caça-níquel, dado e moeda.",
-  "authors": ["Autores do mod Cassino"],
+  "authors": [
+    "Autores do mod Cassino"
+  ],
   "license": "MIT",
   "icon": "assets/cassino/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.cassino.mod.Cassino"]
+    "main": [
+      "com.cassino.mod.Cassino"
+    ],
+    "client": [
+      "com.cassino.mod.client.CassinoClient"
+    ]
   },
   "depends": {
     "fabricloader": ">=0.15.0",
