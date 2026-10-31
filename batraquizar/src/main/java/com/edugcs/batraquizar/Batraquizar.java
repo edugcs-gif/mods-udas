@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Batraquizar: a Poção do Sapo. Quem bebe, é atingido pela poção arremessável (ou persistente, ou pela flecha) vira
+ * Batraquizar: a poção Batraquizador. Quem bebe, é atingido pela poção arremessável (ou persistente, ou pela flecha) vira
  * sapo até o efeito acabar. Leite desfaz, como qualquer efeito.
  *
  * <p>Ser sapo é o efeito {@link FrogEffect}: ele encolhe a pessoa (atributo de tamanho), deixa pular
@@ -40,7 +40,7 @@ public class Batraquizar implements ModInitializer {
     public static final RegistryEntry<StatusEffect> FROG_EFFECT =
             Registry.registerReference(Registries.STATUS_EFFECT, id("frog"), new FrogEffect());
 
-    // As duas usam o nome "frog", então as traduções são as mesmas ("Poção do Sapo").
+    // As duas usam o nome "frog", então as traduções são as mesmas ("Batraquizador").
     public static final RegistryEntry<Potion> FROG_POTION = Registry.registerReference(Registries.POTION, id("frog"),
             new Potion("frog", new StatusEffectInstance(FROG_EFFECT, DURATION)));
     public static final RegistryEntry<Potion> LONG_FROG_POTION = Registry.registerReference(Registries.POTION,
@@ -58,7 +58,7 @@ public class Batraquizar implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // Poção estranha + bola de slime = Poção do Sapo; + redstone = dura mais. A arremessável (pólvora),
+        // Poção estranha + bola de slime = Batraquizador; + redstone = dura mais. A arremessável (pólvora),
         // a persistente (bafo do dragão) e a flecha saem pelas receitas normais do jogo.
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
             builder.registerPotionRecipe(Potions.AWKWARD, Items.SLIME_BALL, FROG_POTION);

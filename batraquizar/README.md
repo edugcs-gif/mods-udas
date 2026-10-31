@@ -1,18 +1,18 @@
 # Batraquizar (Fabric 1.21.1)
 
-Uma poção que **transforma em sapo** quem for atingido por ela. Jogue a **Poção Arremessável do Sapo** num amigo e veja ele virar um sapinho pulando por aí.
+O **Batraquizador** é uma poção que **transforma em sapo** quem for atingido por ela. Jogue o **Batraquizador Arremessável** num amigo e veja ele virar um sapinho pulando por aí.
 
 ## Como fazer a poção
 
 No suporte de poções:
 
 1. **Garrafa de água** + verruga do Nether = Poção Estranha
-2. **Poção Estranha** + **bola de slime** = **Poção do Sapo** (1 minuto)
-3. *(opcional)* + pó de redstone = Poção do Sapo prolongada (3 minutos)
-4. **+ pólvora** = **Poção Arremessável do Sapo** (essa é a de jogar nos outros)
-5. *(opcional)* + bafo do dragão = Poção Persistente do Sapo (deixa uma nuvem no chão)
+2. **Poção Estranha** + **bola de slime** = **Batraquizador** (1 minuto)
+3. *(opcional)* + pó de redstone = Batraquizador prolongado (3 minutos)
+4. **+ pólvora** = **Batraquizador Arremessável** (esse é o de jogar nos outros)
+5. *(opcional)* + bafo do dragão = Batraquizador Persistente (deixa uma nuvem no chão)
 
-Também dá para fazer a **Flecha do Sapo** com a poção persistente, como as outras flechas com efeito. No criativo, as poções aparecem nas abas de poções junto com as outras.
+Também dá para fazer a **Flecha do Batraquizador** com o Batraquizador Persistente, como as outras flechas com efeito. No criativo, ele aparece nas abas de poções junto com as outras poções.
 
 ## O que acontece com quem vira sapo
 
