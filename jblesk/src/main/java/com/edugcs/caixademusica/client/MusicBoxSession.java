@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.BooleanSupplier;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.SoundInstance;
 
@@ -75,6 +76,9 @@ final class MusicBoxSession {
     /** Alcance da caixa (blocos), que o dono pode mudar enquanto toca: o som lê estes valores a cada tick. */
     private volatile int near = 8;
     private volatile int far = 64;
+
+    /** Criado uma vez só: o buffer consulta isto a cada pedaço de áudio (~50 vezes por segundo). */
+    private final BooleanSupplier isStopped = () -> stopped;
 
     private volatile AudioPlayer player;
     private Thread pump;
@@ -361,7 +365,7 @@ final class MusicBoxSession {
                     mono[o] = (byte) mixed;
                     mono[o + 1] = (byte) (mixed >> 8);
                 }
-                if (!buffer.write(mono, 0, monoLength, () -> stopped)) {
+                if (!buffer.write(mono, 0, monoLength, isStopped)) {
                     break;
                 }
             } catch (TimeoutException ignored) {
@@ -475,15 +479,14 @@ final class MusicBoxSession {
 
     private TrackMarker audibleMarker() {
         long read = buffer.totalRead();
-        while (markers.size() >= 2) {
+        // Quase sempre só há uma música no buffer: aí nem cria o iterador.
+        while (markers.peekFirst() != markers.peekLast()) {
             Iterator<TrackMarker> it = markers.iterator();
             it.next();
-            TrackMarker second = it.next();
-            if (second.offset <= read) {
-                markers.pollFirst();
-            } else {
+            if (!it.hasNext() || it.next().offset > read) {
                 break;
             }
+            markers.pollFirst();
         }
         return markers.peekFirst();
     }

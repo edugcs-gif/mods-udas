@@ -5,11 +5,9 @@ import com.edugcs.caixademusica.block.MusicBoxBlockEntity;
 import com.edugcs.caixademusica.network.PortableSourcesPayload;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
@@ -159,9 +157,11 @@ public final class MusicBoxClientManager {
             }
             return;
         }
+        // A caixa saiu da lista (guardada em outro lugar, parada...) ou o dono sumiu: some na hora. As que
+        // continuam são colocadas de volta logo abaixo.
+        SEEN.keySet().removeIf(INTEGER_KEY);
         long now = world.getTime();
         Entity vehicle = client.player.getVehicle();
-        Set<Integer> active = new HashSet<>();
         for (Map.Entry<Integer, PlaybackState> entry : PORTABLE_SOURCES.entrySet()) {
             PlaybackState state = entry.getValue();
             if (!state.playing()) {
@@ -174,12 +174,9 @@ public final class MusicBoxClientManager {
             // Quem carrega a caixa (ou anda no veículo que a leva) ouve "colada" na cabeça: uma fonte posicionada
             // em cima do ouvinte e atualizada só a cada tick balança de lado a cada passo ou giro de câmera.
             boolean own = carrier == client.player || carrier == vehicle;
-            active.add(entry.getKey());
             SEEN.put(entry.getKey(), new BoxInfo(state, state.startedAt() - serverClockOffset, now, positionOf(carrier),
                     own));
         }
-        // A caixa saiu da lista (guardada em outro lugar, parada...) ou o dono sumiu: some na hora.
-        SEEN.keySet().removeIf(key -> key instanceof Integer && !active.contains(key));
     }
 
     static void tick(MinecraftClient client) {

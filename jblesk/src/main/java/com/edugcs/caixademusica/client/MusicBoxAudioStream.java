@@ -1,6 +1,7 @@
 package com.edugcs.caixademusica.client;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import javax.sound.sampled.AudioFormat;
 import net.minecraft.client.sound.AudioStream;
 import org.lwjgl.BufferUtils;
@@ -38,14 +39,15 @@ final class MusicBoxAudioStream implements AudioStream {
             return null;
         }
         int capacity = Math.max(size, MIN_CHUNK) & ~1;
-        ByteBuffer out = BufferUtils.createByteBuffer(capacity);
+        // Buffer novo já vem zerado (silêncio); a ordem é a do formato, para amplify() ler amostras inteiras.
+        ByteBuffer out = BufferUtils.createByteBuffer(capacity).order(ByteOrder.LITTLE_ENDIAN);
         buffer.read(out, capacity);
         float boost = ClientSettings.boost();
         if (boost > 1.001F) {
             amplify(out, boost);
         }
         if (out.position() < MIN_CHUNK && !session.isFinished()) {
-            out.put(new byte[MIN_CHUNK - out.position()]);
+            out.position(MIN_CHUNK); // o resto já é silêncio
         }
         out.flip();
         return out;
@@ -55,10 +57,8 @@ final class MusicBoxAudioStream implements AudioStream {
     private static void amplify(ByteBuffer out, float boost) {
         int end = out.position() & ~1;
         for (int i = 0; i < end; i += 2) {
-            int sample = (short) ((out.get(i) & 0xFF) | (out.get(i + 1) << 8));
-            int amplified = Math.max(Short.MIN_VALUE, Math.min(Short.MAX_VALUE, Math.round(sample * boost)));
-            out.put(i, (byte) amplified);
-            out.put(i + 1, (byte) (amplified >> 8));
+            int amplified = Math.round(out.getShort(i) * boost);
+            out.putShort(i, (short) Math.max(Short.MIN_VALUE, Math.min(Short.MAX_VALUE, amplified)));
         }
     }
 
