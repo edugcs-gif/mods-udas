@@ -5,6 +5,7 @@ Mods de Minecraft (Fabric) do edugcs. Cada mod fica na sua própria pasta, com R
 | Mod | O que faz | Minecraft |
 |---|---|---|
 | [**jblesk**](jblesk/) | **jbleskão** (bloco) e **jblesk** (caixa de som portátil): tocam músicas e playlists do YouTube, SoundCloud ou links diretos de áudio para todo mundo que estiver perto. Pausa, pular na barra, volume pessoal, alcance perto/longe, e a caixa também toca do inventário, do baú do burro e do barco com baú. | 1.21.1 (Fabric) |
+| [**batraquizar**](batraquizar/) | A **Poção do Sapo**: jogue a poção arremessável em alguém e ele vira sapo (pequeno, pulando alto, coaxando e sem conseguir atacar) até o efeito passar ou beber leite. | 1.21.1 (Fabric) |
 
 ## Baixar o .jar
 
@@ -15,6 +16,7 @@ O GitHub gera o `.jar` sozinho a cada alteração: abra a aba **Actions**, entre
 ```
 mods-udas/
 ├── jblesk/          o mod jblesk (código, recursos, README e licença)
+├── batraquizar/     o mod Batraquizar (a poção que transforma em sapo)
 └── .github/
     └── workflows/   um workflow por mod, que gera o .jar
 ```

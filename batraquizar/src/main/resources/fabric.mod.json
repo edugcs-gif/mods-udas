@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "batraquizar",
+  "version": "${version}",
+  "name": "Batraquizar",
+  "description": "Uma poção que transforma quem é atingido por ela em sapo: fica pequeno, pula alto, coaxa e não consegue atacar nem quebrar blocos até o efeito passar (ou beber leite).",
+  "authors": ["edugcs"],
+  "license": "MIT",
+  "icon": "assets/batraquizar/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.edugcs.batraquizar.Batraquizar"],
+    "client": ["com.edugcs.batraquizar.client.BatraquizarClient"]
+  },
+  "mixins": ["batraquizar.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

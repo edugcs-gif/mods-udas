@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.edugcs.batraquizar.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "client.HeldItemRendererMixin",
+    "client.LimbAnimatorAccessor",
+    "client.LivingEntityRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

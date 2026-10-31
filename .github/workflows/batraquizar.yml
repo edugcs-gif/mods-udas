@@ -1,0 +1,30 @@
+name: batraquizar - gerar o .jar
+
+on:
+  push:
+    paths:
+      - 'batraquizar/**'
+      - '.github/workflows/batraquizar.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: batraquizar
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          build-root-directory: batraquizar
+      - name: Compilar
+        run: chmod +x gradlew && ./gradlew build --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: batraquizar
+          path: batraquizar/build/libs/*.jar
