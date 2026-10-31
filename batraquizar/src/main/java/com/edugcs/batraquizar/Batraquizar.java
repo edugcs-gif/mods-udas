@@ -53,6 +53,15 @@ public class Batraquizar implements ModInitializer {
             id("long_batraquizador"),
             new Potion("batraquizador", new StatusEffectInstance(BATRAQUIZADO, LONG_DURATION)));
 
+    /** Devolve os efeitos ruins para quem os aplicou (veja {@link Retorsao}). */
+    public static final RegistryEntry<StatusEffect> RETORSAO =
+            Registry.registerReference(Registries.STATUS_EFFECT, id("retorsao"), new RetorsaoEffect());
+    // Normal: 1 minuto (devolve 1 efeito). Prolongada com redstone: 3 minutos (devolve até 3).
+    public static final RegistryEntry<Potion> RETORSAO_POTION = Registry.registerReference(Registries.POTION,
+            id("retorsao"), new Potion("retorsao", new StatusEffectInstance(RETORSAO, Retorsao.COST)));
+    public static final RegistryEntry<Potion> LONG_RETORSAO_POTION = Registry.registerReference(Registries.POTION,
+            id("long_retorsao"), new Potion("retorsao", new StatusEffectInstance(RETORSAO, 3 * Retorsao.COST)));
+
     public static Identifier id(String path) {
         return Identifier.of(MOD_ID, path);
     }
@@ -72,9 +81,13 @@ public class Batraquizar implements ModInitializer {
                 builder.registerPotionRecipe(Potions.AWKWARD, froglight, BATRAQUIZADOR);
             }
             builder.registerPotionRecipe(BATRAQUIZADOR, Items.REDSTONE, LONG_BATRAQUIZADOR);
+            // Poção estranha + fragmento de ametista = Retorsão; + redstone = Retorsão prolongada.
+            builder.registerPotionRecipe(Potions.AWKWARD, Items.AMETHYST_SHARD, RETORSAO_POTION);
+            builder.registerPotionRecipe(RETORSAO_POTION, Items.REDSTONE, LONG_RETORSAO_POTION);
         });
 
         BencaoDoPrincipe.init();
+        Retorsao.init();
 
         // Sapo não ataca nem quebra blocos. Usar itens continua valendo (comer, abrir portas e beber leite para desvirar).
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) ->

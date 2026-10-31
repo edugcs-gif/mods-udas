@@ -5,5 +5,10 @@
   "item.minecraft.splash_potion.effect.batraquizador": "Splash Batraquizador",
   "item.minecraft.lingering_potion.effect.batraquizador": "Lingering Batraquizador",
   "item.minecraft.tipped_arrow.effect.batraquizador": "Arrow of Batraquizador",
+  "effect.batraquizar.retorsao": "Retortion",
+  "item.minecraft.potion.effect.retorsao": "Potion of Retortion",
+  "item.minecraft.splash_potion.effect.retorsao": "Splash Potion of Retortion",
+  "item.minecraft.lingering_potion.effect.retorsao": "Lingering Potion of Retortion",
+  "item.minecraft.tipped_arrow.effect.retorsao": "Arrow of Retortion",
   "message.batraquizar.protected": "The Prince's Blessing kept you from turning into a frog!"
 }

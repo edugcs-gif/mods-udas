@@ -3,16 +3,24 @@
   "id": "batraquizar",
   "version": "${version}",
   "name": "Batraquizar",
-  "description": "Uma poção que transforma quem é atingido por ela em sapo: fica pequeno, corre mais, pula alto, coaxa e não consegue atacar nem quebrar blocos até o efeito passar (ou beber leite). Depois, a Bênção do Príncipe protege de virar sapo de novo por 10 minutos.",
-  "authors": ["edugcs"],
+  "description": "Uma poção que transforma quem é atingido por ela em sapo: fica pequeno, corre mais, pula alto, coaxa e não consegue atacar nem quebrar blocos até o efeito passar (ou beber leite). Depois, a Bênção do Príncipe protege de virar sapo de novo por 10 minutos. E a Poção de Retorsão, que devolve os efeitos ruins para quem os jogou.",
+  "authors": [
+    "edugcs"
+  ],
   "license": "MIT",
   "icon": "assets/batraquizar/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.edugcs.batraquizar.Batraquizar"],
-    "client": ["com.edugcs.batraquizar.client.BatraquizarClient"]
+    "main": [
+      "com.edugcs.batraquizar.Batraquizar"
+    ],
+    "client": [
+      "com.edugcs.batraquizar.client.BatraquizarClient"
+    ]
   },
-  "mixins": ["batraquizar.mixins.json"],
+  "mixins": [
+    "batraquizar.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.15.11",
     "minecraft": "1.21.1",

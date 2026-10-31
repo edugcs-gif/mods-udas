@@ -2,6 +2,8 @@ package com.edugcs.batraquizar.mixin;
 
 import com.edugcs.batraquizar.Batraquizar;
 import com.edugcs.batraquizar.BencaoDoPrincipe;
+import com.edugcs.batraquizar.Retorsao;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -12,12 +14,25 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** As regras da Bênção do Príncipe que precisam de ganchos nos efeitos de qualquer criatura. */
+/** As regras da Bênção do Príncipe e da Retorsão que precisam de ganchos nos efeitos de qualquer criatura. */
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
     /** A bênção guardada enquanto o totem da imortalidade limpa os efeitos. */
     @Unique
     private StatusEffectInstance batraquizar$savedBlessing;
+
+    /** Retorsão: o efeito ruim volta para quem o aplicou (se ele pegaria nesta criatura). */
+    @Inject(method = "addStatusEffect(Lnet/minecraft/entity/effect/StatusEffectInstance;Lnet/minecraft/entity/Entity;)Z",
+            at = @At("HEAD"), cancellable = true)
+    private void batraquizar$retorsao(StatusEffectInstance effect, Entity source, CallbackInfoReturnable<Boolean> cir) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        LivingEntity attacker = Retorsao.reflectTarget(self, source, effect.getEffectType().value());
+        if (attacker != null && self.canHaveStatusEffect(effect)) {
+            StatusEffectInstance copy = new StatusEffectInstance(effect);
+            Retorsao.reflect(self, attacker, () -> attacker.addStatusEffect(copy, self));
+            cir.setReturnValue(false);
+        }
+    }
 
     @Inject(method = "canHaveStatusEffect", at = @At("HEAD"), cancellable = true)
     private void batraquizar$blessingProtects(StatusEffectInstance effect, CallbackInfoReturnable<Boolean> cir) {

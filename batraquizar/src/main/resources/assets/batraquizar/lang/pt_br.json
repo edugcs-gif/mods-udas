@@ -5,5 +5,10 @@
   "item.minecraft.splash_potion.effect.batraquizador": "Batraquizador Arremessável",
   "item.minecraft.lingering_potion.effect.batraquizador": "Batraquizador Persistente",
   "item.minecraft.tipped_arrow.effect.batraquizador": "Flecha do Batraquizador",
+  "effect.batraquizar.retorsao": "Retorsão",
+  "item.minecraft.potion.effect.retorsao": "Poção de Retorsão",
+  "item.minecraft.splash_potion.effect.retorsao": "Poção Arremessável de Retorsão",
+  "item.minecraft.lingering_potion.effect.retorsao": "Poção Persistente de Retorsão",
+  "item.minecraft.tipped_arrow.effect.retorsao": "Flecha de Retorsão",
   "message.batraquizar.protected": "A Bênção do Príncipe te protegeu de virar sapo!"
 }

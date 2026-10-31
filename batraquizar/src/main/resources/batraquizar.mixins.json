@@ -4,6 +4,7 @@
   "package": "com.edugcs.batraquizar.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "InstantHealthOrDamageStatusEffectMixin",
     "LivingEntityMixin"
   ],
   "client": [
