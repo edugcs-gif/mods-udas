@@ -47,6 +47,7 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
     private static final int JACKPOT_TEXT = 0xFFC00000;
     private static final int LOSE_TEXT = 0xFF555555;
     private static final int ERROR_TEXT = 0xFFB02020;
+    private static final int POOL_TEXT = 0xFFB07800;
 
     // Posições a partir do canto da tela (as do espaço das fichas e do inventário estão no SlotMachineScreenHandler).
     private static final int REELS_X = 8;
@@ -72,6 +73,8 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
     private static final double SCROLL_SPEED = 0.016;
     /** Se o servidor não responder ao GIRAR! nesse tempo (sem créditos, por exemplo), o botão volta. */
     private static final long WAIT_MS = 1_500;
+    /** Quanto tempo um aviso fica embaixo dos rolos antes de voltar a mostrar o acumulado do jackpot. */
+    private static final long MESSAGE_MS = 4_000;
 
     private static final Identifier SEVEN_TEXTURE = Cassino.id("textures/gui/symbol_seven.png");
     private static final Identifier HEART_TEXTURE = Cassino.id("textures/gui/symbol_heart.png");
@@ -99,6 +102,7 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
     private int winningRun;
     private Text message;
     private int messageColor;
+    private long messageUntil;
 
     public SlotMachineScreen(SlotMachineScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -157,6 +161,8 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
             text.append("\n").append(Text.translatable("gui.cassino.slot.paytable.line",
                     Text.translatable("gui.cassino.slot.symbol." + symbol), pay[0], pay[1], pay[2]));
         }
+        text.append("\n").append(Text.translatable("gui.cassino.slot.paytable.jackpot",
+                (int) Math.round(SlotMachine.JACKPOT_SHARE * 100), SlotMachine.maxBet()));
         return text;
     }
 
@@ -184,6 +190,7 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
     private void showMessage(Text text, int color) {
         message = text;
         messageColor = color;
+        messageUntil = System.currentTimeMillis() + MESSAGE_MS;
     }
 
     private void play(net.minecraft.sound.SoundEvent sound, float pitch, float volume) {
@@ -380,10 +387,15 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
         drawAmount(context, Text.translatable("gui.cassino.slot.bet", handler.bet()), RIGHT_X, BET_Y);
         drawAmount(context, Text.translatable("gui.cassino.slot.credits", shownCredits()), RIGHT_X, CREDITS_Y);
 
-        if (message != null) {
-            context.drawText(textRenderer, message, REELS_X + (REELS_WIDTH - textRenderer.getWidth(message)) / 2,
-                    MESSAGE_Y, messageColor, false);
+        // Embaixo dos rolos: o aviso da última girada por uns segundos; senão, o acumulado do jackpot.
+        Text below = message;
+        int belowColor = messageColor;
+        if (message == null || (spinStartedAt < 0 && System.currentTimeMillis() > messageUntil)) {
+            below = Text.translatable("gui.cassino.slot.pool", handler.pool());
+            belowColor = POOL_TEXT;
         }
+        context.drawText(textRenderer, below, REELS_X + (REELS_WIDTH - textRenderer.getWidth(below)) / 2,
+                MESSAGE_Y, belowColor, false);
 
         Text inventory = Text.literal(Text.translatable("container.inventory").getString().toUpperCase(Locale.ROOT));
         context.drawText(textRenderer, inventory, SlotMachineScreenHandler.INVENTORY_X,

@@ -11,7 +11,8 @@ import net.minecraft.util.math.random.Random;
  * <ul>
  *   <li>com a casa no positivo (ou até 63 fichas no negativo), 40% das giradas ganham e 60% perdem;</li>
  *   <li>numa vitória, o prêmio sai de {@link #WINS}: quase sempre 3 pás ou 3 esmeraldas (o dobro da aposta), e os
- *       prêmios maiores são cada vez mais raros; o jackpot (cinco 7, 100x) sai uma vez a cada ~25.000 giradas.</li>
+ *       prêmios maiores são cada vez mais raros; o jackpot (cinco 7, 100x mais o acumulado, veja
+ *       {@link #jackpotBonus}) sai uma vez a cada ~25.000 giradas.</li>
  * </ul>
  * Toda vitória paga pelo menos o dobro da aposta, mas no total a máquina devolve uns 88% do que é apostado: quem
  * joga perde mais do que ganha, e a casa lucra no longo prazo.
@@ -98,6 +99,13 @@ public final class SlotMachine {
     /** Quantas "bolinhas" cada símbolo tem nos rolos que só enfeitam (e nas derrotas): o 7 aparece pouco. */
     private static final int[] WEIGHTS = {1, 2, 3, 4, 5, 6};
     private static final int WEIGHTS_TOTAL = 21;
+
+    /**
+     * O jackpot acumulado: além dos 100x da aposta, o jackpot leva esta parte do saldo positivo da casa que sobra
+     * depois de pagar os 100x, com a aposta máxima; com apostas menores, uma parte proporcional (aposta 32 = metade
+     * disso). Proporcional para que apostar 1 ficha não valha a pena só para disputar o acumulado.
+     */
+    public static final double JACKPOT_SHARE = 0.5;
 
     /** As apostas possíveis, em fichas por girada. */
     public static final int[] BETS = {1, 2, 4, 8, 16, 32, 64};
@@ -228,6 +236,23 @@ public final class SlotMachine {
     public static int multiplier(int[] cells) {
         int length = runLength(cells);
         return length >= 3 ? PAYOUT[cells[cell(0, PAYLINE_ROW)]][length - 3] : 0;
+    }
+
+    /** A maior aposta (a que leva a parte inteira do acumulado no jackpot). */
+    public static int maxBet() {
+        return BETS[BETS.length - 1];
+    }
+
+    /**
+     * O extra do jackpot acumulado (veja {@link #JACKPOT_SHARE}). {@code houseAfterBase} é o saldo da casa depois de
+     * receber a aposta e pagar os 100x; se ele não for positivo, não há acumulado e o extra é 0. Como sai só do que
+     * sobra de positivo, o extra nunca deixa a casa negativa.
+     */
+    public static long jackpotBonus(int bet, long houseAfterBase) {
+        if (houseAfterBase <= 0) {
+            return 0;
+        }
+        return (long) (houseAfterBase * JACKPOT_SHARE * bet / maxBet());
     }
 
     /** Cinco 7 na linha do meio. */

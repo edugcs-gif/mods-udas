@@ -55,19 +55,26 @@ public class SlotMachineScreenHandler extends ScreenHandler {
     private static final int P_CREDITS_LOW = 0;
     private static final int P_CREDITS_HIGH = 1;
     private static final int P_BET = 2;
-    private static final int P_WIN = 3;
-    private static final int P_CELLS = 4;
+    private static final int P_WIN_LOW = 3;
+    private static final int P_WIN_HIGH = 4;
+    private static final int P_POOL_LOW = 5;
+    private static final int P_POOL_HIGH = 6;
+    private static final int P_CELLS = 7;
     /** O contador de giradas vai por último: quando a tela o vê mudar, os símbolos novos já chegaram. */
     private static final int P_SPINS = P_CELLS + SlotMachine.CELLS;
     private static final int P_COUNT = P_SPINS + 1;
 
     private final ScreenHandlerContext context;
     private final PlayerEntity player;
+    /** O cofre do servidor ({@code null} no cliente). */
+    private final CassinoState state;
     private final Inventory coins = new SimpleInventory(1);
 
     private int credits;
     private int betIndex = SlotMachine.DEFAULT_BET;
     private int lastWin;
+    /** O acumulado do jackpot (o saldo positivo da casa), só para a tela mostrar. */
+    private int pool;
     private final int[] cells;
     private int spins;
 
@@ -83,7 +90,10 @@ public class SlotMachineScreenHandler extends ScreenHandler {
         // Já abre com símbolos nos rolos (só enfeite; não paga nada).
         this.cells = SlotMachine.idle(player.getRandom());
         if (player instanceof ServerPlayerEntity serverPlayer) {
-            credits = CassinoState.get(serverPlayer.getServer()).balance(player.getUuid());
+            state = CassinoState.get(serverPlayer.getServer());
+            credits = state.balance(player.getUuid());
+        } else {
+            state = null;
         }
 
         addSlot(new Slot(coins, 0, COIN_SLOT_X + 1, COIN_SLOT_Y + 1) {
@@ -114,8 +124,15 @@ public class SlotMachineScreenHandler extends ScreenHandler {
                 if (index == P_BET) {
                     return betIndex;
                 }
-                if (index == P_WIN) {
-                    return lastWin;
+                if (index == P_WIN_LOW) {
+                    return lastWin & 0xFFFF;
+                }
+                if (index == P_WIN_HIGH) {
+                    return (lastWin >>> 16) & 0xFFFF;
+                }
+                if (index == P_POOL_LOW || index == P_POOL_HIGH) {
+                    int value = state == null ? pool : (int) Math.min(Integer.MAX_VALUE, Math.max(0L, state.house()));
+                    return index == P_POOL_LOW ? value & 0xFFFF : (value >>> 16) & 0xFFFF;
                 }
                 if (index == P_SPINS) {
                     return spins & 0x7FFF;
@@ -132,8 +149,14 @@ public class SlotMachineScreenHandler extends ScreenHandler {
                     credits = (credits & 0xFFFF) | ((value & 0xFFFF) << 16);
                 } else if (index == P_BET) {
                     betIndex = value;
-                } else if (index == P_WIN) {
-                    lastWin = value & 0xFFFF;
+                } else if (index == P_WIN_LOW) {
+                    lastWin = (lastWin & 0xFFFF0000) | (value & 0xFFFF);
+                } else if (index == P_WIN_HIGH) {
+                    lastWin = (lastWin & 0xFFFF) | ((value & 0xFFFF) << 16);
+                } else if (index == P_POOL_LOW) {
+                    pool = (pool & 0xFFFF0000) | (value & 0xFFFF);
+                } else if (index == P_POOL_HIGH) {
+                    pool = (pool & 0xFFFF) | ((value & 0xFFFF) << 16);
                 } else if (index == P_SPINS) {
                     spins = value;
                 } else {
@@ -168,6 +191,11 @@ public class SlotMachineScreenHandler extends ScreenHandler {
         return cells;
     }
 
+    /** O acumulado do jackpot: o saldo positivo da casa. */
+    public int pool() {
+        return pool;
+    }
+
     /** Muda a cada girada (a tela começa a animação quando vê este número mudar). */
     public int spins() {
         return spins;
@@ -195,14 +223,9 @@ public class SlotMachineScreenHandler extends ScreenHandler {
         return true;
     }
 
-    /** O cofre do servidor (só no servidor). */
-    private CassinoState state() {
-        return CassinoState.get(((ServerPlayerEntity) player).getServer());
-    }
-
     /** Guarda o saldo deste jogador no cofre (é ele que vale; o campo aqui é só o que a tela mostra). */
     private void saveCredits() {
-        state().setBalance(player.getUuid(), credits);
+        state.setBalance(player.getUuid(), credits);
     }
 
     /** As fichas do espaço viram créditos. */
@@ -226,23 +249,28 @@ public class SlotMachineScreenHandler extends ScreenHandler {
         if (credits < bet) {
             return;
         }
-        CassinoState state = state();
         int[] result = SlotMachine.spin(player.getRandom(), bet, state.house());
         System.arraycopy(result, 0, cells, 0, cells.length);
-        lastWin = bet * SlotMachine.multiplier(result);
+        int base = bet * SlotMachine.multiplier(result);
+        boolean jackpot = SlotMachine.isJackpot(result);
+        long prize = base;
+        if (jackpot) {
+            prize += SlotMachine.jackpotBonus(bet, state.house() + bet - base);
+        }
+        credits -= bet;
+        lastWin = (int) Math.min(prize, CassinoState.MAX_BALANCE - credits);
+        credits += lastWin;
         state.settle(bet, lastWin);
-        credits = Math.min(CassinoState.MAX_BALANCE, credits - bet + lastWin);
         saveCredits();
         spins++;
 
-        boolean jackpot = SlotMachine.isJackpot(result);
-        int prize = lastWin;
+        int paid = lastWin;
         context.run((world, pos) -> {
             world.playSound(null, pos, SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.8F, 1.0F);
             if (jackpot && world instanceof ServerWorld serverWorld) {
                 // Avisa quem está perto só quando os rolos já pararam na tela de quem jogou.
                 Cassino.later(serverWorld.getServer(), SPIN_TICKS, () -> Cassino.broadcastNearby(world, player,
-                        Text.translatable("message.cassino.slot.jackpot_broadcast", player.getDisplayName(), prize)
+                        Text.translatable("message.cassino.slot.jackpot_broadcast", player.getDisplayName(), paid)
                                 .formatted(Formatting.GOLD), 32.0));
             }
         });

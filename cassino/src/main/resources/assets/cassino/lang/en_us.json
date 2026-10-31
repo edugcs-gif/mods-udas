@@ -29,5 +29,7 @@
   "gui.cassino.slot.deposit": "DEPOSIT",
   "gui.cassino.slot.withdraw": "WITHDRAW",
   "gui.cassino.slot.tip.deposit": "Deposits the chips in the slot next to it: each chip becomes 1 credit. Credits are yours only, work on any slot machine and stay saved when you close it",
-  "gui.cassino.slot.tip.withdraw": "Cashes out all your credits as chips"
+  "gui.cassino.slot.tip.withdraw": "Cashes out all your credits as chips",
+  "gui.cassino.slot.pool": "JACKPOT POOL: %s",
+  "gui.cassino.slot.paytable.jackpot": "Jackpot (five 7s): 100x + %s%% of the house pool with a bet of %s (smaller bets get a proportional part)"
 }

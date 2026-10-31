@@ -29,5 +29,7 @@
   "gui.cassino.slot.deposit": "DEPÓSITO",
   "gui.cassino.slot.withdraw": "RETIRADA",
   "gui.cassino.slot.tip.deposit": "Deposita as fichas do espaço ao lado: cada ficha vira 1 crédito. Os créditos são só seus, valem em qualquer caça-níquel e ficam guardados ao fechar a máquina",
-  "gui.cassino.slot.tip.withdraw": "Saca todos os seus créditos em fichas"
+  "gui.cassino.slot.tip.withdraw": "Saca todos os seus créditos em fichas",
+  "gui.cassino.slot.pool": "ACUMULADO: %s",
+  "gui.cassino.slot.paytable.jackpot": "Jackpot (cinco 7): 100x + %s%% do acumulado da casa com a aposta %s (com aposta menor, uma parte proporcional)"
 }

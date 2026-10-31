@@ -37,16 +37,17 @@ Ganha quem tirar **3, 4 ou 5 símbolos iguais seguidos na linha do meio, a parti
 
 | Símbolo | 3 iguais | 4 iguais | 5 iguais |
 | --- | --- | --- | --- |
-| 7 | 10x | 30x | **100x (JACKPOT)** |
+| 7 | 10x | 30x | **100x + acumulado (JACKPOT)** |
 | Estrela | 5x | 15x | 50x |
 | Diamante | 4x | 8x | 25x |
 | Coração | 3x | 6x | 15x |
 | Esmeralda | 2x | 4x | 10x |
 | Pá | 2x | 3x | 6x |
 
+- **Jackpot acumulado:** além dos 100x da aposta, quem tira cinco 7 leva uma parte do **saldo positivo da casa** (o "acumulado", que aparece embaixo dos rolos). Com a aposta máxima (64) leva **50%** do que sobra depois de pagar os 100x; com apostas menores, uma parte proporcional (aposta 32 = 25%, aposta 4 = ~3%). Proporcional para que apostar 1 ficha não valha a pena só para disputar o acumulado. Como sai só do que sobra de positivo, o jackpot nunca deixa a casa negativa.
 - **40% das giradas ganham e 60% perdem.** Quase todas as vitórias são 3 pás ou 3 esmeraldas (o dobro da aposta); os prêmios maiores são cada vez mais raros, e o jackpot sai uma vez a cada ~25.000 giradas (quem está até 32 blocos é avisado no chat).
 - No total a máquina devolve uns **88%** do que é apostado: quem joga perde mais do que ganha, e o caça-níquel não vira máquina de ouro.
-- Para mudar as chances ou os prêmios, edite `WIN_CHANCE_BY_DEBT`, `WIN_CHANCE_BY_PROFIT`, `WINS` e `PAYOUT` em `machine/SlotMachine.java`.
+- Para mudar as chances ou os prêmios, edite `WIN_CHANCE_BY_DEBT`, `WIN_CHANCE_BY_PROFIT`, `WINS`, `PAYOUT` e `JACKPOT_SHARE` em `machine/SlotMachine.java`.
 
 ### Limite de prêmios da casa
 
@@ -87,7 +88,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.3.1.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.4.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -98,7 +99,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.3.1.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.4.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 
