@@ -87,7 +87,7 @@ public final class SlotMachine {
     private static final int WEIGHTS_TOTAL = 21;
 
     /** As apostas possíveis, em fichas por girada. */
-    public static final int[] BETS = {1, 2, 5, 10, 20, 50};
+    public static final int[] BETS = {1, 2, 4, 8, 16, 32, 64};
     public static final int DEFAULT_BET = 2;
 
     private SlotMachine() {

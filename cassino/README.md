@@ -7,7 +7,7 @@ Um mod de cassino para o Minecraft 1.20.1, com Fabric. É um mod original: o có
 | Item | O que faz |
 | --- | --- |
 | **Ficha** | A "moeda" do cassino, usada para apostar. Custa caro (8 barras de ouro + 1 diamante) e não volta a ser ouro. |
-| **Caça-níquel** (bloco) | Botão direito abre a máquina: 5 rolos, aposta de 1 a 50 fichas, créditos e prêmios de até 100x a aposta. |
+| **Caça-níquel** (bloco) | Botão direito abre a máquina: 5 rolos, aposta de 1 a 64 fichas, créditos e prêmios de até 100x a aposta. |
 | **Dado** | Botão direito rola de 1 a 6; quem está até 16 blocos vê o resultado no chat. |
 | **Moeda** | Botão direito joga cara ou coroa; quem está até 16 blocos vê o resultado no chat. |
 
@@ -27,7 +27,7 @@ Botão direito no caça-níquel abre a tela da máquina:
 - **5 rolos** à esquerda, com 3 símbolos cada: 7, estrela, diamante, coração, esmeralda e pá. Só a **linha do meio** (a destacada em amarelo) paga.
 - **DEPÓSITO:** ponha fichas no espaço ao lado e aperte DEPÓSITO; cada ficha vira 1 crédito. Shift + clique numa ficha do inventário já a coloca no espaço. Se apertar GIRAR! sem créditos, as fichas do espaço são depositadas sozinhas.
 - **Os créditos são só seus:** ficam guardados no servidor no seu nome, valem em qualquer caça-níquel e continuam lá depois de fechar a máquina. Outro jogador que abrir a mesma máquina vê só os créditos dele.
-- **APOSTA:** os botões **+** e **-** escolhem quanto cada girada custa: 1, 2, 5, 10, 20 ou 50 créditos.
+- **APOSTA:** os botões **+** e **-** escolhem quanto cada girada custa: 1, 2, 4, 8, 16, 32 ou 64 créditos.
 - **GIRAR!:** os rolos giram e param um a um, da esquerda para a direita. Passe o mouse no botão para ver a tabela de prêmios.
 - **RETIRADA:** saca todos os seus créditos em fichas. Fichas deixadas no espaço sem depositar voltam para você ao fechar a máquina.
 
@@ -82,7 +82,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.2.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.2.1.jar`.
 
 ### Opção 2: no seu PC
 
@@ -93,7 +93,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.2.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.2.1.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 
