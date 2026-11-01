@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "transparencia",
+  "version": "${version}",
+  "name": "Inventário Transparente",
+  "description": "Deixa o fundo do inventário (e de baús, fornalhas, mesas...) semitransparente para ver o mundo atrás. A tecla I troca entre 100%, 80%, 60%, 40% e 20%. Só visual: não precisa estar no servidor.",
+  "authors": ["edugcs"],
+  "license": "MIT",
+  "icon": "assets/transparencia/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.edugcs.transparencia.Transparencia"]
+  },
+  "mixins": ["transparencia.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}
