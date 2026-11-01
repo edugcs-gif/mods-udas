@@ -76,5 +76,7 @@
   "gui.cassino.race.tip.pays": "Pays %s the bet",
   "gui.cassino.race.result.win": "%s wins! +%s",
   "gui.cassino.race.result.lose": "%s wins.",
-  "message.cassino.race.longshot": "%s won %s chips betting on the long shot %s (x%s)!"
+  "message.cassino.race.longshot": "%s won %s chips betting on the long shot %s (x%s)!",
+  "gui.cassino.house": "HOUSE: %s",
+  "gui.cassino.house.tip": "House balance: how much the casino has won (+) or paid out beyond what it took in (-) on this server, across all games. It never goes below -640; while negative, players' odds drop step by step until the house recovers."
 }

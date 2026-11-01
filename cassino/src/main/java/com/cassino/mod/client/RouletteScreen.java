@@ -256,6 +256,7 @@ public class RouletteScreen extends HandledScreen<RouletteScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
     }
 
     @Override
@@ -352,6 +353,7 @@ public class RouletteScreen extends HandledScreen<RouletteScreenHandler> {
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
         CassinoGui.drawTitle(context, textRenderer, title, backgroundWidth);
+        CassinoGui.drawHouse(context, textRenderer, handler.house());
 
         for (int color = 0; color < Roulette.COLORS; color++) {
             int boxX = BOX_X + color * BOX_STEP;

@@ -251,6 +251,7 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
     }
 
     @Override
@@ -337,6 +338,7 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
         CassinoGui.drawTitle(context, textRenderer, title, backgroundWidth);
+        CassinoGui.drawHouse(context, textRenderer, handler.house());
         CassinoGui.drawAmount(context, textRenderer, Text.translatable("gui.cassino.slot.bet", handler.bet()), RIGHT_X,
                 BET_Y);
         CassinoGui.drawAmount(context, textRenderer, Text.translatable("gui.cassino.slot.credits", shownCredits()),

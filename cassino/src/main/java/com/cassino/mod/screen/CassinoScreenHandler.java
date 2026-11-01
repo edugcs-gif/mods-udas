@@ -19,6 +19,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
  * O que as telas do cassino (caça-níquel e mesa de blackjack) têm em comum: os créditos do jogador, o espaço das
  * fichas com DEPÓSITO e RETIRADA, e o inventário embaixo.
  *
+ * <p>A tela também mostra o saldo da casa ({@link #house}), o mesmo em todos os jogos.
+ *
  * <p>Os créditos são do jogador, guardados no {@link CassinoState}: valem em qualquer máquina, continuam lá depois
  * de fechar a tela, e ninguém mais mexe neles. DEPÓSITO transforma as fichas do espaço em créditos (1 ficha = 1
  * crédito); RETIRADA saca todos em fichas.
@@ -36,6 +38,8 @@ public abstract class CassinoScreenHandler extends ScreenHandler {
     private final Block block;
 
     protected int credits;
+    /** O saldo da casa, só para a tela mostrar (no servidor ele vem do cofre). */
+    private int house;
 
     /**
      * @param coinX, coinY      o fundo do espaço das fichas (o item fica 1 pixel para dentro)
@@ -71,20 +75,30 @@ public abstract class CassinoScreenHandler extends ScreenHandler {
             addSlot(new Slot(playerInventory, column, inventoryX + 1 + column * 18, hotbarY + 1));
         }
 
+        // 0 e 1: os créditos do jogador; 2 e 3: o saldo da casa (pode ser negativo: vai inteiro, em duas partes).
         addProperties(new PropertyDelegate() {
             @Override
             public int get(int index) {
-                return index == 0 ? low(credits) : high(credits);
+                int value = index < 2 ? credits : houseValue();
+                return index % 2 == 0 ? low(value) : high(value);
             }
 
             @Override
             public void set(int index, int value) {
-                credits = index == 0 ? withLow(credits, value) : withHigh(credits, value);
+                if (index == 0) {
+                    credits = withLow(credits, value);
+                } else if (index == 1) {
+                    credits = withHigh(credits, value);
+                } else if (index == 2) {
+                    house = withLow(house, value);
+                } else {
+                    house = withHigh(house, value);
+                }
             }
 
             @Override
             public int size() {
-                return 2;
+                return 4;
             }
         });
     }
@@ -112,6 +126,15 @@ public abstract class CassinoScreenHandler extends ScreenHandler {
 
     public int credits() {
         return credits;
+    }
+
+    /** O saldo da casa: o que o cassino já ganhou (positivo) ou pagou a mais (negativo), somando todos os jogos. */
+    public int house() {
+        return house;
+    }
+
+    private int houseValue() {
+        return state == null ? house : (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, state.house()));
     }
 
     /** Quantas fichas estão no espaço ao lado de DEPÓSITO. */

@@ -224,6 +224,7 @@ public class BlackjackScreen extends HandledScreen<BlackjackScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
     }
 
     @Override
@@ -298,6 +299,7 @@ public class BlackjackScreen extends HandledScreen<BlackjackScreenHandler> {
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
         CassinoGui.drawTitle(context, textRenderer, title, backgroundWidth);
+        CassinoGui.drawHouse(context, textRenderer, handler.house());
 
         context.drawText(textRenderer, Text.translatable("gui.cassino.blackjack.dealer"), CARDS_X, DEALER_LABEL_Y,
                 CassinoGui.TEXT, false);

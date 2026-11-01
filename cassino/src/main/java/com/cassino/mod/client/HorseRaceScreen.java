@@ -272,6 +272,7 @@ public class HorseRaceScreen extends HandledScreen<HorseRaceScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
         int row = rowAt(mouseX, mouseY);
         if (row >= 0 && raceStartedAt < 0) {
             context.drawTooltip(textRenderer, List.of(horseName(row),
@@ -348,6 +349,7 @@ public class HorseRaceScreen extends HandledScreen<HorseRaceScreenHandler> {
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
         CassinoGui.drawTitle(context, textRenderer, title, backgroundWidth);
+        CassinoGui.drawHouse(context, textRenderer, handler.house());
 
         drawSmall(context, Text.translatable("gui.cassino.race.horse"), TEXT_X, HEADER_Y, LABEL);
         drawSmall(context, Text.translatable("gui.cassino.race.track"), LANE_X, HEADER_Y, LABEL);

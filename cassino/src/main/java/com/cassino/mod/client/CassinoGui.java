@@ -46,6 +46,42 @@ final class CassinoGui {
         matrices.pop();
     }
 
+    // ---------------------------------------------------------------- saldo da casa (no canto de cima, à esquerda)
+
+    private static final int HOUSE_X = 8;
+    private static final int HOUSE_Y = 8;
+    private static final float HOUSE_SCALE = 0.75F;
+    private static final int HOUSE_POSITIVE = 0xFF1E7A1E;
+    private static final int HOUSE_NEGATIVE = 0xFFB02020;
+
+    private static Text houseText(int house) {
+        String value = house > 0 ? "+" + house : Integer.toString(house);
+        return Text.translatable("gui.cassino.house", value);
+    }
+
+    /** "CASA: +1234" no canto de cima (coordenadas a partir do canto da tela): verde no lucro, vermelho no negativo. */
+    static void drawHouse(DrawContext context, TextRenderer textRenderer, int house) {
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(HOUSE_X, HOUSE_Y, 0.0F);
+        matrices.scale(HOUSE_SCALE, HOUSE_SCALE, 1.0F);
+        context.drawText(textRenderer, houseText(house), 0, 0,
+                house > 0 ? HOUSE_POSITIVE : house < 0 ? HOUSE_NEGATIVE : TEXT, false);
+        matrices.pop();
+    }
+
+    /** Com o mouse em cima do saldo da casa: a explicação. */
+    static void drawHouseTooltip(DrawContext context, TextRenderer textRenderer, int panelX, int panelY, int mouseX,
+                                 int mouseY, int house) {
+        int left = panelX + HOUSE_X;
+        int top = panelY + HOUSE_Y;
+        int width = Math.round(textRenderer.getWidth(houseText(house)) * HOUSE_SCALE);
+        if (mouseX >= left && mouseX < left + width && mouseY >= top && mouseY < top + 7) {
+            context.drawOrderedTooltip(textRenderer,
+                    textRenderer.wrapLines(Text.translatable("gui.cassino.house.tip"), 200), mouseX, mouseY);
+        }
+    }
+
     static void drawSlot(DrawContext context, int slotX, int slotY) {
         context.fill(slotX, slotY, slotX + 18, slotY + 18, PANEL_LIGHT);
         context.fill(slotX, slotY, slotX + 17, slotY + 17, SLOT_DARK);
