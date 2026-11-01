@@ -37,13 +37,15 @@ final class CassinoGui {
         context.fill(x + width - 3, y + 1, x + width - 1, y + height - 1, PANEL_DARK);
     }
 
-    /** O título em letras grandes, no meio do alto da tela (coordenadas a partir do canto da tela). */
+    /** O título em letras grandes, no meio do alto da tela (a partir do canto da tela); diminui se não couber. */
     static void drawTitle(DrawContext context, TextRenderer textRenderer, Text title, int panelWidth) {
         Text bigTitle = Text.literal(title.getString().toUpperCase(Locale.ROOT)).formatted(Formatting.BOLD);
+        // 1,5 vez o tamanho normal; menor se não couber na largura da tela (com uma margem dos lados).
+        float scale = Math.min(1.5F, (panelWidth - 16) / (float) textRenderer.getWidth(bigTitle));
         MatrixStack matrices = context.getMatrices();
         matrices.push();
-        matrices.translate(panelWidth / 2.0F, 6.0F, 0.0F);
-        matrices.scale(1.5F, 1.5F, 1.0F);
+        matrices.translate(panelWidth / 2.0F, 6.0F + (1.5F - scale) * 4.0F, 0.0F);
+        matrices.scale(scale, scale, 1.0F);
         context.drawText(textRenderer, bigTitle, -textRenderer.getWidth(bigTitle) / 2, 0, TITLE, false);
         matrices.pop();
     }
