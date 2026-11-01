@@ -19,9 +19,9 @@ import net.minecraft.util.math.random.Random;
  *
  * <p>O saldo da casa ({@link CassinoState}) segura quantas fichas o cassino cria no servidor:
  * <ul>
- *   <li>a cada 64 fichas que a casa fica no negativo, a chance de ganhar cai um ponto
- *       ({@link #WIN_CHANCE_DROP_PER_STEP}: 40%, 39%, 38%... até {@link #MIN_WIN_CHANCE}), e a máquina passa a devolver
- *       menos, até a casa se recuperar;</li>
+ *   <li>a cada 64 fichas que a casa fica no negativo, a chance de ganhar cai um pouco: 40% vezes o que sobra da sorte
+ *       da casa ({@link Luck#houseLuck}), até 0% no último degrau, perto de -5000 (a casa ganha todas); a máquina
+ *       devolve menos até a casa se recuperar;</li>
  *   <li>a partir de +640 fichas no positivo, a chance sobe um ponto a cada 64 fichas ({@link #WIN_CHANCE_BY_PROFIT}:
  *       41%, 42%... até 50% em +1216, com a máquina devolvendo ~110%): de uns 45,5% para cima os jogadores ganham
  *       mais do que perdem, e a casa volta para perto de +640 em vez de acumular (como nos outros jogos, veja
@@ -55,13 +55,6 @@ public final class SlotMachine {
             {2, 3, 6},     // pá
     };
 
-    /**
-     * Quanto a chance de uma girada ganhar cai a cada degrau do negativo da casa ({@link Luck#debtStep}): até -63, 40%;
-     * de -64 a -127, 39%; de -128 a -191, 38%; e assim por diante, até {@link #MIN_WIN_CHANCE} (de -1920 para baixo).
-     */
-    public static final float WIN_CHANCE_DROP_PER_STEP = 0.01F;
-    /** A menor chance de ganhar, com a casa perto do limite. */
-    public static final float MIN_WIN_CHANCE = 0.10F;
     /**
      * Chance de ganhar com a casa no positivo, por degrau do lucro ({@link Luck#profitStep}): até +639, 40% (o
      * normal); de +640 a +703, 41%; de +704 a +767, 42%; e assim por diante, até 50% de +1216 para cima. De uns 45,5%
@@ -142,7 +135,7 @@ public final class SlotMachine {
         if (house >= 0) {
             return WIN_CHANCE_BY_PROFIT[Math.min(WIN_CHANCE_BY_PROFIT.length - 1, Luck.profitStep(house))];
         }
-        return Math.max(MIN_WIN_CHANCE, WIN_CHANCE_BY_PROFIT[0] - WIN_CHANCE_DROP_PER_STEP * Luck.debtStep(house));
+        return WIN_CHANCE_BY_PROFIT[0] * (1.0F - Luck.houseLuck(house));
     }
 
     /**

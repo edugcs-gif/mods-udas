@@ -10,7 +10,7 @@ import net.minecraft.util.math.random.Random;
  * {@link #EDGE em pé}, e aí ninguém acerta: cada lado sai em 48% das vezes, e o jogo devolve uns 96%.
  *
  * <p>A sorte segue o saldo da casa, como em todos os jogos ({@link Luck}). Com a casa no negativo, numa parte dos
- * lançamentos ({@link Luck#houseLuck}) a moeda é lançada duas vezes e fica o pior para o jogador. De 0 a +639 a moeda
+ * lançamentos ({@link Luck#houseLuck}) a moeda cai do outro lado (em todos, perto do limite). De 0 a +639 a moeda
  * é limpa. De +640 para cima, numa parte dos lançamentos perdidos ela é lançada de novo
  * ({@link #PLAYER_BOOST_PER_STEP}), e no último degrau, em +1216, o jogo devolve uns 110%.
  */
@@ -39,12 +39,9 @@ public final class CoinFlip {
     /** Lança a moeda para quem apostou em {@code choice}: devolve {@link #HEADS}, {@link #TAILS} ou {@link #EDGE}. */
     public static int flip(Random random, int choice, long house) {
         int result = toss(random);
-        if (random.nextFloat() < Luck.houseLuck(house)) {
-            // Sorte da casa: lança de novo e fica com o pior para o jogador.
-            int again = toss(random);
-            if (result == choice && again != choice) {
-                result = again;
-            }
+        if (result == choice && Luck.houseWins(random, house)) {
+            // Sorte da casa: a moeda cai do outro lado.
+            result = SIDES - 1 - choice;
         } else if (result != choice && random.nextFloat()
                 < Luck.retryChance(house, PLAYER_BOOST_PER_STEP, (1.0 - EDGE_CHANCE) / SIDES)) {
             // Sorte do jogador: errou, mas a moeda é lançada de novo.

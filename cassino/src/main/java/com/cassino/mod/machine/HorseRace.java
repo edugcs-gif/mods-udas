@@ -17,7 +17,7 @@ import net.minecraft.util.math.random.Random;
  * </ul>
  *
  * <p>A sorte segue o saldo da casa, como em todos os jogos ({@link Luck}). Com a casa no negativo, numa parte das
- * corridas ({@link Luck#houseLuck}) o vencedor é sorteado duas vezes e fica o pior para o jogador. De 0 a +639 a
+ * corridas ({@link Luck#houseLuck}) o vencedor é outro cavalo (em todas, perto do limite). De 0 a +639 a
  * corrida é limpa. De +640 para cima, a chance do cavalo escolhido sobe {@link #PLAYER_BOOST_PER_STEP} dela a cada
  * degrau (numa parte das derrotas o vencedor é sorteado de novo): no último degrau, em +1216, ela é 1,25 vez a do dia
  * (20% vira 25%), e cada cavalo devolve uns 110%.
@@ -110,12 +110,11 @@ public final class HorseRace {
     public static int[] race(Random random, Lineup lineup, int choice, long house) {
         double[] chance = lineup.chance();
         int winner = pick(random, chance, new boolean[HORSES]);
-        if (random.nextFloat() < Luck.houseLuck(house)) {
-            // Sorte da casa: sorteia de novo e fica com o pior para o jogador.
-            int again = pick(random, chance, new boolean[HORSES]);
-            if (winner == choice && again != choice) {
-                winner = again;
-            }
+        if (winner == choice && Luck.houseWins(random, house)) {
+            // Sorte da casa: o vencedor é outro cavalo.
+            boolean[] notChoice = new boolean[HORSES];
+            notChoice[choice] = true;
+            winner = pick(random, chance, notChoice);
         } else if (winner != choice
                 && random.nextFloat() < Luck.retryChance(house, PLAYER_BOOST_PER_STEP, chance[choice])) {
             // Sorte do jogador: o cavalo dele perdeu, mas o vencedor é sorteado de novo.

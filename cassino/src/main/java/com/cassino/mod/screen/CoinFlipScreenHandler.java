@@ -18,7 +18,7 @@ import net.minecraft.sound.SoundEvents;
  *
  * <p>O jogador escolhe o lado clicando em CARA ou COROA e aperta LANÇAR!. A aposta e o prêmio entram no saldo da casa,
  * o mesmo das outras máquinas; um lançamento só é aceito se o pior caso (o lado escolhido sair) couber no limite de
- * -2000.
+ * -5000.
  */
 public class CoinFlipScreenHandler extends CassinoScreenHandler {
     public static final int BUTTON_FLIP = 0;

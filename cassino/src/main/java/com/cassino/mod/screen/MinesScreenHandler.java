@@ -2,6 +2,7 @@ package com.cassino.mod.screen;
 
 import com.cassino.mod.Cassino;
 import com.cassino.mod.machine.CassinoState;
+import com.cassino.mod.machine.Luck;
 import com.cassino.mod.machine.Mines;
 import com.cassino.mod.machine.SlotMachine;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import net.minecraft.util.math.random.Random;
  *
  * <p>JOGAR! tira a aposta dos créditos e cobre a grade; cada clique num bloco cava ele; SACAR! paga o prêmio do
  * momento. Enquanto a rodada está aberta, a casa reserva o que pagaria se o jogador sacasse (como numa mão de
- * blackjack), e só deixa cavar se o prêmio depois da próxima pedra ainda couber no limite de -2000: perto do limite, a
+ * blackjack), e só deixa cavar se o prêmio depois da próxima pedra ainda couber no limite de -5000: perto do limite, a
  * tela avisa que é hora de sacar. Fechar a tela no meio da rodada saca sozinho.
  */
 public class MinesScreenHandler extends CassinoScreenHandler {
@@ -80,6 +81,8 @@ public class MinesScreenHandler extends CassinoScreenHandler {
     private long reserved;
     /** Se a sorte do jogador ainda pode salvar ele de uma mina nesta rodada (só no servidor). */
     private boolean rescue;
+    /** Se a rodada começou condenada pela sorte da casa: o primeiro bloco cavado é mina (só no servidor). */
+    private boolean doomed;
 
     /** Do lado do cliente (a tela): o resto chega pelas propriedades. */
     public MinesScreenHandler(int syncId, PlayerInventory playerInventory) {
@@ -232,6 +235,7 @@ public class MinesScreenHandler extends CassinoScreenHandler {
         found = 0;
         lastWin = 0;
         rescue = true;
+        doomed = Luck.houseWins(player.getRandom(), state.house());
         Arrays.fill(tiles, Mines.HIDDEN);
         phase = PLAYING;
         events++;
@@ -243,7 +247,7 @@ public class MinesScreenHandler extends CassinoScreenHandler {
         }
         Random random = player.getRandom();
         int hidden = Mines.CELLS - found;
-        Mines.Dig dig = Mines.dig(random, hidden, mines(), state.house(), rescue);
+        Mines.Dig dig = Mines.dig(random, hidden, mines(), state.house(), doomed, rescue);
         if (dig.rescued()) {
             rescue = false;
         }

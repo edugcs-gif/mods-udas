@@ -21,9 +21,9 @@ import net.minecraft.util.math.random.Random;
  * volta 1), então a conta vale igual para qualquer aposta.
  *
  * <p>A sorte segue o saldo da casa, como em todos os jogos ({@link Luck}). Com a casa no negativo, numa parte das
- * jogadas ({@link Luck#houseLuck}) a bola cai duas vezes e fica o pior buraco para o jogador. De 0 a +639 o Plinko é
- * limpo. De +640 para cima, numa parte das quedas nos buracos que pagam menos que a aposta a bola cai de novo
- * ({@link #PLAYER_BOOST_PER_STEP}), e no último degrau, em +1216, o jogo devolve uns 110%.
+ * jogadas ({@link Luck#houseLuck}) a bola cai num buraco que paga menos que a aposta (em todas, perto do limite). De 0
+ * a +639 o Plinko é limpo. De +640 para cima, numa parte das quedas nos buracos que pagam menos que a aposta a bola cai
+ * de novo ({@link #PLAYER_BOOST_PER_STEP}), e no último degrau, em +1216, o jogo devolve uns 110%.
  */
 public final class Plinko {
     public static final int ROWS = 6;
@@ -57,12 +57,11 @@ public final class Plinko {
     /** Deixa a bola cair: devolve o caminho ({@value #ROWS} bits, 1 = direita). */
     public static int drop(Random random, long house) {
         int path = randomPath(random);
-        if (random.nextFloat() < Luck.houseLuck(house)) {
-            // Sorte da casa: a bola cai de novo e fica o pior buraco para o jogador.
-            int again = randomPath(random);
-            if (multiplier10(bucket(again)) < multiplier10(bucket(path))) {
-                path = again;
-            }
+        if (multiplier10(bucket(path)) >= 10 && Luck.houseWins(random, house)) {
+            // Sorte da casa: a bola cai num buraco que paga menos que a aposta.
+            do {
+                path = randomPath(random);
+            } while (multiplier10(bucket(path)) >= 10);
         } else if (multiplier10(bucket(path)) < 10
                 && random.nextFloat() < Luck.retryChance(house, PLAYER_BOOST_PER_STEP, WIN_CHANCE)) {
             // Sorte do jogador: caiu num buraco que paga menos que a aposta, mas a bola cai de novo.

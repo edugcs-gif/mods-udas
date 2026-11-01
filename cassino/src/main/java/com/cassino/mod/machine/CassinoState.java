@@ -35,7 +35,7 @@ import net.minecraft.world.PersistentState;
  */
 public class CassinoState extends PersistentState {
     /** O máximo de fichas que o cassino pode ter dado a mais do que recebeu, no servidor todo. */
-    public static final int MAX_HOUSE_DEBT = 2000;
+    public static final int MAX_HOUSE_DEBT = 5000;
     /** Máximo de créditos de um jogador. */
     public static final int MAX_BALANCE = 1_000_000;
     /** O saldo da casa não passa disso: o que passar vai para o prêmio da loteria. */

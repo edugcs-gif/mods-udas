@@ -1,13 +1,16 @@
 package com.cassino.mod.machine;
 
+import net.minecraft.util.math.random.Random;
+
 /**
  * A sorte que segue o saldo da casa ({@link CassinoState}), igual em todos os jogos do cassino.
  *
  * <ul>
  *   <li><b>Casa no negativo:</b> a cada 64 fichas no negativo sobe um degrau ({@link #debtStep}: 1 de -64 a -127, 2
  *       de -128 a -191... até {@link #DEBT_STEPS} perto do limite de -{@value CassinoState#MAX_HOUSE_DEBT}), e a casa
- *       ganha mais sorte ({@link #houseLuck}: uns 1,6% a cada degrau, até {@link #MAX_HOUSE_LUCK} no último). Os jogos
- *       sorteiam duas vezes e ficam com o pior para o jogador.</li>
+ *       ganha mais sorte ({@link #houseLuck}): numa parte das rodadas que o jogador ganharia, o resultado vira derrota.
+ *       A parte sobe uns 1,3% a cada degrau (o degrau ÷ 78): 13% em -640, 26% em -1280, 50% em -2496 e 100% no último
+ *       degrau (de -4992 até o limite), quando a casa ganha todas.</li>
  *   <li><b>Casa de 0 a +639:</b> jogo normal.</li>
  *   <li><b>Casa em +640 ou mais:</b> a cada 64 fichas sobe um degrau ({@link #profitStep}: 1 de +640 a +703, 2 de
  *       +704 a +767... até {@link #MAX_STEPS} de +1216 para cima), e a chance de o jogador ganhar sobe em todos os
@@ -22,10 +25,10 @@ public final class Luck {
     public static final int PROFIT_START = 640;
     /** Quantos degraus há no positivo. */
     public static final int MAX_STEPS = 10;
-    /** Quantos degraus há no negativo: de 64 em 64 até o limite da casa (31 com o limite de -2000). */
+    /** Quantos degraus há no negativo: de 64 em 64 até o limite da casa (78 com o limite de -5000). */
     public static final int DEBT_STEPS = CassinoState.MAX_HOUSE_DEBT / STEP;
-    /** A sorte da casa no último degrau negativo. */
-    public static final float MAX_HOUSE_LUCK = 0.5F;
+    /** A sorte da casa no último degrau negativo: 100%, a casa ganha todas. */
+    public static final float MAX_HOUSE_LUCK = 1.0F;
 
     private Luck() {
     }
@@ -35,9 +38,18 @@ public final class Luck {
         return house >= 0 ? 0 : (int) Math.min(DEBT_STEPS, -house / STEP);
     }
 
-    /** Com a casa no negativo: a chance de um sorteio sair duas vezes e ficar o pior para o jogador. */
+    /**
+     * Com a casa no negativo: a chance de uma rodada que o jogador ganharia virar derrota. Sobe igual a cada degrau,
+     * até {@link #MAX_HOUSE_LUCK} no último.
+     */
     public static float houseLuck(long house) {
         return MAX_HOUSE_LUCK * debtStep(house) / DEBT_STEPS;
+    }
+
+    /** Sorteia a sorte da casa: {@code true} quando a rodada deve virar derrota do jogador. */
+    public static boolean houseWins(Random random, long house) {
+        float luck = houseLuck(house);
+        return luck > 0 && random.nextFloat() < luck;
     }
 
     /** O degrau do lucro da casa: 0 abaixo de +640, 1 de +640 a +703, 2 de +704 a +767... até 10 de +1216 para cima. */

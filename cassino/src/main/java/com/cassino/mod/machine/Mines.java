@@ -17,9 +17,9 @@ import net.minecraft.util.math.random.Random;
  *
  * <p>As minas não são sorteadas no começo: cada bloco cavado vira mina com a chance certa (minas que faltam ÷ blocos
  * que faltam), e no fim as minas que sobraram são espalhadas nos blocos que não foram cavados, para mostrar. Isso deixa
- * a sorte da casa ({@link Luck}) funcionar como nos outros jogos: com a casa no negativo, numa parte das cavadas o
- * bloco é sorteado duas vezes e fica o pior para o jogador; de +640 para cima, a primeira mina de cada rodada pode
- * virar pedra preciosa ({@link #PLAYER_RESCUE_PER_STEP}).
+ * a sorte da casa ({@link Luck}) funcionar como nos outros jogos: com a casa no negativo, uma parte das rodadas
+ * ({@link Luck#houseLuck}) já começa condenada, e o primeiro bloco cavado nela é mina (todas, perto do limite); de +640
+ * para cima, a primeira mina de cada rodada pode virar pedra preciosa ({@link #PLAYER_RESCUE_PER_STEP}).
  */
 public final class Mines {
     public static final int SIZE = 5;
@@ -77,16 +77,15 @@ public final class Mines {
     }
 
     /**
-     * Cava um bloco, com {@code hidden} blocos ainda cobertos e {@code mines} minas entre eles. {@code rescue} diz se a
-     * sorte do jogador ainda pode salvá-lo de uma mina nesta rodada.
+     * Cava um bloco, com {@code hidden} blocos ainda cobertos e {@code mines} minas entre eles. {@code doomed} diz se a
+     * rodada começou condenada pela sorte da casa (aí o bloco é mina), e {@code rescue}, se a sorte do jogador ainda
+     * pode salvá-lo de uma mina nesta rodada.
      */
-    public static Dig dig(Random random, int hidden, int mines, long house, boolean rescue) {
-        boolean mine = random.nextInt(hidden) < mines;
-        if (random.nextFloat() < Luck.houseLuck(house)) {
-            // Sorte da casa: sorteia de novo e fica com o pior para o jogador.
-            mine = mine || random.nextInt(hidden) < mines;
-            return new Dig(mine, false);
+    public static Dig dig(Random random, int hidden, int mines, long house, boolean doomed, boolean rescue) {
+        if (doomed) {
+            return new Dig(true, false);
         }
+        boolean mine = random.nextInt(hidden) < mines;
         if (mine && rescue && random.nextFloat() < PLAYER_RESCUE_PER_STEP * Luck.profitStep(house)) {
             // Sorte do jogador: era mina, mas o bloco é sorteado de novo.
             mine = random.nextInt(hidden) < mines;

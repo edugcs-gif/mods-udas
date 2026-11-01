@@ -13,11 +13,11 @@ import net.minecraft.util.math.random.Random;
  * </ul>
  * Nos dois casos a roleta devolve em média 36/37 ≈ 97% do que é apostado: a casa ganha com o 0.
  *
- * <p>A sorte segue o saldo da casa, como em todos os jogos ({@link Luck}). Com a casa no negativo, numa parte das giradas
- * ({@link Luck#houseLuck}) a roda gira duas vezes e fica com a pior para o jogador. De 0 a +639 a roleta é limpa. De
- * +640 para cima, a chance da cor escolhida sobe {@link #PLAYER_BOOST_PER_STEP} dela a cada degrau (numa parte das
- * derrotas a roda gira de novo): no último degrau, em +1216, vermelho e preto saem em 55% das vezes, o verde em 3,1%,
- * e a roleta devolve uns 110%.
+ * <p>A sorte segue o saldo da casa, como em todos os jogos ({@link Luck}). Com a casa no negativo, numa parte das
+ * giradas ({@link Luck#houseLuck}) a bolinha cai numa casa de outra cor (até em todas, perto do limite). De 0 a +639 a
+ * roleta é limpa. De +640 para cima, a chance da cor escolhida sobe {@link #PLAYER_BOOST_PER_STEP} dela a cada degrau
+ * (numa parte das derrotas a roda gira de novo): no último degrau, em +1216, vermelho e preto saem em 55% das vezes, o
+ * verde em 3,1%, e a roleta devolve uns 110%.
  */
 public final class Roulette {
     public static final int POCKETS = 37;
@@ -56,12 +56,11 @@ public final class Roulette {
     /** Gira a roda para quem apostou na cor {@code choice}: devolve a casa onde a bolinha parou (0 a 36). */
     public static int spin(Random random, int choice, long house) {
         int pocket = random.nextInt(POCKETS);
-        if (random.nextFloat() < Luck.houseLuck(house)) {
-            // Sorte da casa: gira de novo e fica com a pior para o jogador.
-            int again = random.nextInt(POCKETS);
-            if (color(pocket) == choice && color(again) != choice) {
-                pocket = again;
-            }
+        if (color(pocket) == choice && Luck.houseWins(random, house)) {
+            // Sorte da casa: a bolinha cai numa casa de outra cor.
+            do {
+                pocket = random.nextInt(POCKETS);
+            } while (color(pocket) == choice);
         } else if (color(pocket) != choice && random.nextFloat()
                 < Luck.retryChance(house, PLAYER_BOOST_PER_STEP, pockets(choice) / (double) POCKETS)) {
             // Sorte do jogador: perdeu, mas a roda gira de novo.

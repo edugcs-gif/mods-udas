@@ -21,7 +21,7 @@ import net.minecraft.util.Formatting;
  *
  * <p>O jogador escolhe o cavalo clicando na fileira dele e aperta CORRER!. A escalação (nomes, quanto paga cada um e as
  * chances) é a do dia do Minecraft. A aposta e o prêmio entram no saldo da casa, o mesmo das outras máquinas; a
- * corrida só é aceita se o pior caso (o cavalo escolhido vencer) couber no limite de -2000.
+ * corrida só é aceita se o pior caso (o cavalo escolhido vencer) couber no limite de -5000.
  */
 public class HorseRaceScreenHandler extends CassinoScreenHandler {
     public static final int BUTTON_RUN = 0;

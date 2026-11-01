@@ -17,7 +17,7 @@ import net.minecraft.sound.SoundEvents;
  *
  * <p>O jogador escolhe a aposta e aperta LANÇAR!. O caminho da bola vai para a tela, que mostra ela quicando nos pinos
  * até o buraco. A aposta e o prêmio entram no saldo da casa, o mesmo das outras máquinas; uma jogada só é aceita se o
- * pior caso (a bola cair numa ponta, 10x) couber no limite de -2000.
+ * pior caso (a bola cair numa ponta, 10x) couber no limite de -5000.
  */
 public class PlinkoScreenHandler extends CassinoScreenHandler {
     public static final int BUTTON_DROP = 0;

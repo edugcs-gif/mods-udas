@@ -85,8 +85,8 @@ Em todos os jogos, **à esquerda do inventário**, um quadro com coroa mostra o 
 
 O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada aposta e **desce** com cada prêmio, somando todos os jogos (caça-níquel, blackjack, roleta, corrida, dados, cara ou coroa, Plinko e Campo Minado). Quando está negativo, quer dizer que o cassino já deu mais fichas do que recebeu. Ele aparece no **canto de cima, à esquerda, de todas as telas** ("CASA: +1234", em verde); passe o mouse em cima para ver a explicação. Quando a casa está no negativo, a tela mostra **0** (o valor de verdade nem sai do servidor), então os jogadores não ficam sabendo que as chances estão contra eles.
 
-- A casa pode ficar **no máximo em -2000**: o cassino nunca cria mais de 2000 fichas a mais do que recebeu, no servidor todo. Um prêmio que passaria disso vira um prêmio menor que caiba; se nem o menor couber, a girada perde.
-- Quanto mais no negativo, menor a chance de ganhar, **um pouco a cada 64 fichas** até perto de -2000; e a partir de **+640** a chance sobe um ponto a cada 64 fichas, para a casa devolver fichas em vez de acumular. No caça-níquel:
+- A casa pode ficar **no máximo em -5000**: o cassino nunca cria mais de 5000 fichas a mais do que recebeu, no servidor todo. Um prêmio que passaria disso vira um prêmio menor que caiba; se nem o menor couber, a girada perde.
+- Quanto mais no negativo, menor a chance de ganhar, **um pouco a cada 64 fichas** até perto de -5000, quando a casa ganha todas; e a partir de **+640** a chance sobe um ponto a cada 64 fichas, para a casa devolver fichas em vez de acumular. No caça-níquel:
 
 | Saldo da casa | Chance de ganhar | A máquina devolve |
 | --- | --- | --- |
@@ -94,22 +94,33 @@ O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada apost
 | +704 a +767 | 42% | ~92% |
 | +640 a +703 | 41% | ~90% |
 | -63 a +639 | 40% (o normal) | ~88% |
-| -64 a -127 | 39% | ~86% |
-| -128 a -191 | 38% | ~84% |
-| ... (1 ponto a menos a cada 64) | ... | ... |
-| -640 a -703 | 30% | ~66% |
-| -1280 a -1343 | 20% | ~44% |
-| -1920 a -2000 | 10% (só prêmios que caibam) | ~22% ou menos |
+| -640 | ~35% | ~77% |
+| -1280 | ~30% | ~66% |
+| -2496 | 20% | ~44% |
+| -3840 | ~9% | ~20% |
+| -4992 a -5000 | 0% (a casa ganha todas) | 0% |
 
 Com as apostas dos jogadores a casa volta a subir, e a chance volta ao normal. De uns 45,5% para cima a máquina paga mais do que recebe: é de propósito, para os jogadores ganharem de volta o que a casa acumulou, até ela voltar para perto de +640. O saldo da casa e os créditos de cada jogador ficam salvos no mundo (`data/cassino.dat`).
 
-**A mesma regra vale em todos os jogos** (a conta está em `machine/Luck.java`): de -63 a +639 tudo é normal; no negativo, a casa tem cada vez mais sorte (uns 1,6% a cada 64 fichas, até 50% perto de -2000); e de **+640** para cima a chance dos jogadores sobe a cada 64 fichas, até **+1216**, quando todos os jogos devolvem uns **110%**:
+**A mesma regra vale em todos os jogos** (a conta está em `machine/Luck.java`): de -63 a +639 tudo é normal; no negativo, a casa tem cada vez mais sorte (a cada 64 fichas no negativo, uns 1,3% a mais das rodadas que você ganharia viram derrota; perto de -5000, todas); e de **+640** para cima a chance dos jogadores sobe a cada 64 fichas, até **+1216**, quando todos os jogos devolvem uns **110%**:
 
 | Saldo da casa | Caça-níquel | Roleta (vermelho/preto) | Roleta (verde) | Corrida (seu cavalo) | Blackjack (jogando perfeito) |
 | --- | --- | --- | --- | --- | --- |
 | até +639 | 40% (~88%) | 48,6% (~97%) | 2,7% (~97%) | a chance do dia (~87%) | ~99% |
 | +896 | 45% (~99%) | 51,8% (~104%) | 2,9% (~104%) | chance x1,125 (~98%) | ~104% |
 | +1216 ou mais | 50% (~110%) | 55,0% (~110%) | 3,05% (~110%) | chance x1,25 (~109%) | ~110% |
+
+No negativo, quanto cada jogo devolve (com a mesma estratégia de sempre):
+
+| Saldo da casa | Sorte da casa | Caça-níquel | Roleta (verm./preto) | Cara ou coroa | Dados (pares) | Plinko | Campo Minado | Blackjack (perfeito) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| -640 | 13% | ~77% | ~85% | ~84% | ~87% | ~91% | ~84% | ~85% |
+| -1280 | 26% | ~66% | ~72% | ~71% | ~74% | ~83% | ~71% | ~72% |
+| -2496 | 50% | ~44% | ~49% | ~48% | ~50% | ~68% | ~48% | ~47% |
+| -3840 | 77% | ~20% | ~22% | ~22% | ~23% | ~52% | ~22% | ~21% |
+| -4992 a -5000 | 100% | 0% | 0% | 0% | 0% | ~38% | 0% | 0% |
+
+Perto de -5000 **a casa ganha todas**: ninguém acerta nada (no Plinko a bola só cai nos buracos de 0,5x e 0,2x, que devolvem menos que a aposta).
 
 **Teto de +800 (desde a 1.14.0):** o saldo da casa não passa de **+800**; o que passar vai para o prêmio da **Loteria de Mobs**. Por isso, na prática, a chance dos jogadores sobe só nos degraus até +800 (até 43% no caça-níquel).
 
@@ -127,8 +138,8 @@ Botão direito na mesa abre o blackjack (21) contra o dealer. Os **créditos sã
 
 **Ligada ao caça-níquel:** o blackjack usa o **mesmo saldo da casa**:
 
-- O limite de **-2000** vale para tudo junto. Ao dar as cartas (e ao dobrar), a mesa **reserva** o pior caso para a casa (você tirar blackjack, ou ganhar a aposta dobrada) e só aceita a aposta se ele couber, contando também as mãos de outros jogadores em andamento. Se a aposta for alta demais, a tela mostra a aposta máxima do momento.
-- A **sorte da mesa** segue o saldo da casa: numa parte das cartas a mesa tira duas e dá a melhor para um lado e a pior para o outro. Com a casa no negativo, a melhor vai para o dealer (uns 1,6% a cada 64 negativos, até 50% perto de -2000); de 0 a +639 o jogo é **limpo**; de **+640** para cima, a melhor vai para você (1,5% a cada 64, até 15% em +1216).
+- O limite de **-5000** vale para tudo junto. Ao dar as cartas (e ao dobrar), a mesa **reserva** o pior caso para a casa (você tirar blackjack, ou ganhar a aposta dobrada) e só aceita a aposta se ele couber, contando também as mãos de outros jogadores em andamento. Se a aposta for alta demais, a tela mostra a aposta máxima do momento.
+- A **sorte da mesa** segue o saldo da casa: numa parte das cartas a mesa tira duas e dá a melhor para um lado e a pior para o outro. Com a casa no negativo, numa parte das cartas a mesa escolhe a dedo a melhor para o dealer e a pior para você (cada vez mais a cada 64 fichas; perto de -5000, todas, e o dealer sempre ganha); de 0 a +639 o jogo é **limpo**; de **+640** para cima, a melhor vai para você (1,5% a cada 64, até 15% em +1216).
 
 Quanto a mesa devolve (simulação com as regras do mod, 150 mil mãos ou mais por linha):
 
@@ -138,10 +149,11 @@ Quanto a mesa devolve (simulação com as regras do mod, 150 mil mãos ou mais p
 | +896 | ~104% | ~100% |
 | +640 | ~100% | ~96% |
 | 0 a +639 (limpo) | ~99% | ~94% |
-| -64 | ~98% | ~93% |
-| -640 | ~88% | ~82% |
-| -1280 | ~76% | ~71% |
-| -1984 a -2000 | ~64% | ~58% |
+| -640 | ~85% | ~81% |
+| -1280 | ~72% | ~69% |
+| -2496 | ~47% | ~44% |
+| -3840 | ~21% | ~20% |
+| -4992 a -5000 | 0% | 0% |
 
 ## Roleta
 
@@ -153,7 +165,7 @@ Botão direito na roleta abre a mesa da roleta (só com as cores, sem os número
 - **Vermelho ou preto devolve 2x** a aposta; **o verde devolve 36x**. Nos dois casos a roleta devolve em média **~97%**: a casa ganha com o 0 (quem aposta numa cor perde quando sai o verde).
 - A faixa ao lado da roda mostra as **últimas cores** que saíram (a mais nova em cima).
 
-**Ligada ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-2000**. Uma girada só é aceita se o pior caso (a sua cor sair) couber no limite: com a casa perto de 0, a aposta no verde fica limitada (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** do blackjack (numa parte das giradas a roda gira duas vezes e fica com a pior para o jogador: uns 1,6% a cada 64 negativos, até 50% perto de -2000). De 0 a +639 a roleta é limpa; de **+640** para cima, numa parte das giradas que você perderia a roda gira de novo: a chance da sua cor sobe aos poucos até **55%** no vermelho/preto e **3,05%** no verde em +1216, quando a roleta devolve uns **110%**.
+**Ligada ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-5000**. Uma girada só é aceita se o pior caso (a sua cor sair) couber no limite: com a casa perto de 0, a aposta no verde fica limitada (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** do blackjack (numa parte das giradas que você ganharia, a bolinha cai numa casa de outra cor a cada 64 fichas no negativo, uns 1,3% a mais das rodadas que você ganharia viram derrota; perto de -5000, todas). De 0 a +639 a roleta é limpa; de **+640** para cima, numa parte das giradas que você perderia a roda gira de novo: a chance da sua cor sobe aos poucos até **55%** no vermelho/preto e **3,05%** no verde em +1216, quando a roleta devolve uns **110%**.
 
 ## Corrida de Cavalos
 
@@ -164,7 +176,7 @@ Botão direito no bloco abre as apostas da corrida. Os **créditos**, o **espaç
 - **Clique na fileira de um cavalo** para apostar nele (a ficha aparece na caixinha), escolha a **APOSTA** com **-** e **+** e aperte **CORRER!**: os números correm nas raias até a linha de chegada, com ultrapassagens no meio; se o seu cavalo vencer, a aposta volta multiplicada.
 - Em cada cavalo, uns **90%** do que é apostado volta no longo prazo (um pouco menos, pelo arredondamento). Quando um azarão de **x10 ou mais** ganha, quem está perto é avisado no chat.
 
-**Ligada ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-2000**: a corrida só é aceita se o pior caso (o seu cavalo vencer) couber, então apostas altas em azarões ficam limitadas com a casa perto de 0 (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (o vencedor é sorteado duas vezes e fica o pior para o jogador: uns 1,6% a cada 64 negativos, até 50% perto de -2000). De 0 a +639 a corrida é limpa; de **+640** para cima, numa parte das corridas que o seu cavalo perderia o vencedor é sorteado de novo: a chance dele sobe aos poucos até **1,25 vez** a do dia em +1216 (20% vira 25%), quando cada cavalo devolve uns **110%**.
+**Ligada ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-5000**: a corrida só é aceita se o pior caso (o seu cavalo vencer) couber, então apostas altas em azarões ficam limitadas com a casa perto de 0 (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (numa parte das corridas que o seu cavalo ganharia, vence outro a cada 64 fichas no negativo, uns 1,3% a mais das rodadas que você ganharia viram derrota; perto de -5000, todas). De 0 a +639 a corrida é limpa; de **+640** para cima, numa parte das corridas que o seu cavalo perderia o vencedor é sorteado de novo: a chance dele sobe aos poucos até **1,25 vez** a do dia em +1216 (20% vira 25%), quando cada cavalo devolve uns **110%**.
 
 ## Jogo de Dados
 
@@ -186,7 +198,7 @@ Botão direito na mesa de dados abre o jogo. Os **créditos**, o **espaço das f
 - O **número do NÚMERO** fica no quadradinho da fileira: clique para aumentar, botão direito para diminuir, ou use a rodinha do mouse.
 - O prêmio é a aposta vezes o multiplicador, arredondado. PARES e ÍMPARES são jogo limpo (devolvem **100%** no longo prazo); NÚMERO, MENOR e MAIOR devolvem uns **92 a 95%**, e a casa fica com a diferença. O 7 não é nem MENOR nem MAIOR.
 
-**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-2000**: a jogada só é aceita se o pior caso (a sua aposta acertar) couber, então apostas altas no NÚMERO 2 ou 12 ficam limitadas com a casa perto de 0 (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (os dados rolam duas vezes e fica o pior para você: uns 1,6% a cada 64 negativos, até 50% perto de -2000); de 0 a +639 os dados são limpos; de **+640** para cima, numa parte das jogadas que você perderia os dados rolam de novo, e a chance de acertar sobe aos poucos até +1216.
+**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-5000**: a jogada só é aceita se o pior caso (a sua aposta acertar) couber, então apostas altas no NÚMERO 2 ou 12 ficam limitadas com a casa perto de 0 (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (numa parte das jogadas que você ganharia, os dados mostram outra soma a cada 64 fichas no negativo, uns 1,3% a mais das rodadas que você ganharia viram derrota; perto de -5000, todas); de 0 a +639 os dados são limpos; de **+640** para cima, numa parte das jogadas que você perderia os dados rolam de novo, e a chance de acertar sobe aos poucos até +1216.
 
 ## Cara ou Coroa
 
@@ -196,7 +208,7 @@ Botão direito na mesa de cara ou coroa abre o jogo. Os **créditos**, o **espa�
 - **APOSTA** com **+** e **-** (1 a 64) e **LANÇAR!**: a moeda gira no ar, mostrando o rosto e a coroa, e cai. O resultado aparece embaixo dela, e os últimos no quadro "ÚLTIMOS".
 - **Acertar devolve 2x** a aposta. A casa ganha porque, **uma vez em 25**, a moeda **cai em pé**, e aí ninguém acerta: cada lado sai em 48% das vezes, e o jogo devolve uns **96%**.
 
-**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-2000** (o pior caso é o seu lado sair). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (a moeda é lançada duas vezes e fica o pior para você: uns 1,6% a cada 64 negativos, até 50% perto de -2000); de 0 a +639 a moeda é limpa; de **+640** para cima, numa parte dos lançamentos que você perderia a moeda é lançada de novo, até o jogo devolver uns **110%** em +1216.
+**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-5000** (o pior caso é o seu lado sair). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (numa parte dos lançamentos que você ganharia, a moeda cai do outro lado a cada 64 fichas no negativo, uns 1,3% a mais das rodadas que você ganharia viram derrota; perto de -5000, todas); de 0 a +639 a moeda é limpa; de **+640** para cima, numa parte dos lançamentos que você perderia a moeda é lançada de novo, até o jogo devolver uns **110%** em +1216.
 
 ## Plinko de Slime
 
@@ -211,7 +223,7 @@ Botão direito no Plinko abre o jogo. Os **créditos**, o **espaço das fichas**
 
 - No total o Plinko devolve uns **98,4%** do que é apostado. Quando a conta não dá um número inteiro de fichas (0,5x de 1 ficha, por exemplo), a parte quebrada vira a chance de 1 ficha a mais (metade das vezes volta 1), então os multiplicadores valem igual para qualquer aposta.
 
-**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-2000** (o pior caso é a bola cair numa ponta, 10x; com a casa perto de 0 a aposta fica limitada e a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (a bola cai duas vezes e fica o pior buraco para você: uns 1,6% a cada 64 negativos, até 50% perto de -2000); de 0 a +639 o Plinko é limpo; de **+640** para cima, numa parte das quedas nos buracos de 0,5x e 0,2x a bola cai de novo, até o jogo devolver uns **110%** em +1216.
+**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-5000** (o pior caso é a bola cair numa ponta, 10x; com a casa perto de 0 a aposta fica limitada e a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (numa parte das quedas nos buracos de 2x e 10x, a bola cai num buraco de 0,5x ou 0,2x a cada 64 fichas no negativo, uns 1,3% a mais das rodadas que você ganharia viram derrota; perto de -5000, todas); de 0 a +639 o Plinko é limpo; de **+640** para cima, numa parte das quedas nos buracos de 0,5x e 0,2x a bola cai de novo, até o jogo devolver uns **110%** em +1216.
 
 ## Loteria de Mobs
 
@@ -247,7 +259,7 @@ Mais minas, mais difícil, e o multiplicador sobe mais rápido. Alguns exemplos:
 
 O multiplicador é o justo (pela chance de chegar até ali) vezes **0,96**: seja qual for a estratégia, o jogo devolve uns **96%** no longo prazo. O prêmio é arredondado para baixo.
 
-**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-2000**. Enquanto a rodada está aberta, a casa reserva o que pagaria se você sacasse, e só deixa cavar se o prêmio depois da próxima pedra ainda couber no limite: perto do limite, a tela avisa **"Limite da casa: hora de sacar!"**. Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (numa parte das cavadas o bloco é sorteado duas vezes e fica o pior para você); de +640 para cima, a primeira mina de cada rodada pode virar pedra preciosa.
+**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-5000**. Enquanto a rodada está aberta, a casa reserva o que pagaria se você sacasse, e só deixa cavar se o prêmio depois da próxima pedra ainda couber no limite: perto do limite, a tela avisa **"Limite da casa: hora de sacar!"**. Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (uma parte das rodadas já começa condenada, e o primeiro bloco cavado nela é mina a cada 64 fichas no negativo, uns 1,3% a mais das rodadas que você ganharia viram derrota; perto de -5000, todas); de +640 para cima, a primeira mina de cada rodada pode virar pedra preciosa.
 
 ## Instalação
 
@@ -260,7 +272,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.17.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.18.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -271,7 +283,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.17.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.18.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 

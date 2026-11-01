@@ -18,8 +18,9 @@ import net.minecraft.util.math.random.Random;
  * limpo); as outras, uns 92 a 95%, e a casa fica com a diferença.
  *
  * <p>A sorte segue o saldo da casa, como em todos os jogos ({@link Luck}). Com a casa no negativo, numa parte das
- * jogadas ({@link Luck#houseLuck}) os dados rolam duas vezes e fica o pior para o jogador. De 0 a +639 os dados são
- * limpos. De +640 para cima, numa parte das jogadas perdidas os dados rolam de novo ({@link #PLAYER_BOOST_PER_STEP}).
+ * jogadas ({@link Luck#houseLuck}) os dados mostram uma soma em que a aposta não ganha (em todas, perto do limite). De
+ * 0 a +639 os dados são limpos. De +640 para cima, numa parte das jogadas perdidas os dados rolam de novo
+ * ({@link #PLAYER_BOOST_PER_STEP}).
  */
 public final class Dice {
     public static final int EVEN = 0;
@@ -97,12 +98,11 @@ public final class Dice {
     /** Rola os dois dados para esta aposta: devolve {dado 1, dado 2}, cada um de 1 a 6. */
     public static int[] roll(Random random, int type, int number, long house) {
         int[] dice = throwDice(random);
-        if (random.nextFloat() < Luck.houseLuck(house)) {
-            // Sorte da casa: rola de novo e fica com o pior para o jogador.
-            int[] again = throwDice(random);
-            if (wins(type, number, sum(dice)) && !wins(type, number, sum(again))) {
-                dice = again;
-            }
+        if (wins(type, number, sum(dice)) && Luck.houseWins(random, house)) {
+            // Sorte da casa: os dados mostram uma soma em que a aposta não ganha.
+            do {
+                dice = throwDice(random);
+            } while (wins(type, number, sum(dice)));
         } else if (!wins(type, number, sum(dice))
                 && random.nextFloat() < Luck.retryChance(house, PLAYER_BOOST_PER_STEP, winChance(type, number))) {
             // Sorte do jogador: perdeu, mas os dados rolam de novo.

@@ -16,9 +16,9 @@ import net.minecraft.util.math.random.Random;
  *   <li>Com as duas primeiras cartas o jogador pode dobrar: dobra a aposta, recebe só mais uma carta e para.</li>
  * </ul>
  *
- * <p>A "sorte da mesa" segue o saldo da casa, como em todos os jogos ({@link Luck}): numa parte das cartas a mesa tira
- * duas e dá a melhor para um lado e a pior para o outro. Com a casa no negativo, a melhor vai para o dealer
- * ({@link Luck#houseLuck}: uns 1,6% a cada 64, até 50% perto de -2000); de 0 a +639 o jogo é limpo (uns 99%);
+ * <p>A "sorte da mesa" segue o saldo da casa, como em todos os jogos ({@link Luck}). Com a casa no negativo, numa parte
+ * das cartas ({@link Luck#houseLuck}) a mesa escolhe a dedo a melhor carta para o dealer e a pior para o jogador (em
+ * todas, perto de -5000: aí o dealer sempre ganha); de 0 a +639 o jogo é limpo (uns 99%);
  * de +640 para cima, a melhor vai para o jogador ({@link #playerLuck}: 1,5% a cada 64, até 15% em +1216, quando a
  * mesa devolve uns 110% para quem joga perfeito).
  */
@@ -107,18 +107,46 @@ public final class Blackjack {
     public static int draw(Random random, int[] hand, int count, boolean dealerHand, long house) {
         int card = random.nextInt(DECK);
         float houseLuck = Luck.houseLuck(house);
-        float playerLuck = playerLuck(house); // só uma das duas vale de cada vez
-        if (random.nextFloat() >= houseLuck + playerLuck) {
+        // Uma mão tem várias cartas: a chance por carta é menor (1 - raiz de 1 - sorte), para a mesa acompanhar os
+        // outros jogos; no último degrau ela também é 100%.
+        if (houseLuck > 0 && random.nextFloat() < 1.0F - (float) Math.sqrt(1.0F - houseLuck)) {
+            // Sorte da casa: a melhor carta possível para o dealer, a pior possível para o jogador.
+            return rigged(random, hand, count, dealerHand);
+        }
+        if (random.nextFloat() >= playerLuck(house)) {
             return card;
         }
+        // Sorte do jogador: tira duas e dá a melhor para ele e a pior para o dealer.
         int other = random.nextInt(DECK);
         int scoreCard = score(hand, count, card);
         int scoreOther = score(hand, count, other);
-        boolean helped = dealerHand == (houseLuck > 0);
-        if (helped) {
+        if (!dealerHand) {
             return scoreOther > scoreCard ? other : card;
         }
         return scoreOther < scoreCard ? other : card;
+    }
+
+    /**
+     * A carta escolhida a dedo entre os 13 valores (de um naipe qualquer): a que deixa a mão do dealer melhor, ou a do
+     * jogador pior (estourando, se der). Com a casa no último degrau toda carta é assim, e o dealer sempre ganha.
+     */
+    private static int rigged(Random random, int[] hand, int count, boolean dealerHand) {
+        int chosen = -1;
+        int chosenScore = 0;
+        int ties = 0;
+        for (int rank = 0; rank < 13; rank++) {
+            int card = rank + 13 * random.nextInt(4);
+            int score = score(hand, count, card);
+            boolean better = chosen < 0 || (dealerHand ? score > chosenScore : score < chosenScore);
+            if (better) {
+                chosen = card;
+                chosenScore = score;
+                ties = 1;
+            } else if (score == chosenScore && random.nextInt(++ties) == 0) {
+                chosen = card; // empate (10, J, Q, K): um deles ao acaso
+            }
+        }
+        return chosen;
     }
 
     /** Quão boa fica a mão com esta carta: o valor dela, ou -1 se estourar. */
