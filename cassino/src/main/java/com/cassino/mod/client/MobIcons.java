@@ -28,8 +28,7 @@ final class MobIcons {
         Identifier pig = tex("pig/pig");
         FACES[0] = new Face(64, 32, 8, 8, layer(pig, 8, 8, 8, 8, 0, 0), layer(pig, 17, 17, 4, 3, 2, 4));
         FACES[1] = new Face(64, 32, 8, 8, layer(tex("cow/cow"), 6, 6, 8, 8, 0, 0));
-        FACES[2] = new Face(64, 32, 6, 6, layer(tex("sheep/sheep"), 8, 8, 6, 6, 0, 0),
-                layer(tex("sheep/sheep_fur"), 6, 6, 6, 6, 0, 0));
+        FACES[2] = new Face(64, 32, 6, 6, layer(tex("sheep/sheep"), 8, 8, 6, 6, 0, 0));
         Identifier chicken = tex("chicken");
         FACES[3] = new Face(64, 32, 4, 6, layer(chicken, 3, 3, 4, 6, 0, 0), layer(chicken, 16, 2, 4, 2, 0, 2),
                 layer(chicken, 16, 6, 2, 2, 1, 4));
@@ -54,7 +53,8 @@ final class MobIcons {
                 layer(slime, 34, 6, 2, 2, 5.25F, 2), layer(slime, 33, 9, 1, 1, 4, 5),
                 layer(slime, 8, 8, 8, 8, 0, 0));
         FACES[16] = villagerLike(tex("illager/pillager"), 64, 64);
-        FACES[17] = new Face(64, 32, 8, 8, layer(tex("enderman/enderman"), 8, 8, 8, 8, 0, 0),
+        Identifier enderman = tex("enderman/enderman");
+        FACES[17] = new Face(64, 32, 8, 8, layer(enderman, 8, 24, 8, 8, 0, 0), layer(enderman, 8, 8, 8, 8, 0, 0),
                 layer(tex("enderman/enderman_eyes"), 8, 8, 8, 8, 0, 0));
         FACES[18] = new Face(64, 32, 8, 8, layer(tex("blaze"), 8, 8, 8, 8, 0, 0));
         FACES[19] = new Face(64, 32, 16, 16, layer(tex("ghast/ghast"), 16, 16, 16, 16, 0, 0));
