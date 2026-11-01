@@ -1,10 +1,12 @@
 package com.cassino.mod;
 
 import com.cassino.mod.block.BlackjackTableBlock;
+import com.cassino.mod.block.RouletteBlock;
 import com.cassino.mod.block.SlotMachineBlock;
 import com.cassino.mod.item.CoinItem;
 import com.cassino.mod.item.DiceItem;
 import com.cassino.mod.screen.BlackjackScreenHandler;
+import com.cassino.mod.screen.RouletteScreenHandler;
 import com.cassino.mod.screen.SlotMachineScreenHandler;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,6 +48,9 @@ public class Cassino implements ModInitializer {
     public static final Block BLACKJACK_TABLE =
             new BlackjackTableBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).strength(2.0F));
     public static final Item BLACKJACK_TABLE_ITEM = new BlockItem(BLACKJACK_TABLE, new Item.Settings());
+    public static final Block ROULETTE =
+            new RouletteBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).strength(2.0F));
+    public static final Item ROULETTE_ITEM = new BlockItem(ROULETTE, new Item.Settings());
 
     /** A tela do caça-níquel (rolos, aposta, créditos e o espaço das fichas). */
     public static final ScreenHandlerType<SlotMachineScreenHandler> SLOT_MACHINE_HANDLER = Registry.register(
@@ -55,6 +60,10 @@ public class Cassino implements ModInitializer {
     public static final ScreenHandlerType<BlackjackScreenHandler> BLACKJACK_HANDLER = Registry.register(
             Registries.SCREEN_HANDLER, id("blackjack"),
             new ScreenHandlerType<>(BlackjackScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
+    /** A tela da roleta (a roda, as cores para apostar, a aposta, os créditos e o espaço das fichas). */
+    public static final ScreenHandlerType<RouletteScreenHandler> ROULETTE_HANDLER = Registry.register(
+            Registries.SCREEN_HANDLER, id("roulette"),
+            new ScreenHandlerType<>(RouletteScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
 
     /** Tarefas para rodar daqui a alguns ticks (o aviso do jackpot espera os rolos pararem na tela). */
     private static final List<Later> LATER = new ArrayList<>();
@@ -69,6 +78,7 @@ public class Cassino implements ModInitializer {
                 entries.add(CHIP);
                 entries.add(SLOT_MACHINE_ITEM);
                 entries.add(BLACKJACK_TABLE_ITEM);
+                entries.add(ROULETTE_ITEM);
                 entries.add(DIE);
                 entries.add(COIN);
             })
@@ -87,6 +97,8 @@ public class Cassino implements ModInitializer {
         Registry.register(Registries.ITEM, id("slot_machine"), SLOT_MACHINE_ITEM);
         Registry.register(Registries.BLOCK, id("blackjack_table"), BLACKJACK_TABLE);
         Registry.register(Registries.ITEM, id("blackjack_table"), BLACKJACK_TABLE_ITEM);
+        Registry.register(Registries.BLOCK, id("roulette"), ROULETTE);
+        Registry.register(Registries.ITEM, id("roulette"), ROULETTE_ITEM);
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {

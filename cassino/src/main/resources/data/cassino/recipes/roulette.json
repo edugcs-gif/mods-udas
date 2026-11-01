@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "VPV", "PFP", "TTT" ],
+  "key": {
+    "V": { "item": "minecraft:red_wool" },
+    "P": { "item": "minecraft:black_wool" },
+    "F": { "item": "cassino:chip" },
+    "T": { "tag": "minecraft:planks" }
+  },
+  "result": { "item": "cassino:roulette", "count": 1 }
+}

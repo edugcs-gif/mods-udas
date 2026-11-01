@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "cassino:block/roulette_top",
+    "side": "cassino:block/roulette_side",
+    "bottom": "cassino:block/blackjack_table_bottom"
+  }
+}

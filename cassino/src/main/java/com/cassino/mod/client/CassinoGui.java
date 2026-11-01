@@ -85,7 +85,12 @@ final class CassinoGui {
 
     /** "APOSTA: 5" ou "CRÉDITOS: 150", com uma ficha pequena do lado. */
     static void drawAmount(DrawContext context, TextRenderer textRenderer, Text text, int textX, int textY) {
-        context.drawText(textRenderer, text, textX, textY, TEXT, false);
+        drawAmount(context, textRenderer, text, textX, textY, TEXT);
+    }
+
+    static void drawAmount(DrawContext context, TextRenderer textRenderer, Text text, int textX, int textY,
+                           int color) {
+        context.drawText(textRenderer, text, textX, textY, color, false);
         MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(textX + textRenderer.getWidth(text) + 2, textY - 2, 0.0F);

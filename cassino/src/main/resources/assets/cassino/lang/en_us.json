@@ -51,5 +51,17 @@
   "gui.cassino.blackjack.result.push": "Push: bet returned.",
   "gui.cassino.blackjack.result.bust": "Bust! -%s chips",
   "gui.cassino.blackjack.result.dealer_blackjack": "Dealer blackjack. -%s",
-  "gui.cassino.blackjack.result.lose": "The house wins. -%s chips"
+  "gui.cassino.blackjack.result.lose": "The house wins. -%s chips",
+  "block.cassino.roulette": "Roulette",
+  "gui.cassino.roulette.title": "Roulette",
+  "gui.cassino.roulette.box.0": "0",
+  "gui.cassino.roulette.box.1": "RED",
+  "gui.cassino.roulette.box.2": "BLACK",
+  "gui.cassino.roulette.color.0": "the GREEN 0",
+  "gui.cassino.roulette.color.1": "RED",
+  "gui.cassino.roulette.color.2": "BLACK",
+  "gui.cassino.roulette.rule": "Click a color to bet on it",
+  "gui.cassino.roulette.tip.rules": "The wheel has 37 pockets: 18 red, 18 black and the green 0. Red or black pays back 2x the bet; green pays back 36x. Click one of the colors on the table to choose your bet.",
+  "gui.cassino.roulette.result.win": "%s! +%s chips",
+  "gui.cassino.roulette.result.lose": "%s. Not this time."
 }
