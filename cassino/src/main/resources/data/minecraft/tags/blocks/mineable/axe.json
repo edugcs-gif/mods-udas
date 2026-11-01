@@ -1,1 +1,1 @@
-{ "values": [ "cassino:blackjack_table", "cassino:roulette", "cassino:horse_race", "cassino:dice_table" ] }
+{ "values": [ "cassino:blackjack_table", "cassino:roulette", "cassino:horse_race", "cassino:dice_table", "cassino:coin_flip" ] }

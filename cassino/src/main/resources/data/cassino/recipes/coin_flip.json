@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "MGM", "PFP", "S S" ],
+  "key": {
+    "M": { "item": "cassino:coin" },
+    "G": { "item": "minecraft:green_carpet" },
+    "P": { "tag": "minecraft:planks" },
+    "F": { "item": "cassino:chip" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "result": { "item": "cassino:coin_flip", "count": 1 }
+}

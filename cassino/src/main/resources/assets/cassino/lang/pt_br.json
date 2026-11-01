@@ -105,5 +105,22 @@
   "gui.cassino.dice.tip.2": "NÚMERO: ganha se a soma for exatamente %1$s. Sai %2$s vezes em 36. Paga %3$s.",
   "gui.cassino.dice.tip.3": "MENOR: ganha se a soma for de 2 a 6. Sai %2$s vezes em 36. Paga %3$s.",
   "gui.cassino.dice.tip.4": "MAIOR: ganha se a soma for de 8 a 12. Sai %2$s vezes em 36. Paga %3$s.",
-  "gui.cassino.dice.tip.number_box": "O número da aposta NÚMERO (2 a 12). Clique para aumentar, botão direito para diminuir, ou use a rodinha do mouse. Quanto mais difícil o número, mais ele paga."
+  "gui.cassino.dice.tip.number_box": "O número da aposta NÚMERO (2 a 12). Clique para aumentar, botão direito para diminuir, ou use a rodinha do mouse. Quanto mais difícil o número, mais ele paga.",
+  "block.cassino.coin_flip": "Mesa de Cara ou Coroa",
+  "gui.cassino.coin.title": "Cara ou Coroa",
+  "gui.cassino.coin.flip": "LANÇAR!",
+  "gui.cassino.coin.result": "RESULTADO",
+  "gui.cassino.coin.bets": "APOSTAS",
+  "gui.cassino.coin.side.0": "CARA",
+  "gui.cassino.coin.side.1": "COROA",
+  "gui.cassino.coin.side.2": "EM PÉ",
+  "gui.cassino.coin.shown.0": "CARA!",
+  "gui.cassino.coin.shown.1": "COROA!",
+  "gui.cassino.coin.shown.2": "EM PÉ!",
+  "gui.cassino.coin.history": "ÚLTIMOS:",
+  "gui.cassino.coin.hint": "Clique em CARA ou COROA para escolher",
+  "gui.cassino.coin.result.win": "Deu %s! +%s fichas",
+  "gui.cassino.coin.result.lose": "Deu %s. Não foi dessa vez.",
+  "gui.cassino.coin.result.edge": "A moeda caiu em pé! A casa ganha.",
+  "gui.cassino.coin.tip.rules": "Escolha CARA ou COROA e lance a moeda: acertar devolve 2x a aposta. Uma vez em 25 a moeda cai em pé, e aí a casa ganha."
 }

@@ -13,5 +13,6 @@ public class CassinoClient implements ClientModInitializer {
         HandledScreens.register(Cassino.ROULETTE_HANDLER, RouletteScreen::new);
         HandledScreens.register(Cassino.HORSE_RACE_HANDLER, HorseRaceScreen::new);
         HandledScreens.register(Cassino.DICE_HANDLER, DiceScreen::new);
+        HandledScreens.register(Cassino.COIN_FLIP_HANDLER, CoinFlipScreen::new);
     }
 }

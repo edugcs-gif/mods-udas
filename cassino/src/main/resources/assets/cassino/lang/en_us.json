@@ -105,5 +105,22 @@
   "gui.cassino.dice.tip.2": "NUMBER: wins if the total is exactly %1$s. Comes up %2$s times in 36. Pays %3$s.",
   "gui.cassino.dice.tip.3": "LOW: wins if the total is 2 to 6. Comes up %2$s times in 36. Pays %3$s.",
   "gui.cassino.dice.tip.4": "HIGH: wins if the total is 8 to 12. Comes up %2$s times in 36. Pays %3$s.",
-  "gui.cassino.dice.tip.number_box": "The number for the NUMBER bet (2 to 12). Click to raise it, right-click to lower it, or use the mouse wheel. The harder the number, the more it pays."
+  "gui.cassino.dice.tip.number_box": "The number for the NUMBER bet (2 to 12). Click to raise it, right-click to lower it, or use the mouse wheel. The harder the number, the more it pays.",
+  "block.cassino.coin_flip": "Coin Flip Table",
+  "gui.cassino.coin.title": "Heads or Tails",
+  "gui.cassino.coin.flip": "FLIP!",
+  "gui.cassino.coin.result": "RESULT",
+  "gui.cassino.coin.bets": "BETS",
+  "gui.cassino.coin.side.0": "HEADS",
+  "gui.cassino.coin.side.1": "TAILS",
+  "gui.cassino.coin.side.2": "EDGE",
+  "gui.cassino.coin.shown.0": "HEADS!",
+  "gui.cassino.coin.shown.1": "TAILS!",
+  "gui.cassino.coin.shown.2": "EDGE!",
+  "gui.cassino.coin.history": "LAST:",
+  "gui.cassino.coin.hint": "Click HEADS or TAILS to choose",
+  "gui.cassino.coin.result.win": "%s! +%s chips",
+  "gui.cassino.coin.result.lose": "%s. Not this time.",
+  "gui.cassino.coin.result.edge": "The coin landed on its edge! The house wins.",
+  "gui.cassino.coin.tip.rules": "Pick HEADS or TAILS and flip the coin: a hit pays 2x the bet. Once in 25 flips the coin lands on its edge, and the house wins."
 }
