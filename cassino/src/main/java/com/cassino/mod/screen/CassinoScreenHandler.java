@@ -19,7 +19,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
  * O que as telas do cassino (caça-níquel e mesa de blackjack) têm em comum: os créditos do jogador, o espaço das
  * fichas com DEPÓSITO e RETIRADA, e o inventário embaixo.
  *
- * <p>A tela também mostra o saldo da casa ({@link #house}), o mesmo em todos os jogos.
+ * <p>A tela também mostra o saldo da casa ({@link #house}), o mesmo em todos os jogos. No negativo ela mostra 0: os
+ * jogadores não ficam sabendo quando a casa está devendo (e jogando com mais sorte).
  *
  * <p>Os créditos são do jogador, guardados no {@link CassinoState}: valem em qualquer máquina, continuam lá depois
  * de fechar a tela, e ninguém mais mexe neles. DEPÓSITO transforma as fichas do espaço em créditos (1 ficha = 1
@@ -38,7 +39,7 @@ public abstract class CassinoScreenHandler extends ScreenHandler {
     private final Block block;
 
     protected int credits;
-    /** O saldo da casa, só para a tela mostrar (no servidor ele vem do cofre). */
+    /** O saldo da casa, só para a tela mostrar (no servidor ele vem do cofre); nunca menor que 0. */
     private int house;
 
     /**
@@ -75,7 +76,7 @@ public abstract class CassinoScreenHandler extends ScreenHandler {
             addSlot(new Slot(playerInventory, column, inventoryX + 1 + column * 18, hotbarY + 1));
         }
 
-        // 0 e 1: os créditos do jogador; 2 e 3: o saldo da casa (pode ser negativo: vai inteiro, em duas partes).
+        // 0 e 1: os créditos do jogador; 2 e 3: o saldo da casa (em duas partes, porque passa de 16 bits).
         addProperties(new PropertyDelegate() {
             @Override
             public int get(int index) {
@@ -128,13 +129,14 @@ public abstract class CassinoScreenHandler extends ScreenHandler {
         return credits;
     }
 
-    /** O saldo da casa: o que o cassino já ganhou (positivo) ou pagou a mais (negativo), somando todos os jogos. */
+    /** O saldo da casa, somando todos os jogos: o que o cassino já ganhou, ou 0 se ele estiver no negativo. */
     public int house() {
         return house;
     }
 
     private int houseValue() {
-        return state == null ? house : (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, state.house()));
+        // No negativo a tela mostra 0: o valor de verdade nem sai do servidor.
+        return state == null ? house : (int) Math.max(0, Math.min(Integer.MAX_VALUE, state.house()));
     }
 
     /** Quantas fichas estão no espaço ao lado de DEPÓSITO. */

@@ -78,5 +78,5 @@
   "gui.cassino.race.result.lose": "%s venceu.",
   "message.cassino.race.longshot": "%s ganhou %s fichas apostando no azarão %s (x%s)!",
   "gui.cassino.house": "CASA: %s",
-  "gui.cassino.house.tip": "Saldo da casa: quanto o cassino já ganhou (+) ou pagou a mais do que recebeu (-) no servidor, somando todos os jogos. Ele nunca passa de -640; no negativo, as chances dos jogadores caem aos poucos até a casa se recuperar."
+  "gui.cassino.house.tip": "Saldo da casa: quanto o cassino já ganhou no servidor, somando todos os jogos. A partir de +640, a chance de ganhar sobe aos poucos em todos os jogos, para devolver as fichas aos jogadores."
 }

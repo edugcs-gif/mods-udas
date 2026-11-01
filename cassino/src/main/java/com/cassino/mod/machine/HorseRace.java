@@ -16,9 +16,11 @@ import net.minecraft.util.math.random.Random;
  *   <li>Na corrida, o vencedor é sorteado pelas chances do dia, e os outros chegam em ordem sorteada pelas forças.</li>
  * </ul>
  *
- * <p>A "sorte da casa" segue o saldo da casa (o mesmo das outras máquinas, veja {@link CassinoState}): com a casa no
- * negativo, numa parte das corridas ({@link Blackjack#houseLuck}) o vencedor é sorteado duas vezes e fica o pior para
- * o jogador. Com a casa no positivo a corrida é limpa.
+ * <p>A sorte segue o saldo da casa, como em todos os jogos ({@link Luck}). Com a casa no negativo, numa parte das
+ * corridas ({@link Luck#houseLuck}) o vencedor é sorteado duas vezes e fica o pior para o jogador. De 0 a +639 a
+ * corrida é limpa. De +640 para cima, a chance do cavalo escolhido sobe {@link #PLAYER_BOOST_PER_STEP} dela a cada
+ * degrau (numa parte das derrotas o vencedor é sorteado de novo): no último degrau, em +1216, ela é 1,25 vez a do dia
+ * (20% vira 25%), e cada cavalo devolve uns 110%.
  */
 public final class HorseRace {
     public static final int HORSES = 7;
@@ -27,6 +29,8 @@ public final class HorseRace {
     public static final int MIN_ODDS_10 = 15;
     public static final int MAX_ODDS_10 = 300;
     private static final int TICKS_PER_DAY = 24_000;
+    /** Quanto a chance do cavalo escolhido sobe (proporcionalmente) a cada degrau do lucro da casa. */
+    public static final double PLAYER_BOOST_PER_STEP = 0.025;
 
     /** Os nomes que podem correr (7 por dia). */
     public static final String[] NAMES = {
@@ -106,12 +110,16 @@ public final class HorseRace {
     public static int[] race(Random random, Lineup lineup, int choice, long house) {
         double[] chance = lineup.chance();
         int winner = pick(random, chance, new boolean[HORSES]);
-        if (random.nextFloat() < Blackjack.houseLuck(house)) {
+        if (random.nextFloat() < Luck.houseLuck(house)) {
             // Sorte da casa: sorteia de novo e fica com o pior para o jogador.
             int again = pick(random, chance, new boolean[HORSES]);
             if (winner == choice && again != choice) {
                 winner = again;
             }
+        } else if (winner != choice
+                && random.nextFloat() < Luck.retryChance(house, PLAYER_BOOST_PER_STEP, chance[choice])) {
+            // Sorte do jogador: o cavalo dele perdeu, mas o vencedor é sorteado de novo.
+            winner = pick(random, chance, new boolean[HORSES]);
         }
         int[] order = new int[HORSES];
         boolean[] done = new boolean[HORSES];

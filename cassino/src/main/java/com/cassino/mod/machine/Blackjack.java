@@ -16,10 +16,11 @@ import net.minecraft.util.math.random.Random;
  *   <li>Com as duas primeiras cartas o jogador pode dobrar: dobra a aposta, recebe só mais uma carta e para.</li>
  * </ul>
  *
- * <p>A "sorte da mesa" segue o saldo da casa (o mesmo do caça-níquel, veja {@link CassinoState}), como as chances
- * do caça-níquel: com a casa no negativo, numa parte das cartas ({@link #houseLuck}) a mesa tira duas e fica com a
- * melhor para a casa. Com a casa no positivo o jogo é limpo: o blackjack limpo já devolve uns 99% para quem joga
- * perfeito, então qualquer ajuda ao jogador faria a mesa pagar mais do que recebe.
+ * <p>A "sorte da mesa" segue o saldo da casa, como em todos os jogos ({@link Luck}): numa parte das cartas a mesa tira
+ * duas e dá a melhor para um lado e a pior para o outro. Com a casa no negativo, a melhor vai para o dealer
+ * ({@link Luck#houseLuck}: 5% a cada 64, até 50%); de 0 a +639 o jogo é limpo (devolve uns 99% para quem joga perfeito);
+ * de +640 para cima, a melhor vai para o jogador ({@link #playerLuck}: 1,5% a cada 64, até 15% em +1216, quando a
+ * mesa devolve uns 110% para quem joga perfeito).
  */
 public final class Blackjack {
     public static final int COPAS = 0;
@@ -90,27 +91,31 @@ public final class Blackjack {
 
     // ---------------------------------------------------------------- sorte da mesa
 
-    /** Fichas de saldo da casa por degrau da sorte (o mesmo degrau do caça-níquel). */
-    private static final int STEP = 64;
+    /** Quanto a sorte do jogador sobe a cada degrau do lucro da casa ({@link Luck#profitStep}). */
+    public static final float PLAYER_LUCK_PER_STEP = 0.015F;
 
-    /** Com a casa no negativo: chance de uma carta sair a melhor para a casa entre duas (5% a cada 64, até 50%). */
-    public static float houseLuck(long house) {
-        return house >= 0 ? 0.0F : 0.05F * Math.min(10, -house / STEP);
+    /** Com a casa em +640 ou mais: a chance de uma carta sair a melhor para o jogador entre duas. */
+    public static float playerLuck(long house) {
+        return PLAYER_LUCK_PER_STEP * Luck.profitStep(house);
     }
 
     /**
-     * Tira uma carta para a mão {@code hand} (com {@code count} cartas). {@code dealerHand} diz de quem é a mão: com a
-     * sorte da casa, a mão do dealer fica com a melhor de duas cartas, e a do jogador com a pior.
+     * Tira uma carta para a mão {@code hand} (com {@code count} cartas). {@code dealerHand} diz de quem é a mão. Com a
+     * sorte da casa (casa no negativo) a mão do dealer fica com a melhor de duas cartas, e a do jogador com a pior; com
+     * a sorte do jogador (casa em +640 ou mais), o contrário.
      */
     public static int draw(Random random, int[] hand, int count, boolean dealerHand, long house) {
         int card = random.nextInt(DECK);
-        if (random.nextFloat() >= houseLuck(house)) {
+        float houseLuck = Luck.houseLuck(house);
+        float playerLuck = playerLuck(house); // só uma das duas vale de cada vez
+        if (random.nextFloat() >= houseLuck + playerLuck) {
             return card;
         }
         int other = random.nextInt(DECK);
         int scoreCard = score(hand, count, card);
         int scoreOther = score(hand, count, other);
-        if (dealerHand) {
+        boolean helped = dealerHand == (houseLuck > 0);
+        if (helped) {
             return scoreOther > scoreCard ? other : card;
         }
         return scoreOther < scoreCard ? other : card;

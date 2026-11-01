@@ -52,21 +52,20 @@ final class CassinoGui {
     private static final int HOUSE_Y = 8;
     private static final float HOUSE_SCALE = 0.75F;
     private static final int HOUSE_POSITIVE = 0xFF1E7A1E;
-    private static final int HOUSE_NEGATIVE = 0xFFB02020;
 
+    /** O servidor manda 0 quando a casa está no negativo, então aqui ela nunca é menor que 0. */
     private static Text houseText(int house) {
-        String value = house > 0 ? "+" + house : Integer.toString(house);
-        return Text.translatable("gui.cassino.house", value);
+        return Text.translatable("gui.cassino.house", house > 0 ? "+" + house : "0");
     }
 
-    /** "CASA: +1234" no canto de cima (coordenadas a partir do canto da tela): verde no lucro, vermelho no negativo. */
+    /** "CASA: +1234" no canto de cima (coordenadas a partir do canto da tela): verde no lucro, cinza no 0. */
     static void drawHouse(DrawContext context, TextRenderer textRenderer, int house) {
         MatrixStack matrices = context.getMatrices();
         matrices.push();
         matrices.translate(HOUSE_X, HOUSE_Y, 0.0F);
         matrices.scale(HOUSE_SCALE, HOUSE_SCALE, 1.0F);
         context.drawText(textRenderer, houseText(house), 0, 0,
-                house > 0 ? HOUSE_POSITIVE : house < 0 ? HOUSE_NEGATIVE : TEXT, false);
+                house > 0 ? HOUSE_POSITIVE : TEXT, false);
         matrices.pop();
     }
 
