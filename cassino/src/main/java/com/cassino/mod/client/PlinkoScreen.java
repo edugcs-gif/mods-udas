@@ -280,6 +280,9 @@ public class PlinkoScreen extends HandledScreen<PlinkoScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawTycoonTooltip(context, textRenderer, handler, x, y, mouseX, mouseY,
+                PlinkoScreenHandler.INVENTORY_X, PlinkoScreenHandler.INVENTORY_Y,
+                PlinkoScreenHandler.HOTBAR_Y);
         CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
     }
 
@@ -398,5 +401,7 @@ public class PlinkoScreen extends HandledScreen<PlinkoScreenHandler> {
                 RIGHT_X + 4, 61, INFO_TEXT);
         CassinoGui.drawInventoryLabel(context, textRenderer, PlinkoScreenHandler.INVENTORY_X,
                 PlinkoScreenHandler.INVENTORY_Y);
+        CassinoGui.drawTycoon(context, textRenderer, handler, PlinkoScreenHandler.INVENTORY_X,
+                PlinkoScreenHandler.INVENTORY_Y, PlinkoScreenHandler.HOTBAR_Y);
     }
 }

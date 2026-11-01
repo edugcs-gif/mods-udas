@@ -153,5 +153,13 @@
   "message.cassino.lottery.draw.win_many": "%s %s was drawn! Winners: %s (+%s chips each).",
   "message.cassino.lottery.won.title": "YOU WON!",
   "message.cassino.lottery.won.subtitle": "+%s chips in the Mob Lottery",
-  "message.cassino.lottery.won.chat": "You won %s chips in the Mob Lottery! They are already in your casino credits."
+  "message.cassino.lottery.won.chat": "You won %s chips in the Mob Lottery! They are already in your casino credits.",
+  "gui.cassino.tycoon.title": "TYCOON",
+  "gui.cassino.tycoon.nobody": "nobody yet",
+  "gui.cassino.tycoon.you": "YOUR RANK",
+  "gui.cassino.tycoon.of": "of %s",
+  "gui.cassino.tycoon.is_you": "it's you!",
+  "gui.cassino.tycoon.unranked": "no credits",
+  "gui.cassino.tycoon.tip": "The server tycoon is whoever has the most casino credits (chips deposited in the machines, plus winnings). You are #%s out of %s players with credits.",
+  "gui.cassino.tycoon.tip.unranked": "The server tycoon is whoever has the most casino credits. Deposit chips in a machine to join the ranking."
 }

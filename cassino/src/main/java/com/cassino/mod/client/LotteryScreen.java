@@ -17,7 +17,7 @@ import net.minecraft.text.Text;
 /**
  * A tela da loteria de mobs: a tabela colorida com os 25 mobs à esquerda (clique num para escolher) e APOSTAR!, o
  * prêmio acumulado, os créditos, quanto falta para o sorteio, a sua aposta de hoje, o último mob sorteado, o espaço das
- * fichas e DEPÓSITO à direita; RETIRADA ao lado do inventário.
+ * fichas e DEPÓSITO à direita; o magnata à esquerda do inventário e RETIRADA à direita dele.
  *
  * <p>O sorteio não acontece aqui: ele sai sozinho quando o dia do Minecraft acaba (veja {@link Lottery}).
  */
@@ -90,7 +90,8 @@ public class LotteryScreen extends HandledScreen<LotteryScreenHandler> {
                 .build());
         addDrawableChild(ButtonWidget.builder(Text.translatable("gui.cassino.slot.withdraw"),
                         button -> click(LotteryScreenHandler.BUTTON_WITHDRAW))
-                .dimensions(x + GRID_X, y + LotteryScreenHandler.INVENTORY_Y, 64, 18)
+                .dimensions(x + LotteryScreenHandler.INVENTORY_X + 168, y + LotteryScreenHandler.INVENTORY_Y,
+                        63, 18)
                 .tooltip(Tooltip.of(Text.translatable("gui.cassino.slot.tip.withdraw")))
                 .build());
     }
@@ -198,6 +199,9 @@ public class LotteryScreen extends HandledScreen<LotteryScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawTycoonTooltip(context, textRenderer, handler, x, y, mouseX, mouseY,
+                LotteryScreenHandler.INVENTORY_X, LotteryScreenHandler.INVENTORY_Y,
+                LotteryScreenHandler.HOTBAR_Y);
         int mob = cellAt(mouseX, mouseY);
         if (mob >= 0) {
             context.drawTooltip(textRenderer, Text.translatable("gui.cassino.lottery.cell", Lottery.name(mob)),
@@ -304,6 +308,8 @@ public class LotteryScreen extends HandledScreen<LotteryScreenHandler> {
 
         CassinoGui.drawInventoryLabel(context, textRenderer, LotteryScreenHandler.INVENTORY_X,
                 LotteryScreenHandler.INVENTORY_Y);
+        CassinoGui.drawTycoon(context, textRenderer, handler, LotteryScreenHandler.INVENTORY_X,
+                LotteryScreenHandler.INVENTORY_Y, LotteryScreenHandler.HOTBAR_Y);
     }
 
     /** O título pequeno em cima e o nome do mob ao lado do rosto. */

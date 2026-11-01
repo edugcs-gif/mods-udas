@@ -294,6 +294,9 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawTycoonTooltip(context, textRenderer, handler, x, y, mouseX, mouseY,
+                DiceScreenHandler.INVENTORY_X, DiceScreenHandler.INVENTORY_Y,
+                DiceScreenHandler.HOTBAR_Y);
         drawTableTooltip(context, mouseX, mouseY);
         CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
     }
@@ -447,6 +450,8 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
                 RIGHT_X + 4, 61, INFO_TEXT);
         CassinoGui.drawInventoryLabel(context, textRenderer, DiceScreenHandler.INVENTORY_X,
                 DiceScreenHandler.INVENTORY_Y);
+        CassinoGui.drawTycoon(context, textRenderer, handler, DiceScreenHandler.INVENTORY_X,
+                DiceScreenHandler.INVENTORY_Y, DiceScreenHandler.HOTBAR_Y);
     }
 
     /** "ÚLTIMOS:" e as últimas somas numa linha (a da jogada em andamento só aparece quando os dados param). */

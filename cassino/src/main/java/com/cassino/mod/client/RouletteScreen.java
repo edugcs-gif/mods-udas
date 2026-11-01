@@ -256,6 +256,9 @@ public class RouletteScreen extends HandledScreen<RouletteScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawTycoonTooltip(context, textRenderer, handler, x, y, mouseX, mouseY,
+                RouletteScreenHandler.INVENTORY_X, RouletteScreenHandler.INVENTORY_Y,
+                RouletteScreenHandler.HOTBAR_Y);
         CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
     }
 
@@ -378,6 +381,8 @@ public class RouletteScreen extends HandledScreen<RouletteScreenHandler> {
                 RIGHT_X + 4, 61, INFO_TEXT);
         CassinoGui.drawInventoryLabel(context, textRenderer, RouletteScreenHandler.INVENTORY_X,
                 RouletteScreenHandler.INVENTORY_Y);
+        CassinoGui.drawTycoon(context, textRenderer, handler, RouletteScreenHandler.INVENTORY_X,
+                RouletteScreenHandler.INVENTORY_Y, RouletteScreenHandler.HOTBAR_Y);
     }
 
     /** Texto branco centralizado em {@code centerX}, diminuído se não couber em {@code maxWidth}. */

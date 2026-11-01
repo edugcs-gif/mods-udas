@@ -1,6 +1,7 @@
 package com.cassino.mod.client;
 
 import com.cassino.mod.Cassino;
+import com.cassino.mod.screen.CassinoScreenHandler;
 import java.util.Locale;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -8,6 +9,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 
 /** O desenho comum às telas do cassino: o painel, o título grande, os espaços, os valores com ficha e o inventário. */
 final class CassinoGui {
@@ -135,6 +137,94 @@ final class CassinoGui {
         matrices.scale(scale, scale, 1.0F);
         context.drawText(textRenderer, text, -width / 2, 0, color, false);
         matrices.pop();
+    }
+
+    // ---------------------------------------------------------------- o magnata (ao lado do inventário)
+
+    private static final Identifier CROWN = Cassino.id("textures/gui/crown.png");
+    private static final int TYCOON_BG = 0xFF2E2A22;
+    private static final int TYCOON_OUTLINE = 0xFF9A7414;
+    private static final int TYCOON_GOLD = 0xFFF2C230;
+    private static final int TYCOON_TEXT = 0xFFE8E8E8;
+    private static final int TYCOON_LABEL = 0xFFA8A8A8;
+
+    /** O quadro do magnata: à esquerda do inventário, da altura do "INVENTÁRIO" até o fim da barra de baixo. */
+    private static int[] tycoonBox(int inventoryX, int inventoryY, int hotbarY) {
+        int left = 8;
+        int top = inventoryY - 8;
+        return new int[] {left, top, inventoryX - 4 - left, hotbarY + 18 - top};
+    }
+
+    /**
+     * O magnata do servidor (quem tem mais créditos no cassino: o nome e quanto tem, com uma coroa) e a posição do
+     * jogador no ranking, num quadro ao lado do inventário (coordenadas a partir do canto da tela).
+     */
+    static void drawTycoon(DrawContext context, TextRenderer textRenderer, CassinoScreenHandler handler,
+                           int inventoryX, int inventoryY, int hotbarY) {
+        int[] box = tycoonBox(inventoryX, inventoryY, hotbarY);
+        int left = box[0];
+        int top = box[1];
+        int width = box[2];
+        int center = left + width / 2;
+        int inner = width - 4;
+        context.fill(left, top, left + width, top + box[3], TYCOON_OUTLINE);
+        context.fill(left + 1, top + 1, left + width - 1, top + box[3] - 1, TYCOON_BG);
+
+        context.drawTexture(CROWN, center - 6, top + 2, 12, 12, 0.0F, 0.0F, 16, 16, 16, 16);
+        drawFittedText(context, textRenderer, Text.translatable("gui.cassino.tycoon.title"), center, top + 15, inner,
+                TYCOON_GOLD);
+        String name = handler.tycoonName();
+        if (name.isEmpty()) {
+            drawFittedText(context, textRenderer, Text.translatable("gui.cassino.tycoon.nobody"), center, top + 26,
+                    inner, TYCOON_LABEL);
+        } else {
+            drawFittedText(context, textRenderer, Text.literal(name), center, top + 26, inner, TYCOON_TEXT);
+            Text amount = Text.literal(Integer.toString(handler.tycoonCredits()));
+            int amountWidth = textRenderer.getWidth(amount) + 10;
+            float scale = Math.min(1.0F, inner / (float) amountWidth);
+            MatrixStack matrices = context.getMatrices();
+            matrices.push();
+            matrices.translate(center - amountWidth * scale / 2.0F, top + 36 + (1.0F - scale) * 4.0F, 0.0F);
+            matrices.scale(scale, scale, 1.0F);
+            context.drawText(textRenderer, amount, 0, 0, TYCOON_GOLD, false);
+            matrices.translate(textRenderer.getWidth(amount) + 1, -1, 0.0F);
+            matrices.scale(0.56F, 0.56F, 1.0F);
+            context.drawItem(CHIP, 0, 0);
+            matrices.pop();
+        }
+
+        context.fill(left + 3, top + 47, left + width - 3, top + 48, TYCOON_OUTLINE);
+        drawFittedText(context, textRenderer, Text.translatable("gui.cassino.tycoon.you"), center, top + 51, inner,
+                TYCOON_LABEL);
+        int rank = handler.rank();
+        Text position = rank > 0 ? Text.literal(rank + "º") : Text.literal("-");
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(center, top + 61, 0.0F);
+        matrices.scale(1.5F, 1.5F, 1.0F);
+        context.drawText(textRenderer, position, -textRenderer.getWidth(position) / 2, 0,
+                rank == 1 ? TYCOON_GOLD : TYCOON_TEXT, true);
+        matrices.pop();
+        Text detail = rank == 1 ? Text.translatable("gui.cassino.tycoon.is_you")
+                : rank > 0 ? Text.translatable("gui.cassino.tycoon.of", handler.rankedPlayers())
+                : Text.translatable("gui.cassino.tycoon.unranked");
+        drawFittedText(context, textRenderer, detail, center, top + box[3] - 10, inner,
+                rank == 1 ? TYCOON_GOLD : TYCOON_LABEL);
+    }
+
+    /** Com o mouse em cima do quadro do magnata: a explicação. */
+    static void drawTycoonTooltip(DrawContext context, TextRenderer textRenderer, CassinoScreenHandler handler,
+                                  int panelX, int panelY, int mouseX, int mouseY, int inventoryX, int inventoryY,
+                                  int hotbarY) {
+        int[] box = tycoonBox(inventoryX, inventoryY, hotbarY);
+        int left = panelX + box[0];
+        int top = panelY + box[1];
+        if (mouseX >= left && mouseX < left + box[2] && mouseY >= top && mouseY < top + box[3]) {
+            Text tip = handler.rank() > 0
+                    ? Text.translatable("gui.cassino.tycoon.tip", handler.rank(), handler.rankedPlayers())
+                    : Text.translatable("gui.cassino.tycoon.tip.unranked");
+            context.drawOrderedTooltip(textRenderer, textRenderer.wrapLines(tip, 200), mouseX, mouseY);
+        }
     }
 
     /** "INVENTÁRIO" em cima dos espaços (coordenadas a partir do canto da tela). */

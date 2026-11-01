@@ -1,7 +1,10 @@
 package com.cassino.mod.machine;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -20,6 +23,7 @@ import net.minecraft.world.PersistentState;
  *       desce com cada prêmio. Ele mede quantas fichas o cassino já criou (negativo) ou destruiu (positivo) no
  *       servidor, e nunca passa de {@link #MAX_HOUSE_DEBT} negativo (veja {@link SlotMachine}). Também nunca passa de
  *       {@link #LOTTERY_HOUSE_CAP}: o que passar vai para o prêmio da loteria;</li>
+ *   <li>o <b>nome</b> de cada jogador (para o ranking: o <b>magnata</b> é quem tem mais créditos);</li>
  *   <li>a <b>loteria de mobs</b> ({@link Lottery}), com o saldo separado: o prêmio acumulado, as apostas do dia, o
  *       último mob sorteado e os avisos de prêmio para quem ganhou sem estar no jogo.</li>
  * </ul>
@@ -40,6 +44,10 @@ public class CassinoState extends PersistentState {
     private long house;
     private long reserved;
     private final Map<UUID, Integer> balances = new HashMap<>();
+    private final Map<UUID, String> names = new HashMap<>();
+    /** O ranking por créditos (do mais rico ao mais pobre), refeito quando algum saldo muda; não é salvo. */
+    private List<UUID> ranking;
+    private final Map<UUID, Integer> rankOf = new HashMap<>();
 
     /** Uma aposta na loteria: o mob (índice em {@link Lottery#MOBS}) e o nome do jogador (para o anúncio). */
     public record LotteryBet(int mob, String name) {
@@ -165,7 +173,52 @@ public class CassinoState extends PersistentState {
         } else {
             balances.put(player, value);
         }
+        ranking = null;
         markDirty();
+    }
+
+    // ---------------------------------------------------------------- ranking (o magnata)
+
+    /** Guarda o nome do jogador (para mostrar no ranking, mesmo quando ele não está no jogo). */
+    public void rememberName(UUID player, String name) {
+        if (!name.equals(names.put(player, name))) {
+            ranking = null;
+            markDirty();
+        }
+    }
+
+    public String name(UUID player) {
+        return names.getOrDefault(player, "?");
+    }
+
+    private List<UUID> ranking() {
+        if (ranking == null) {
+            ranking = new ArrayList<>(balances.keySet());
+            ranking.sort(Comparator.comparingInt((UUID id) -> balances.get(id)).reversed()
+                    .thenComparing(id -> names.getOrDefault(id, "")));
+            rankOf.clear();
+            for (int i = 0; i < ranking.size(); i++) {
+                rankOf.put(ranking.get(i), i + 1);
+            }
+        }
+        return ranking;
+    }
+
+    /** A posição do jogador no ranking de créditos (1 = o magnata), ou 0 se ele não tem créditos. */
+    public int rank(UUID player) {
+        ranking();
+        return rankOf.getOrDefault(player, 0);
+    }
+
+    /** Quantos jogadores têm créditos (e entram no ranking). */
+    public int rankedPlayers() {
+        return balances.size();
+    }
+
+    /** O magnata: quem tem mais créditos no cassino, ou {@code null} se ninguém tem. */
+    public UUID tycoon() {
+        List<UUID> list = ranking();
+        return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
@@ -179,6 +232,14 @@ public class CassinoState extends PersistentState {
             list.add(player);
         }
         nbt.put("Balances", list);
+        NbtList nameList = new NbtList();
+        for (Map.Entry<UUID, String> entry : names.entrySet()) {
+            NbtCompound player = new NbtCompound();
+            player.putUuid("Player", entry.getKey());
+            player.putString("Name", entry.getValue());
+            nameList.add(player);
+        }
+        nbt.put("Names", nameList);
 
         NbtCompound lottery = new NbtCompound();
         lottery.putLong("Pot", lotteryPot);
@@ -213,6 +274,14 @@ public class CassinoState extends PersistentState {
             NbtCompound player = list.getCompound(i);
             if (player.containsUuid("Player")) {
                 state.balances.put(player.getUuid("Player"), player.getInt("Credits"));
+            }
+        }
+
+        NbtList nameList = nbt.getList("Names", NbtElement.COMPOUND_TYPE);
+        for (int i = 0; i < nameList.size(); i++) {
+            NbtCompound player = nameList.getCompound(i);
+            if (player.containsUuid("Player")) {
+                state.names.put(player.getUuid("Player"), player.getString("Name"));
             }
         }
 

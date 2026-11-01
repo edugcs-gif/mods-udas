@@ -251,6 +251,9 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawTycoonTooltip(context, textRenderer, handler, x, y, mouseX, mouseY,
+                SlotMachineScreenHandler.INVENTORY_X, SlotMachineScreenHandler.INVENTORY_Y,
+                SlotMachineScreenHandler.HOTBAR_Y);
         CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
     }
 
@@ -356,5 +359,7 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
 
         CassinoGui.drawInventoryLabel(context, textRenderer, SlotMachineScreenHandler.INVENTORY_X,
                 SlotMachineScreenHandler.INVENTORY_Y);
+        CassinoGui.drawTycoon(context, textRenderer, handler, SlotMachineScreenHandler.INVENTORY_X,
+                SlotMachineScreenHandler.INVENTORY_Y, SlotMachineScreenHandler.HOTBAR_Y);
     }
 }

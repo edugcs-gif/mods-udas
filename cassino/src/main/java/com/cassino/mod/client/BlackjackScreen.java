@@ -224,6 +224,9 @@ public class BlackjackScreen extends HandledScreen<BlackjackScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawTycoonTooltip(context, textRenderer, handler, x, y, mouseX, mouseY,
+                BlackjackScreenHandler.INVENTORY_X, BlackjackScreenHandler.INVENTORY_Y,
+                BlackjackScreenHandler.HOTBAR_Y);
         CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
     }
 
@@ -331,5 +334,7 @@ public class BlackjackScreen extends HandledScreen<BlackjackScreenHandler> {
                 RIGHT_X, CREDITS_Y);
         CassinoGui.drawInventoryLabel(context, textRenderer, BlackjackScreenHandler.INVENTORY_X,
                 BlackjackScreenHandler.INVENTORY_Y);
+        CassinoGui.drawTycoon(context, textRenderer, handler, BlackjackScreenHandler.INVENTORY_X,
+                BlackjackScreenHandler.INVENTORY_Y, BlackjackScreenHandler.HOTBAR_Y);
     }
 }

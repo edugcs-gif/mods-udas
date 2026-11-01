@@ -275,6 +275,9 @@ public class CoinFlipScreen extends HandledScreen<CoinFlipScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawTycoonTooltip(context, textRenderer, handler, x, y, mouseX, mouseY,
+                CoinFlipScreenHandler.INVENTORY_X, CoinFlipScreenHandler.INVENTORY_Y,
+                CoinFlipScreenHandler.HOTBAR_Y);
         CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
     }
 
@@ -402,6 +405,8 @@ public class CoinFlipScreen extends HandledScreen<CoinFlipScreenHandler> {
                 RIGHT_X + 4, 61, INFO_TEXT);
         CassinoGui.drawInventoryLabel(context, textRenderer, CoinFlipScreenHandler.INVENTORY_X,
                 CoinFlipScreenHandler.INVENTORY_Y);
+        CassinoGui.drawTycoon(context, textRenderer, handler, CoinFlipScreenHandler.INVENTORY_X,
+                CoinFlipScreenHandler.INVENTORY_Y, CoinFlipScreenHandler.HOTBAR_Y);
     }
 
     private void drawCentered(DrawContext context, Text text, int centerX, int textY, int color, boolean shadow) {

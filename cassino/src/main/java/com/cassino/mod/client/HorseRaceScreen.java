@@ -272,6 +272,9 @@ public class HorseRaceScreen extends HandledScreen<HorseRaceScreenHandler> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        CassinoGui.drawTycoonTooltip(context, textRenderer, handler, x, y, mouseX, mouseY,
+                HorseRaceScreenHandler.INVENTORY_X, HorseRaceScreenHandler.INVENTORY_Y,
+                HorseRaceScreenHandler.HOTBAR_Y);
         CassinoGui.drawHouseTooltip(context, textRenderer, x, y, mouseX, mouseY, handler.house());
         int row = rowAt(mouseX, mouseY);
         if (row >= 0 && raceStartedAt < 0) {
@@ -380,6 +383,8 @@ public class HorseRaceScreen extends HandledScreen<HorseRaceScreenHandler> {
                 CassinoGui.TEXT, false);
         CassinoGui.drawInventoryLabel(context, textRenderer, HorseRaceScreenHandler.INVENTORY_X,
                 HorseRaceScreenHandler.INVENTORY_Y);
+        CassinoGui.drawTycoon(context, textRenderer, handler, HorseRaceScreenHandler.INVENTORY_X,
+                HorseRaceScreenHandler.INVENTORY_Y, HorseRaceScreenHandler.HOTBAR_Y);
     }
 
     /** Texto em 3/4 do tamanho (para caber na fileira). */

@@ -153,5 +153,13 @@
   "message.cassino.lottery.draw.win_many": "%s Saiu: %s! Ganharam: %s (+%s fichas cada).",
   "message.cassino.lottery.won.title": "VOCÊ GANHOU!",
   "message.cassino.lottery.won.subtitle": "+%s fichas na Loteria de Mobs",
-  "message.cassino.lottery.won.chat": "Você ganhou %s fichas na Loteria de Mobs! Elas já estão nos seus créditos do cassino."
+  "message.cassino.lottery.won.chat": "Você ganhou %s fichas na Loteria de Mobs! Elas já estão nos seus créditos do cassino.",
+  "gui.cassino.tycoon.title": "MAGNATA",
+  "gui.cassino.tycoon.nobody": "ninguém ainda",
+  "gui.cassino.tycoon.you": "SUA POSIÇÃO",
+  "gui.cassino.tycoon.of": "de %s",
+  "gui.cassino.tycoon.is_you": "é você!",
+  "gui.cassino.tycoon.unranked": "sem créditos",
+  "gui.cassino.tycoon.tip": "O magnata do servidor é quem tem mais créditos no cassino (as fichas depositadas nas máquinas, mais os prêmios). Você está em %sº lugar entre %s jogadores com créditos.",
+  "gui.cassino.tycoon.tip.unranked": "O magnata do servidor é quem tem mais créditos no cassino. Deposite fichas numa máquina para entrar no ranking."
 }
