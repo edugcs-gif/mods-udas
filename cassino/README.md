@@ -6,7 +6,8 @@ Um mod de cassino para o Minecraft 1.20.1, com Fabric. É um mod original: o có
 
 | Item | O que faz |
 | --- | --- |
-| **Ficha** | A "moeda" do cassino, usada para apostar. Custa caro (8 barras de ouro + 1 diamante) e não volta a ser ouro. |
+| **Ficha** | A "moeda" do cassino, usada para apostar. 8 barras de ouro + 1 diamante = 4 fichas. |
+| **Trocador de Fichas** (bloco) | Botão direito abre a troca: ouro e diamante viram fichas, e fichas voltam a ser ouro e diamante (4 fichas = 8 barras de ouro + 1 diamante). |
 | **Caça-níquel** (bloco) | Botão direito abre a máquina: 5 rolos, aposta de 1 a 64 fichas, créditos e prêmios de até 100x a aposta. |
 | **Mesa de Blackjack** (bloco) | Botão direito abre a mesa: blackjack (21) contra o dealer, com os mesmos créditos e o mesmo saldo da casa do caça-níquel. |
 | **Roleta** (bloco) | Botão direito abre a roleta: aposte no vermelho, no preto ou no 0 verde e veja a roda girar. Mesmos créditos e mesmo saldo da casa. |
@@ -18,13 +19,24 @@ Tudo fica na aba **Cassino** do criativo.
 
 ## Receitas
 
-- **Ficha:** 8 barras de ouro em volta e 1 diamante no centro = 1 ficha.
+- **Ficha:** 8 barras de ouro em volta e 1 diamante no centro = **4 fichas**.
+- **Trocador de Fichas:** fileira de cima 3 barras de ferro; no meio ouro, **ficha**, ouro; embaixo 3 barras de ferro.
 - **Caça-níquel:** fileira de cima 3 barras de ferro; no meio ferro, **ficha**, ferro; embaixo ferro, redstone, ferro.
 - **Mesa de Blackjack:** em cima 3 tapetes verdes; no meio tábua, **ficha**, tábua; embaixo um graveto em cada canto (o meio vazio).
 - **Roleta:** em cima lã vermelha, lã preta, lã vermelha; no meio lã preta, **ficha**, lã preta; embaixo 3 tábuas.
 - **Corrida de Cavalos:** em cima 3 fardos de feno; no meio couro, **ficha**, couro; embaixo 3 tábuas.
 - **Dado:** 4 quartzos em quadrado (2x2).
 - **Moeda:** em cruz, 4 pepitas de ferro (em cima, embaixo e nos lados) e 1 pepita de ouro no centro.
+
+## Trocador de Fichas
+
+Botão direito no trocador abre a troca, sempre na mesma conta da receita: **8 barras de ouro + 1 diamante = 4 fichas**, nos dois sentidos.
+
+- **Em cima (ouro e diamante » fichas):** coloque barras de ouro e diamantes nos dois espaços e aperte **TROCAR** (verde). Ele faz quantas trocas couberem (até 32 fichas de uma vez, com 64 barras de ouro e 8 diamantes) e o que sobrar fica no espaço.
+- **Embaixo (fichas » ouro e diamante):** coloque fichas no espaço e aperte **TROCAR** (azul). Cada 4 fichas voltam como 8 barras de ouro + 1 diamante; se sobrarem menos de 4, elas ficam no espaço.
+- Ao lado de cada espaço a tela mostra quanto aquilo vai virar, e o que sai da troca vai direto para o seu inventário (ou cai no chão, se não couber).
+- **Shift + clique** manda o ouro, o diamante e as fichas cada um para o seu espaço. Ao fechar a tela, o que ficou nos espaços volta para você.
+- O trocador não mexe nos créditos das máquinas: para jogar, deposite as fichas na máquina; para trocar o que ganhou, use **RETIRADA** e leve as fichas ao trocador.
 
 ## Caça-níquel
 
@@ -161,7 +173,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.9.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.10.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -172,11 +184,11 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.9.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.10.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 
-Números na roleta, divisão de pares no blackjack, conquistas, uma ficha com valores diferentes (azul, verde, preta) e um caixa (NPC ou bloco) que troca fichas por esmeraldas.
+Números na roleta, divisão de pares no blackjack, conquistas, uma ficha com valores diferentes (azul, verde, preta) e um caixa (NPC) que troca fichas por esmeraldas.
 
 ## Licença
 

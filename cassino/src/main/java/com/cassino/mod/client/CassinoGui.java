@@ -89,9 +89,14 @@ final class CassinoGui {
 
     /** O espaço das fichas, com uma ficha "apagada" quando está vazio. */
     static void drawCoinSlot(DrawContext context, int slotX, int slotY, boolean empty) {
+        drawGhostSlot(context, slotX, slotY, CHIP, empty);
+    }
+
+    /** Um espaço que mostra, "apagado", o item que vai nele enquanto está vazio. */
+    static void drawGhostSlot(DrawContext context, int slotX, int slotY, ItemStack ghost, boolean empty) {
         drawSlot(context, slotX, slotY);
         if (empty) {
-            context.drawItem(CHIP, slotX + 1, slotY + 1);
+            context.drawItem(ghost, slotX + 1, slotY + 1);
             MatrixStack matrices = context.getMatrices();
             matrices.push();
             matrices.translate(0.0F, 0.0F, 300.0F);

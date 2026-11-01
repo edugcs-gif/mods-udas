@@ -78,5 +78,10 @@
   "gui.cassino.race.result.lose": "%s venceu.",
   "message.cassino.race.longshot": "%s ganhou %s fichas apostando no azarão %s (x%s)!",
   "gui.cassino.house": "CASA: %s",
-  "gui.cassino.house.tip": "Saldo da casa: quanto o cassino já ganhou no servidor, somando todos os jogos. A partir de +640, a chance de ganhar sobe aos poucos em todos os jogos, para devolver as fichas aos jogadores."
+  "gui.cassino.house.tip": "Saldo da casa: quanto o cassino já ganhou no servidor, somando todos os jogos. A partir de +640, a chance de ganhar sobe aos poucos em todos os jogos, para devolver as fichas aos jogadores.",
+  "block.cassino.chip_exchanger": "Trocador de Fichas",
+  "gui.cassino.exchanger.title": "Trocador de Fichas",
+  "gui.cassino.exchanger.trade": "TROCAR",
+  "gui.cassino.exchanger.tip.buy": "Troca o ouro e o diamante dos espaços por fichas: 8 barras de ouro + 1 diamante = 4 fichas, quantas vezes couber. As fichas vão para o seu inventário, e o que sobrar fica no espaço.",
+  "gui.cassino.exchanger.tip.sell": "Troca as fichas do espaço por ouro e diamante: 4 fichas = 8 barras de ouro + 1 diamante, quantas vezes couber. O ouro e o diamante vão para o seu inventário, e as fichas que sobrarem (menos de 4) ficam no espaço."
 }

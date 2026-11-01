@@ -78,5 +78,10 @@
   "gui.cassino.race.result.lose": "%s wins.",
   "message.cassino.race.longshot": "%s won %s chips betting on the long shot %s (x%s)!",
   "gui.cassino.house": "HOUSE: %s",
-  "gui.cassino.house.tip": "House balance: how much the casino has won on this server, across all games. From +640 up, the odds of winning rise step by step in every game, to give the chips back to the players."
+  "gui.cassino.house.tip": "House balance: how much the casino has won on this server, across all games. From +640 up, the odds of winning rise step by step in every game, to give the chips back to the players.",
+  "block.cassino.chip_exchanger": "Chip Exchanger",
+  "gui.cassino.exchanger.title": "Chip Exchanger",
+  "gui.cassino.exchanger.trade": "TRADE",
+  "gui.cassino.exchanger.tip.buy": "Trades the gold and diamond in the slots for chips: 8 gold ingots + 1 diamond = 4 chips, as many times as they allow. The chips go to your inventory, and whatever is left stays in the slot.",
+  "gui.cassino.exchanger.tip.sell": "Trades the chips in the slot for gold and diamonds: 4 chips = 8 gold ingots + 1 diamond, as many times as they allow. The gold and diamonds go to your inventory, and leftover chips (fewer than 4) stay in the slot."
 }

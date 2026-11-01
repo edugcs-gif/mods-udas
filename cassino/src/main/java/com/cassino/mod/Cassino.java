@@ -1,12 +1,14 @@
 package com.cassino.mod;
 
 import com.cassino.mod.block.BlackjackTableBlock;
+import com.cassino.mod.block.ChipExchangerBlock;
 import com.cassino.mod.block.HorseRaceBlock;
 import com.cassino.mod.block.RouletteBlock;
 import com.cassino.mod.block.SlotMachineBlock;
 import com.cassino.mod.item.CoinItem;
 import com.cassino.mod.item.DiceItem;
 import com.cassino.mod.screen.BlackjackScreenHandler;
+import com.cassino.mod.screen.ChipExchangerScreenHandler;
 import com.cassino.mod.screen.HorseRaceScreenHandler;
 import com.cassino.mod.screen.RouletteScreenHandler;
 import com.cassino.mod.screen.SlotMachineScreenHandler;
@@ -35,16 +37,22 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 /**
- * Cassino: ficha (a "moeda" do cassino), caça-níquel, dado e moeda de cara ou coroa.
+ * Cassino: ficha (a "moeda" do cassino), trocador de fichas, caça-níquel, blackjack, roleta, corrida de cavalos, dado e
+ * moeda de cara ou coroa.
  */
 public class Cassino implements ModInitializer {
     public static final String MOD_ID = "cassino";
 
-    /** A ficha: vale por jogada no caça-níquel. 1 barra de ouro = 8 fichas (e 8 fichas = 1 barra de ouro). */
+    /**
+     * A ficha: o dinheiro do cassino. 8 barras de ouro + 1 diamante = 4 fichas, na mesa de trabalho ou no trocador (que
+     * também faz a troca de volta).
+     */
     public static final Item CHIP = new Item(new Item.Settings());
     public static final Item DIE = new DiceItem(new Item.Settings().maxCount(16));
     public static final Item COIN = new CoinItem(new Item.Settings().maxCount(16));
 
+    public static final Block CHIP_EXCHANGER = new ChipExchangerBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
+    public static final Item CHIP_EXCHANGER_ITEM = new BlockItem(CHIP_EXCHANGER, new Item.Settings());
     public static final Block SLOT_MACHINE = new SlotMachineBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
     public static final Item SLOT_MACHINE_ITEM = new BlockItem(SLOT_MACHINE, new Item.Settings());
     public static final Block BLACKJACK_TABLE =
@@ -57,6 +65,10 @@ public class Cassino implements ModInitializer {
             new HorseRaceBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).strength(2.0F));
     public static final Item HORSE_RACE_ITEM = new BlockItem(HORSE_RACE, new Item.Settings());
 
+    /** A tela do trocador de fichas (ouro e diamante viram fichas, e fichas viram ouro e diamante). */
+    public static final ScreenHandlerType<ChipExchangerScreenHandler> CHIP_EXCHANGER_HANDLER = Registry.register(
+            Registries.SCREEN_HANDLER, id("chip_exchanger"),
+            new ScreenHandlerType<>(ChipExchangerScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
     /** A tela do caça-níquel (rolos, aposta, créditos e o espaço das fichas). */
     public static final ScreenHandlerType<SlotMachineScreenHandler> SLOT_MACHINE_HANDLER = Registry.register(
             Registries.SCREEN_HANDLER, id("slot_machine"),
@@ -85,6 +97,7 @@ public class Cassino implements ModInitializer {
             .displayName(Text.translatable("itemGroup.cassino"))
             .entries((context, entries) -> {
                 entries.add(CHIP);
+                entries.add(CHIP_EXCHANGER_ITEM);
                 entries.add(SLOT_MACHINE_ITEM);
                 entries.add(BLACKJACK_TABLE_ITEM);
                 entries.add(ROULETTE_ITEM);
@@ -103,6 +116,8 @@ public class Cassino implements ModInitializer {
         Registry.register(Registries.ITEM, id("chip"), CHIP);
         Registry.register(Registries.ITEM, id("die"), DIE);
         Registry.register(Registries.ITEM, id("coin"), COIN);
+        Registry.register(Registries.BLOCK, id("chip_exchanger"), CHIP_EXCHANGER);
+        Registry.register(Registries.ITEM, id("chip_exchanger"), CHIP_EXCHANGER_ITEM);
         Registry.register(Registries.BLOCK, id("slot_machine"), SLOT_MACHINE);
         Registry.register(Registries.ITEM, id("slot_machine"), SLOT_MACHINE_ITEM);
         Registry.register(Registries.BLOCK, id("blackjack_table"), BLACKJACK_TABLE);
