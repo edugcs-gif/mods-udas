@@ -389,8 +389,8 @@ public class PlinkoScreen extends HandledScreen<PlinkoScreenHandler> {
 
         Text line = message != null ? message : Text.translatable("gui.cassino.plinko.hint");
         int color = message != null ? messageColor : LOSE_TEXT;
-        context.drawText(textRenderer, line, BOARD_X + (BOARD_WIDTH - textRenderer.getWidth(line)) / 2, MESSAGE_Y,
-                color, false);
+        CassinoGui.drawFittedText(context, textRenderer, line, BOARD_X + BOARD_WIDTH / 2, MESSAGE_Y, BOARD_WIDTH - 4,
+                color);
 
         CassinoGui.drawAmount(context, textRenderer, Text.translatable("gui.cassino.slot.bet", handler.bet()),
                 RIGHT_X + 4, 50, INFO_TEXT);

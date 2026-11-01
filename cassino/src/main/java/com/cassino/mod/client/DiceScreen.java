@@ -438,8 +438,8 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
             line = Text.translatable("gui.cassino.dice.hint");
             color = LOSE_TEXT;
         }
-        context.drawText(textRenderer, line, LEFT_X + (messageWidth - textRenderer.getWidth(line)) / 2, MESSAGE_Y,
-                color, false);
+        CassinoGui.drawFittedText(context, textRenderer, line, LEFT_X + messageWidth / 2, MESSAGE_Y, messageWidth,
+                color);
 
         CassinoGui.drawAmount(context, textRenderer, Text.translatable("gui.cassino.slot.bet", handler.bet()),
                 RIGHT_X + 4, 50, INFO_TEXT);

@@ -117,6 +117,26 @@ final class CassinoGui {
         }
     }
 
+    /**
+     * Uma linha de texto centralizada em {@code centerX}; se for mais larga que {@code maxWidth}, ela diminui até
+     * caber (para não passar por cima do que está do lado).
+     */
+    static void drawFittedText(DrawContext context, TextRenderer textRenderer, Text text, int centerX, int textY,
+                               int maxWidth, int color) {
+        int width = textRenderer.getWidth(text);
+        if (width <= maxWidth) {
+            context.drawText(textRenderer, text, centerX - width / 2, textY, color, false);
+            return;
+        }
+        float scale = maxWidth / (float) width;
+        MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.translate(centerX, textY + (1.0F - scale) * 4.0F, 0.0F);
+        matrices.scale(scale, scale, 1.0F);
+        context.drawText(textRenderer, text, -width / 2, 0, color, false);
+        matrices.pop();
+    }
+
     /** "INVENTÁRIO" em cima dos espaços (coordenadas a partir do canto da tela). */
     static void drawInventoryLabel(DrawContext context, TextRenderer textRenderer, int inventoryX, int inventoryY) {
         Text inventory = Text.literal(Text.translatable("container.inventory").getString().toUpperCase(Locale.ROOT));
