@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "HHH", "LFL", "TTT" ],
+  "key": {
+    "H": { "item": "minecraft:hay_block" },
+    "L": { "item": "minecraft:leather" },
+    "F": { "item": "cassino:chip" },
+    "T": { "tag": "minecraft:planks" }
+  },
+  "result": { "item": "cassino:horse_race", "count": 1 }
+}

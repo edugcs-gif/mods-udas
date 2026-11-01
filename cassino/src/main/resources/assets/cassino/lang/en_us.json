@@ -63,5 +63,18 @@
   "gui.cassino.roulette.rule": "Click a color to bet on it",
   "gui.cassino.roulette.tip.rules": "The wheel has 37 pockets: 18 red, 18 black and the green 0. Red or black pays back 2x the bet; green pays back 36x. Click one of the colors on the table to choose your bet.",
   "gui.cassino.roulette.result.win": "%s! +%s chips",
-  "gui.cassino.roulette.result.lose": "%s. Not this time."
+  "gui.cassino.roulette.result.lose": "%s. Not this time.",
+  "block.cassino.horse_race": "Horse Race",
+  "gui.cassino.race.title": "Horse Betting",
+  "gui.cassino.race.run": "RACE!",
+  "gui.cassino.race.horse": "HORSE",
+  "gui.cassino.race.track": "RACE",
+  "gui.cassino.race.bet": "BET",
+  "gui.cassino.race.day": "Day %s",
+  "gui.cassino.race.tip.rules": "Click a horse to bet on it and press RACE!. If it wins, the bet comes back multiplied by the value under its name. The horses and their chances change every Minecraft day.",
+  "gui.cassino.race.tip.chance": "Chance to win today: %s%%",
+  "gui.cassino.race.tip.pays": "Pays %s the bet",
+  "gui.cassino.race.result.win": "%s wins! +%s",
+  "gui.cassino.race.result.lose": "%s wins.",
+  "message.cassino.race.longshot": "%s won %s chips betting on the long shot %s (x%s)!"
 }

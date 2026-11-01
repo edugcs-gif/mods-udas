@@ -63,5 +63,18 @@
   "gui.cassino.roulette.rule": "Clique numa cor para apostar nela",
   "gui.cassino.roulette.tip.rules": "A roda tem 37 casas: 18 vermelhas, 18 pretas e o 0 verde. Vermelho ou preto devolve 2x a aposta; o verde devolve 36x. Clique numa das cores da mesa para escolher onde apostar.",
   "gui.cassino.roulette.result.win": "Saiu %s! +%s fichas",
-  "gui.cassino.roulette.result.lose": "Saiu %s. Não foi dessa vez."
+  "gui.cassino.roulette.result.lose": "Saiu %s. Não foi dessa vez.",
+  "block.cassino.horse_race": "Corrida de Cavalos",
+  "gui.cassino.race.title": "Aposta de Cavalo",
+  "gui.cassino.race.run": "CORRER!",
+  "gui.cassino.race.horse": "CAVALO",
+  "gui.cassino.race.track": "CORRIDA",
+  "gui.cassino.race.bet": "APOSTA",
+  "gui.cassino.race.day": "Dia %s",
+  "gui.cassino.race.tip.rules": "Clique num cavalo para apostar nele e aperte CORRER!. Se ele vencer, a aposta volta multiplicada pelo valor embaixo do nome. Os cavalos e as chances mudam a cada dia do Minecraft.",
+  "gui.cassino.race.tip.chance": "Chance de vencer hoje: %s%%",
+  "gui.cassino.race.tip.pays": "Paga %s a aposta",
+  "gui.cassino.race.result.win": "%s venceu! +%s",
+  "gui.cassino.race.result.lose": "%s venceu.",
+  "message.cassino.race.longshot": "%s ganhou %s fichas apostando no azarão %s (x%s)!"
 }

@@ -10,6 +10,7 @@ Um mod de cassino para o Minecraft 1.20.1, com Fabric. É um mod original: o có
 | **Caça-níquel** (bloco) | Botão direito abre a máquina: 5 rolos, aposta de 1 a 64 fichas, créditos e prêmios de até 100x a aposta. |
 | **Mesa de Blackjack** (bloco) | Botão direito abre a mesa: blackjack (21) contra o dealer, com os mesmos créditos e o mesmo saldo da casa do caça-níquel. |
 | **Roleta** (bloco) | Botão direito abre a roleta: aposte no vermelho, no preto ou no 0 verde e veja a roda girar. Mesmos créditos e mesmo saldo da casa. |
+| **Corrida de Cavalos** (bloco) | Botão direito abre as apostas: escolha um dos 7 cavalos do dia e veja a corrida. Os cavalos e as chances mudam a cada dia do Minecraft. |
 | **Dado** | Botão direito rola de 1 a 6; quem está até 16 blocos vê o resultado no chat. |
 | **Moeda** | Botão direito joga cara ou coroa; quem está até 16 blocos vê o resultado no chat. |
 
@@ -21,6 +22,7 @@ Tudo fica na aba **Cassino** do criativo.
 - **Caça-níquel:** fileira de cima 3 barras de ferro; no meio ferro, **ficha**, ferro; embaixo ferro, redstone, ferro.
 - **Mesa de Blackjack:** em cima 3 tapetes verdes; no meio tábua, **ficha**, tábua; embaixo um graveto em cada canto (o meio vazio).
 - **Roleta:** em cima lã vermelha, lã preta, lã vermelha; no meio lã preta, **ficha**, lã preta; embaixo 3 tábuas.
+- **Corrida de Cavalos:** em cima 3 fardos de feno; no meio couro, **ficha**, couro; embaixo 3 tábuas.
 - **Dado:** 4 quartzos em quadrado (2x2).
 - **Moeda:** em cruz, 4 pepitas de ferro (em cima, embaixo e nos lados) e 1 pepita de ouro no centro.
 
@@ -119,6 +121,17 @@ Botão direito na roleta abre a mesa da roleta (só com as cores, sem os número
 
 **Ligada ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-640**. Uma girada só é aceita se o pior caso (a sua cor sair) couber no limite: com a casa perto de 0, a aposta no verde fica limitada (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** do blackjack (numa parte das giradas a roda gira duas vezes e fica com a pior para o jogador: 5% a cada 64 negativos, até 50%); com a casa no positivo a roleta é limpa.
 
+## Corrida de Cavalos
+
+Botão direito no bloco abre as apostas da corrida. Os **créditos**, o **espaço das fichas**, **DEPÓSITO** e **RETIRADA** são os mesmos das outras máquinas.
+
+- Correm **7 cavalos**, um de cada pelagem do jogo, e **a cada dia do Minecraft muda tudo**: quais nomes correm (Rapidinha, Cruz Credo, Mimimi, Arrogante, Pinga Fogo, Velho Ranzinza, Pé de Valsa, Ventania, Trovão Manco, Bigodudo, Pangaré Veloz, Sossegado, Furacão de Botas, Tô Atrasado, Pé Quente, Chá de Cadeira...) e a força de cada um. Todo mundo no servidor vê a mesma escalação, e ela muda quando vira o dia (também com `/time set`). O dia aparece na tela.
+- Embaixo de cada nome está **quanto ele paga** (x1,5 para o favorito, até x30 para o azarão). Passe o mouse num cavalo para ver a **chance de ele vencer hoje**.
+- **Clique na fileira de um cavalo** para apostar nele (a ficha aparece na caixinha), escolha a **APOSTA** com **-** e **+** e aperte **CORRER!**: os números correm nas raias até a linha de chegada, com ultrapassagens no meio; se o seu cavalo vencer, a aposta volta multiplicada.
+- Em cada cavalo, uns **90%** do que é apostado volta no longo prazo (um pouco menos, pelo arredondamento). Quando um azarão de **x10 ou mais** ganha, quem está perto é avisado no chat.
+
+**Ligada ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-640**: a corrida só é aceita se o pior caso (o seu cavalo vencer) couber, então apostas altas em azarões ficam limitadas com a casa perto de 0 (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (o vencedor é sorteado duas vezes e fica o pior para o jogador: 5% a cada 64 negativos, até 50%); com a casa no positivo a corrida é limpa.
+
 ## Instalação
 
 O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque na pasta `mods`. Em servidor, instale no servidor e em todos os jogadores (só o servidor sorteia, mas a tela da máquina fica no jogo de cada um).
@@ -130,7 +143,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.6.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.7.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -141,7 +154,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.6.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.7.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 
