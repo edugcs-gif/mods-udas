@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "DGD", "PFP", "S S" ],
+  "key": {
+    "D": { "item": "cassino:die" },
+    "G": { "item": "minecraft:green_carpet" },
+    "P": { "tag": "minecraft:planks" },
+    "F": { "item": "cassino:chip" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "result": { "item": "cassino:dice_table", "count": 1 }
+}

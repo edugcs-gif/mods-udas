@@ -12,6 +12,7 @@ Um mod de cassino para o Minecraft 1.20.1, com Fabric. É um mod original: o có
 | **Mesa de Blackjack** (bloco) | Botão direito abre a mesa: blackjack (21) contra o dealer, com os mesmos créditos e o mesmo saldo da casa do caça-níquel. |
 | **Roleta** (bloco) | Botão direito abre a roleta: aposte no vermelho, no preto ou no 0 verde e veja a roda girar. Mesmos créditos e mesmo saldo da casa. |
 | **Corrida de Cavalos** (bloco) | Botão direito abre as apostas: escolha um dos 7 cavalos do dia e veja a corrida. Os cavalos e as chances mudam a cada dia do Minecraft. |
+| **Mesa de Dados** (bloco) | Botão direito abre o jogo de dados: aposte em pares, ímpares, um número, menor ou maior e role dois dados. Mesmos créditos e mesmo saldo da casa. |
 | **Dado** | Botão direito rola de 1 a 6; quem está até 16 blocos vê o resultado no chat. |
 | **Moeda** | Botão direito joga cara ou coroa; quem está até 16 blocos vê o resultado no chat. |
 
@@ -25,6 +26,7 @@ Tudo fica na aba **Cassino** do criativo.
 - **Mesa de Blackjack:** em cima 3 tapetes verdes; no meio tábua, **ficha**, tábua; embaixo um graveto em cada canto (o meio vazio).
 - **Roleta:** em cima lã vermelha, lã preta, lã vermelha; no meio lã preta, **ficha**, lã preta; embaixo 3 tábuas.
 - **Corrida de Cavalos:** em cima 3 fardos de feno; no meio couro, **ficha**, couro; embaixo 3 tábuas.
+- **Mesa de Dados:** em cima dado, tapete verde, dado; no meio tábua, **ficha**, tábua; embaixo um graveto em cada canto (o meio vazio).
 - **Dado:** 4 quartzos em quadrado (2x2).
 - **Moeda:** em cruz, 4 pepitas de ferro (em cima, embaixo e nos lados) e 1 pepita de ouro no centro.
 
@@ -69,7 +71,7 @@ Ganha quem tirar **3, 4 ou 5 símbolos iguais seguidos na linha do meio, a parti
 
 ### Limite de prêmios da casa
 
-O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada aposta e **desce** com cada prêmio, somando todos os jogos (caça-níquel, blackjack, roleta e corrida). Quando está negativo, quer dizer que o cassino já deu mais fichas do que recebeu. Ele aparece no **canto de cima, à esquerda, de todas as telas** ("CASA: +1234", em verde); passe o mouse em cima para ver a explicação. Quando a casa está no negativo, a tela mostra **0** (o valor de verdade nem sai do servidor), então os jogadores não ficam sabendo que as chances estão contra eles.
+O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada aposta e **desce** com cada prêmio, somando todos os jogos (caça-níquel, blackjack, roleta, corrida e dados). Quando está negativo, quer dizer que o cassino já deu mais fichas do que recebeu. Ele aparece no **canto de cima, à esquerda, de todas as telas** ("CASA: +1234", em verde); passe o mouse em cima para ver a explicação. Quando a casa está no negativo, a tela mostra **0** (o valor de verdade nem sai do servidor), então os jogadores não ficam sabendo que as chances estão contra eles.
 
 - A casa pode ficar **no máximo em -640**: o cassino nunca cria mais de 640 fichas a mais do que recebeu, no servidor todo. Um prêmio que passaria disso vira um prêmio menor que caiba; se nem o menor couber, a girada perde.
 - Quanto mais no negativo, menor a chance de ganhar, aos poucos; e a partir de **+640** a chance sobe um ponto a cada 64 fichas, até **50%**, para a casa devolver fichas em vez de acumular. No caça-níquel:
@@ -162,6 +164,28 @@ Botão direito no bloco abre as apostas da corrida. Os **créditos**, o **espaç
 
 **Ligada ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-640**: a corrida só é aceita se o pior caso (o seu cavalo vencer) couber, então apostas altas em azarões ficam limitadas com a casa perto de 0 (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (o vencedor é sorteado duas vezes e fica o pior para o jogador: 5% a cada 64 negativos, até 50%). De 0 a +639 a corrida é limpa; de **+640** para cima, numa parte das corridas que o seu cavalo perderia o vencedor é sorteado de novo: a chance dele sobe aos poucos até **1,25 vez** a do dia em +1216 (20% vira 25%), quando cada cavalo devolve uns **110%**.
 
+## Jogo de Dados
+
+Botão direito na mesa de dados abre o jogo. Os **créditos**, o **espaço das fichas**, **DEPÓSITO** e **RETIRADA** são os mesmos das outras máquinas.
+
+- Rolam **dois dados**, e as apostas são sobre a **soma** (de 2 a 12).
+- **Clique numa fileira** da lista para marcar ou desmarcar a aposta (a ficha aparece nas marcadas). Dá para marcar **várias ao mesmo tempo**: cada uma custa a aposta, e cada uma que acertar paga o seu prêmio. Embaixo da lista aparece quanto a jogada custa no total.
+- **APOSTA** com **+** e **-** (1 a 64) e **ROLAR!**: os dados chacoalham no feltro e param; a soma aparece embaixo deles, e as últimas somas no quadro "ÚLTIMOS".
+- Passe o mouse numa fileira para ver quando ela ganha e quantas vezes em 36 ela sai.
+
+| Aposta | Ganha quando a soma é | Sai (em 36) | Paga |
+| --- | --- | --- | --- |
+| PARES | par | 18 | x1,9 |
+| ÍMPARES | ímpar | 18 | x1,9 |
+| NÚMERO | o número escolhido (2 a 12) | 1 a 6 | x5,7 no 7; x6,8 no 6 e no 8; x8,5 no 5 e no 9; x11,4 no 4 e no 10; x17,1 no 3 e no 11; x34,2 no 2 e no 12 |
+| MENOR | 2 a 6 | 15 | x2,2 |
+| MAIOR | 8 a 12 | 15 | x2,2 |
+
+- O **número do NÚMERO** fica no quadradinho da fileira: clique para aumentar, botão direito para diminuir, ou use a rodinha do mouse.
+- O prêmio é a aposta vezes o multiplicador, arredondado. Cada aposta devolve uns **92 a 95%** no longo prazo (nunca mais de 100%), e a casa fica com a diferença. O 7 não é nem MENOR nem MAIOR.
+
+**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-640**: a jogada só é aceita se o pior caso (a soma que mais paga sair) couber, então apostas altas no NÚMERO 2 ou 12 ficam limitadas com a casa perto de 0 (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (os dados rolam duas vezes e fica o pior para você: 5% a cada 64 negativos, até 50%); de 0 a +639 os dados são limpos; de **+640** para cima, numa parte das jogadas que você perderia os dados rolam de novo, até o jogo devolver uns **110%** em +1216.
+
 ## Instalação
 
 O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque na pasta `mods`. Em servidor, instale no servidor e em todos os jogadores (só o servidor sorteia, mas a tela da máquina fica no jogo de cada um).
@@ -173,7 +197,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.10.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.11.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -184,7 +208,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.10.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.11.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 

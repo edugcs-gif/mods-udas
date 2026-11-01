@@ -2,6 +2,7 @@ package com.cassino.mod;
 
 import com.cassino.mod.block.BlackjackTableBlock;
 import com.cassino.mod.block.ChipExchangerBlock;
+import com.cassino.mod.block.DiceTableBlock;
 import com.cassino.mod.block.HorseRaceBlock;
 import com.cassino.mod.block.RouletteBlock;
 import com.cassino.mod.block.SlotMachineBlock;
@@ -9,6 +10,7 @@ import com.cassino.mod.item.CoinItem;
 import com.cassino.mod.item.DiceItem;
 import com.cassino.mod.screen.BlackjackScreenHandler;
 import com.cassino.mod.screen.ChipExchangerScreenHandler;
+import com.cassino.mod.screen.DiceScreenHandler;
 import com.cassino.mod.screen.HorseRaceScreenHandler;
 import com.cassino.mod.screen.RouletteScreenHandler;
 import com.cassino.mod.screen.SlotMachineScreenHandler;
@@ -37,8 +39,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 /**
- * Cassino: ficha (a "moeda" do cassino), trocador de fichas, caça-níquel, blackjack, roleta, corrida de cavalos, dado e
- * moeda de cara ou coroa.
+ * Cassino: ficha (a "moeda" do cassino), trocador de fichas, caça-níquel, blackjack, roleta, corrida de cavalos, jogo de
+ * dados, dado e moeda de cara ou coroa.
  */
 public class Cassino implements ModInitializer {
     public static final String MOD_ID = "cassino";
@@ -64,6 +66,9 @@ public class Cassino implements ModInitializer {
     public static final Block HORSE_RACE =
             new HorseRaceBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).strength(2.0F));
     public static final Item HORSE_RACE_ITEM = new BlockItem(HORSE_RACE, new Item.Settings());
+    public static final Block DICE_TABLE =
+            new DiceTableBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).strength(2.0F));
+    public static final Item DICE_TABLE_ITEM = new BlockItem(DICE_TABLE, new Item.Settings());
 
     /** A tela do trocador de fichas (ouro e diamante viram fichas, e fichas viram ouro e diamante). */
     public static final ScreenHandlerType<ChipExchangerScreenHandler> CHIP_EXCHANGER_HANDLER = Registry.register(
@@ -86,6 +91,11 @@ public class Cassino implements ModInitializer {
             Registries.SCREEN_HANDLER, id("horse_race"),
             new ScreenHandlerType<>(HorseRaceScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
 
+    /** A tela do jogo de dados (os dados, as apostas, a aposta, os créditos e o espaço das fichas). */
+    public static final ScreenHandlerType<DiceScreenHandler> DICE_HANDLER = Registry.register(
+            Registries.SCREEN_HANDLER, id("dice"),
+            new ScreenHandlerType<>(DiceScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
+
     /** Tarefas para rodar daqui a alguns ticks (o aviso do jackpot espera os rolos pararem na tela). */
     private static final List<Later> LATER = new ArrayList<>();
 
@@ -102,6 +112,7 @@ public class Cassino implements ModInitializer {
                 entries.add(BLACKJACK_TABLE_ITEM);
                 entries.add(ROULETTE_ITEM);
                 entries.add(HORSE_RACE_ITEM);
+                entries.add(DICE_TABLE_ITEM);
                 entries.add(DIE);
                 entries.add(COIN);
             })
@@ -126,6 +137,8 @@ public class Cassino implements ModInitializer {
         Registry.register(Registries.ITEM, id("roulette"), ROULETTE_ITEM);
         Registry.register(Registries.BLOCK, id("horse_race"), HORSE_RACE);
         Registry.register(Registries.ITEM, id("horse_race"), HORSE_RACE_ITEM);
+        Registry.register(Registries.BLOCK, id("dice_table"), DICE_TABLE);
+        Registry.register(Registries.ITEM, id("dice_table"), DICE_TABLE_ITEM);
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
