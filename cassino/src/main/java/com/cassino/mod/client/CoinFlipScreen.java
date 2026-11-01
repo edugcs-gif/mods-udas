@@ -57,7 +57,7 @@ public class CoinFlipScreen extends HandledScreen<CoinFlipScreenHandler> {
     private static final int COIN_CENTER_Y = 58;
     private static final int COIN_SIZE = 48;
     private static final int HISTORY_Y = 100;
-    private static final int HISTORY_HEIGHT = 34;
+    private static final int HISTORY_HEIGHT = 22;
     private static final int BETS_X = 86;
     private static final int BETS_Y = 20;
     private static final int BETS_WIDTH = 122;
@@ -408,21 +408,25 @@ public class CoinFlipScreen extends HandledScreen<CoinFlipScreenHandler> {
         context.drawText(textRenderer, text, centerX - textRenderer.getWidth(text) / 2, textY, color, shadow);
     }
 
-    /** "ÚLTIMOS:" e os últimos resultados, 2 por linha (o do lançamento em andamento aparece quando a moeda cai). */
+    /** "ÚLTIMOS:" e os 2 últimos resultados numa linha (o do lançamento em andamento aparece quando a moeda cai). */
     private void drawHistory(DrawContext context) {
-        context.drawText(textRenderer, Text.translatable("gui.cassino.coin.history"), LEFT_X + 4, HISTORY_Y + 4,
+        context.drawText(textRenderer, Text.translatable("gui.cassino.coin.history"), LEFT_X + 4, HISTORY_Y + 3,
                 CassinoGui.TEXT, false);
         int[] history = handler.history();
+        int textX = LEFT_X + 4;
         int shown = 0;
-        for (int i = flipping() ? 1 : 0; i < history.length && shown < 4; i++) {
+        for (int i = flipping() ? 1 : 0; i < history.length && shown < 2; i++) {
             int result = history[i];
             if (result < 0 || result > CoinFlip.EDGE) {
                 continue;
             }
-            int cellX = LEFT_X + 4 + (shown % 2) * 34;
-            int cellY = HISTORY_Y + 14 + (shown / 2) * 10;
-            context.drawText(textRenderer, Text.translatable("gui.cassino.coin.side." + result), cellX, cellY,
-                    SIDE_TEXT[result], false);
+            if (shown > 0) {
+                context.drawText(textRenderer, ", ", textX, HISTORY_Y + 12, CassinoGui.TEXT, false);
+                textX += textRenderer.getWidth(", ");
+            }
+            Text side = Text.translatable("gui.cassino.coin.side." + result);
+            context.drawText(textRenderer, side, textX, HISTORY_Y + 12, SIDE_TEXT[result], false);
+            textX += textRenderer.getWidth(side);
             shown++;
         }
     }

@@ -3,24 +3,23 @@ package com.cassino.mod.machine;
 import net.minecraft.util.math.random.Random;
 
 /**
- * As regras do jogo de dados do cassino: dois dados de 6 faces, e as apostas são sobre a soma (de 2 a 12).
+ * As regras do jogo de dados do cassino: dois dados de 6 faces, e a aposta é sobre a soma (de 2 a 12). O jogador
+ * escolhe uma aposta por jogada:
  *
  * <ul>
- *   <li>{@link #EVEN PARES} e {@link #ODD ÍMPARES}: a soma par ou ímpar (18 jeitos em 36 cada); pagam x1,9.</li>
+ *   <li>{@link #EVEN PARES} e {@link #ODD ÍMPARES}: a soma par ou ímpar (18 jeitos em 36 cada); pagam x2,0.</li>
  *   <li>{@link #NUMBER NÚMERO}: a soma exata, escolhida de 2 a 12; paga conforme a chance (x5,7 no 7, que sai em 6
  *       jeitos de 36, até x34,2 no 2 e no 12, que saem em 1).</li>
  *   <li>{@link #LOW MENOR} (2 a 6) e {@link #HIGH MAIOR} (8 a 12): 15 jeitos em 36 cada; pagam x2,2. O 7 não é nem
  *       menor nem maior.</li>
  * </ul>
  *
- * <p>Dá para marcar várias apostas na mesma jogada: cada uma custa a aposta, e cada uma que acertar paga o seu prêmio.
- * O prêmio é a aposta vezes o multiplicador, arredondado; cada aposta devolve uns 92 a 95% no longo prazo (nunca mais
- * de 100%), e a casa ganha a diferença.
+ * <p>O prêmio é a aposta vezes o multiplicador, arredondado. PARES e ÍMPARES devolvem 100% no longo prazo (jogo
+ * limpo); as outras, uns 92 a 95%, e a casa fica com a diferença.
  *
  * <p>A sorte segue o saldo da casa, como em todos os jogos ({@link Luck}). Com a casa no negativo, numa parte das
  * jogadas ({@link Luck#houseLuck}) os dados rolam duas vezes e fica o pior para o jogador. De 0 a +639 os dados são
- * limpos. De +640 para cima, numa parte das jogadas perdidas os dados rolam de novo ({@link #PLAYER_BOOST_PER_STEP}),
- * e no último degrau, em +1216, o jogo devolve uns 110%.
+ * limpos. De +640 para cima, numa parte das jogadas perdidas os dados rolam de novo ({@link #PLAYER_BOOST_PER_STEP}).
  */
 public final class Dice {
     public static final int EVEN = 0;
@@ -36,8 +35,8 @@ public final class Dice {
     /** As combinações de dois dados. */
     public static final int OUTCOMES = 36;
 
-    /** Quanto paga cada aposta, em décimos (19 = x1,9); a do NÚMERO está em {@link #NUMBER_ODDS_10}. */
-    private static final int[] ODDS_10 = {19, 19, 0, 22, 22};
+    /** Quanto paga cada aposta, em décimos (20 = x2,0); a do NÚMERO está em {@link #NUMBER_ODDS_10}. */
+    private static final int[] ODDS_10 = {20, 20, 0, 22, 22};
     /** Quanto paga o NÚMERO, em décimos, para cada soma de 2 a 12: uns 95% de 36 ÷ os jeitos de a soma sair. */
     private static final int[] NUMBER_ODDS_10 = {342, 171, 114, 85, 68, 57, 68, 85, 114, 171, 342};
 
@@ -70,59 +69,42 @@ public final class Dice {
     }
 
     /** O prêmio de uma aposta que acertou: a aposta vezes o multiplicador, arredondado. */
-    public static int prize(int stake, int odds10) {
-        return (stake * odds10 + 5) / 10;
+    public static int prize(int type, int number, int stake) {
+        return (stake * odds10(type, number) + 5) / 10;
     }
 
-    /** Quanto custa a jogada: a aposta vezes quantas apostas estão marcadas em {@code mask} (um bit por tipo). */
-    public static int cost(int mask, int stake) {
-        return Integer.bitCount(mask & ((1 << TYPES) - 1)) * stake;
+    /** O que a aposta devolve com esta soma (0 se errou). */
+    public static int payout(int type, int number, int stake, int total) {
+        return wins(type, number, total) ? prize(type, number, stake) : 0;
     }
 
-    /** O que as apostas marcadas devolvem, juntas, com esta soma. */
-    public static int payout(int mask, int number, int stake, int total) {
-        int paid = 0;
-        for (int type = 0; type < TYPES; type++) {
-            if ((mask & (1 << type)) != 0 && wins(type, number, total)) {
-                paid += prize(stake, odds10(type, number));
-            }
-        }
-        return paid;
+    /** O pior caso para a casa: a aposta acertar. */
+    public static int worstLoss(int type, int number, int stake) {
+        return prize(type, number, stake) - stake;
     }
 
-    /** O pior caso para a casa: a soma que mais paga, menos o que a jogada custou. */
-    public static int worstLoss(int mask, int number, int stake) {
-        int worst = 0;
-        for (int total = MIN_TOTAL; total <= MAX_TOTAL; total++) {
-            worst = Math.max(worst, payout(mask, number, stake, total));
-        }
-        return worst - cost(mask, stake);
-    }
-
-    /** A chance de a jogada sair no lucro (devolver mais do que custou), com dados limpos. */
-    public static double winChance(int mask, int number, int stake) {
-        int cost = cost(mask, stake);
+    /** A chance de a aposta acertar, com dados limpos. */
+    public static double winChance(int type, int number) {
         int ways = 0;
         for (int total = MIN_TOTAL; total <= MAX_TOTAL; total++) {
-            if (payout(mask, number, stake, total) > cost) {
+            if (wins(type, number, total)) {
                 ways += ways(total);
             }
         }
         return ways / (double) OUTCOMES;
     }
 
-    /** Rola os dois dados para esta jogada: devolve {dado 1, dado 2}, cada um de 1 a 6. */
-    public static int[] roll(Random random, int mask, int number, int stake, long house) {
+    /** Rola os dois dados para esta aposta: devolve {dado 1, dado 2}, cada um de 1 a 6. */
+    public static int[] roll(Random random, int type, int number, long house) {
         int[] dice = throwDice(random);
         if (random.nextFloat() < Luck.houseLuck(house)) {
             // Sorte da casa: rola de novo e fica com o pior para o jogador.
             int[] again = throwDice(random);
-            if (payout(mask, number, stake, sum(again)) < payout(mask, number, stake, sum(dice))) {
+            if (wins(type, number, sum(dice)) && !wins(type, number, sum(again))) {
                 dice = again;
             }
-        } else if (payout(mask, number, stake, sum(dice)) <= cost(mask, stake)
-                && random.nextFloat() < Luck.retryChance(house, PLAYER_BOOST_PER_STEP,
-                winChance(mask, number, stake))) {
+        } else if (!wins(type, number, sum(dice))
+                && random.nextFloat() < Luck.retryChance(house, PLAYER_BOOST_PER_STEP, winChance(type, number))) {
             // Sorte do jogador: perdeu, mas os dados rolam de novo.
             dice = throwDice(random);
         }

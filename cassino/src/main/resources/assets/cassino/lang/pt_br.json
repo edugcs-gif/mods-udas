@@ -95,11 +95,9 @@
   "gui.cassino.dice.bet.2": "NÚMERO",
   "gui.cassino.dice.bet.3": "MENOR 2-6",
   "gui.cassino.dice.bet.4": "MAIOR 8-12",
-  "gui.cassino.dice.cost": "Total da jogada: %2$s fichas",
-  "gui.cassino.dice.no_bet": "Marque uma aposta na lista.",
   "gui.cassino.dice.result.win": "Deu %s! +%s fichas",
   "gui.cassino.dice.result.lose": "Deu %s. Não foi dessa vez.",
-  "gui.cassino.dice.tip.rules": "Rolam dois dados, e as apostas são sobre a soma (de 2 a 12). Clique nas fileiras para marcar uma ou mais apostas: cada uma custa a aposta, e cada uma que acertar paga o seu prêmio.",
+  "gui.cassino.dice.tip.rules": "Rolam dois dados, e a aposta é sobre a soma (de 2 a 12). Clique numa fileira para escolher a aposta: se ela acertar, paga o prêmio da fileira.",
   "gui.cassino.dice.tip.0": "PARES: ganha se a soma for par. Sai %2$s vezes em 36. Paga %3$s.",
   "gui.cassino.dice.tip.1": "ÍMPARES: ganha se a soma for ímpar. Sai %2$s vezes em 36. Paga %3$s.",
   "gui.cassino.dice.tip.2": "NÚMERO: ganha se a soma for exatamente %1$s. Sai %2$s vezes em 36. Paga %3$s.",
@@ -122,5 +120,6 @@
   "gui.cassino.coin.result.win": "Deu %s! +%s fichas",
   "gui.cassino.coin.result.lose": "Deu %s. Não foi dessa vez.",
   "gui.cassino.coin.result.edge": "A moeda caiu em pé! A casa ganha.",
-  "gui.cassino.coin.tip.rules": "Escolha CARA ou COROA e lance a moeda: acertar devolve 2x a aposta. Uma vez em 25 a moeda cai em pé, e aí a casa ganha."
+  "gui.cassino.coin.tip.rules": "Escolha CARA ou COROA e lance a moeda: acertar devolve 2x a aposta. Uma vez em 25 a moeda cai em pé, e aí a casa ganha.",
+  "gui.cassino.dice.hint": "Clique numa aposta e role os dados"
 }

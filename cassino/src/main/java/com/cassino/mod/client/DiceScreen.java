@@ -17,7 +17,7 @@ import net.minecraft.util.math.random.Random;
 
 /**
  * A tela do jogo de dados: os dois dados no feltro à esquerda (com a soma e as últimas somas embaixo), a lista de
- * apostas no meio (clique numa fileira para marcar ou desmarcar; a ficha aparece nas marcadas) e ROLAR!, a aposta, os
+ * apostas no meio (clique numa fileira para escolher a aposta; a ficha aparece na escolhida) e ROLAR!, a aposta, os
  * créditos, + e -, o espaço das fichas, DEPÓSITO e RETIRADA à direita; o inventário embaixo.
  *
  * <p>Quem rola é o servidor. Quando o resultado chega, os dados chacoalham um pouco na tela e param na soma
@@ -49,7 +49,7 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
     private static final int FELT_Y = 30;
     private static final int FELT_HEIGHT = 66;
     private static final int HISTORY_Y = 100;
-    private static final int HISTORY_HEIGHT = 34;
+    private static final int HISTORY_HEIGHT = 22;
     private static final int DIE_SIZE = 24;
     private static final int DIE_1_X = 14;
     private static final int DIE_1_Y = 37;
@@ -151,11 +151,7 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
         if (rollStartedAt >= 0 || waiting) {
             return;
         }
-        if (handler.mask() == 0) {
-            showMessage(Text.translatable("gui.cassino.dice.no_bet"), ERROR_TEXT);
-            return;
-        }
-        if (handler.credits() + handler.coinsWaiting() < handler.cost()) {
+        if (handler.credits() + handler.coinsWaiting() < handler.bet()) {
             showMessage(Text.translatable("gui.cassino.slot.no_credits"), ERROR_TEXT);
             return;
         }
@@ -208,7 +204,7 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
         return ROW_Y + type * ROW_STEP;
     }
 
-    /** Clicar numa fileira marca ou desmarca a aposta; clicar no quadradinho do NÚMERO troca o número. */
+    /** Clicar numa fileira escolhe a aposta; clicar no quadradinho do NÚMERO troca o número. */
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (rollStartedAt < 0 && (button == 0 || button == 1)) {
@@ -219,7 +215,7 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
             }
             int row = rowAt(mouseX, mouseY);
             if (row >= 0 && button == 0) {
-                click(DiceScreenHandler.BUTTON_TOGGLE + row);
+                click(DiceScreenHandler.BUTTON_CHOOSE + row);
                 play(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 0.6F);
                 return true;
             }
@@ -272,7 +268,7 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
     private void showResult() {
         int total = handler.die1() + handler.die2();
         if (rollWin > 0) {
-            boolean big = rollWin >= handler.cost() * 5;
+            boolean big = rollWin >= handler.bet() * 5;
             showMessage(Text.translatable("gui.cassino.dice.result.win", total, rollWin), big ? GOLD_TEXT : WIN_TEXT);
             play(big ? SoundEvents.ENTITY_PLAYER_LEVELUP : SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 0.8F);
         } else {
@@ -381,7 +377,7 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
         context.fill(left + 1, top + 1, left + LEFT_WIDTH - 1, top + HISTORY_HEIGHT - 1, LIST_FILL);
     }
 
-    /** A lista de apostas: a ficha no quadradinho das marcadas, e a fileira embaixo do mouse mais clara. */
+    /** A lista de apostas: a ficha no quadradinho da escolhida, e a fileira embaixo do mouse mais clara. */
     private void drawList(DrawContext context, int mouseX, int mouseY) {
         int left = x + LIST_X;
         int top = y + LIST_Y;
@@ -390,7 +386,8 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
         int hovered = rolling() || inNumberBox(mouseX, mouseY) ? -1 : rowAt(mouseX, mouseY);
         for (int type = 0; type < Dice.TYPES; type++) {
             int rowTop = y + rowY(type) - 1;
-            if (handler.marked(type)) {
+            boolean chosen = handler.choice() == type;
+            if (chosen) {
                 context.fill(left + 2, rowTop, left + LIST_WIDTH - 2, rowTop + ROW_STEP - 1, ROW_MARKED);
             }
             if (type == hovered) {
@@ -399,7 +396,7 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
             int spotX = x + SPOT_X;
             int spotY = y + rowY(type);
             CassinoGui.drawSlot(context, spotX, spotY);
-            if (handler.marked(type)) {
+            if (chosen) {
                 context.drawItem(CassinoGui.CHIP, spotX + 1, spotY + 1);
             }
         }
@@ -438,7 +435,7 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
         Text line = message;
         int color = messageColor;
         if (line == null) {
-            line = Text.translatable("gui.cassino.dice.cost", handler.bet(), handler.cost());
+            line = Text.translatable("gui.cassino.dice.hint");
             color = LOSE_TEXT;
         }
         context.drawText(textRenderer, line, LEFT_X + (messageWidth - textRenderer.getWidth(line)) / 2, MESSAGE_Y,
@@ -452,9 +449,9 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
                 DiceScreenHandler.INVENTORY_Y);
     }
 
-    /** "ÚLTIMOS:" e as últimas somas, 3 por linha (a da jogada em andamento só aparece quando os dados param). */
+    /** "ÚLTIMOS:" e as últimas somas numa linha (a da jogada em andamento só aparece quando os dados param). */
     private void drawHistory(DrawContext context) {
-        context.drawText(textRenderer, Text.translatable("gui.cassino.dice.history"), LEFT_X + 4, HISTORY_Y + 4,
+        context.drawText(textRenderer, Text.translatable("gui.cassino.dice.history"), LEFT_X + 4, HISTORY_Y + 3,
                 CassinoGui.TEXT, false);
         List<String> totals = new ArrayList<>();
         int[] history = handler.history();
@@ -464,9 +461,8 @@ public class DiceScreen extends HandledScreen<DiceScreenHandler> {
             }
         }
         for (int i = 0; i < totals.size(); i++) {
-            int cellX = LEFT_X + 6 + (i % 3) * 22;
-            int cellY = HISTORY_Y + 14 + (i / 3) * 10;
-            context.drawText(textRenderer, totals.get(i), cellX, cellY, i == 0 ? 0xFF202020 : 0xFF606060, false);
+            context.drawText(textRenderer, totals.get(i), LEFT_X + 5 + i * 13, HISTORY_Y + 12,
+                    i == 0 ? 0xFF202020 : 0xFF606060, false);
         }
     }
 }

@@ -171,22 +171,22 @@ Botão direito no bloco abre as apostas da corrida. Os **créditos**, o **espaç
 Botão direito na mesa de dados abre o jogo. Os **créditos**, o **espaço das fichas**, **DEPÓSITO** e **RETIRADA** são os mesmos das outras máquinas.
 
 - Rolam **dois dados**, e as apostas são sobre a **soma** (de 2 a 12).
-- **Clique numa fileira** da lista para marcar ou desmarcar a aposta (a ficha aparece nas marcadas). Dá para marcar **várias ao mesmo tempo**: cada uma custa a aposta, e cada uma que acertar paga o seu prêmio. Embaixo da lista aparece quanto a jogada custa no total.
+- **Clique numa fileira** da lista para escolher a aposta (a ficha aparece na escolhida). É **uma aposta por jogada**.
 - **APOSTA** com **+** e **-** (1 a 64) e **ROLAR!**: os dados chacoalham no feltro e param; a soma aparece embaixo deles, e as últimas somas no quadro "ÚLTIMOS".
 - Passe o mouse numa fileira para ver quando ela ganha e quantas vezes em 36 ela sai.
 
 | Aposta | Ganha quando a soma é | Sai (em 36) | Paga |
 | --- | --- | --- | --- |
-| PARES | par | 18 | x1,9 |
-| ÍMPARES | ímpar | 18 | x1,9 |
+| PARES | par | 18 | x2,0 |
+| ÍMPARES | ímpar | 18 | x2,0 |
 | NÚMERO | o número escolhido (2 a 12) | 1 a 6 | x5,7 no 7; x6,8 no 6 e no 8; x8,5 no 5 e no 9; x11,4 no 4 e no 10; x17,1 no 3 e no 11; x34,2 no 2 e no 12 |
 | MENOR | 2 a 6 | 15 | x2,2 |
 | MAIOR | 8 a 12 | 15 | x2,2 |
 
 - O **número do NÚMERO** fica no quadradinho da fileira: clique para aumentar, botão direito para diminuir, ou use a rodinha do mouse.
-- O prêmio é a aposta vezes o multiplicador, arredondado. Cada aposta devolve uns **92 a 95%** no longo prazo (nunca mais de 100%), e a casa fica com a diferença. O 7 não é nem MENOR nem MAIOR.
+- O prêmio é a aposta vezes o multiplicador, arredondado. PARES e ÍMPARES são jogo limpo (devolvem **100%** no longo prazo); NÚMERO, MENOR e MAIOR devolvem uns **92 a 95%**, e a casa fica com a diferença. O 7 não é nem MENOR nem MAIOR.
 
-**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-640**: a jogada só é aceita se o pior caso (a soma que mais paga sair) couber, então apostas altas no NÚMERO 2 ou 12 ficam limitadas com a casa perto de 0 (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (os dados rolam duas vezes e fica o pior para você: 5% a cada 64 negativos, até 50%); de 0 a +639 os dados são limpos; de **+640** para cima, numa parte das jogadas que você perderia os dados rolam de novo, até o jogo devolver uns **110%** em +1216.
+**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-640**: a jogada só é aceita se o pior caso (a sua aposta acertar) couber, então apostas altas no NÚMERO 2 ou 12 ficam limitadas com a casa perto de 0 (a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (os dados rolam duas vezes e fica o pior para você: 5% a cada 64 negativos, até 50%); de 0 a +639 os dados são limpos; de **+640** para cima, numa parte das jogadas que você perderia os dados rolam de novo, e a chance de acertar sobe aos poucos até +1216.
 
 ## Cara ou Coroa
 
@@ -209,7 +209,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.12.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.12.1.jar`.
 
 ### Opção 2: no seu PC
 
@@ -220,7 +220,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.12.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.12.1.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 

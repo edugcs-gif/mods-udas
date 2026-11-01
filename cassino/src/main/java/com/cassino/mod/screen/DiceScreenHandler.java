@@ -16,9 +16,9 @@ import net.minecraft.sound.SoundEvents;
  * O jogo de dados, do lado do servidor (é ele quem rola). As regras estão em {@link Dice}; os créditos, o espaço das
  * fichas, DEPÓSITO e RETIRADA, em {@link CassinoScreenHandler}.
  *
- * <p>O jogador marca uma ou mais apostas clicando nas fileiras da mesa (cada uma custa a aposta), escolhe o número do
- * NÚMERO e aperta ROLAR!. A aposta e o prêmio entram no saldo da casa, o mesmo das outras máquinas; a jogada só é
- * aceita se o pior caso (a soma que mais paga sair) couber no limite de -640.
+ * <p>O jogador escolhe uma aposta clicando numa fileira da mesa, escolhe o número do NÚMERO e aperta ROLAR!. A aposta e
+ * o prêmio entram no saldo da casa, o mesmo das outras máquinas; a jogada só é aceita se o pior caso (a aposta
+ * acertar) couber no limite de -640.
  */
 public class DiceScreenHandler extends CassinoScreenHandler {
     public static final int BUTTON_ROLL = 0;
@@ -28,11 +28,11 @@ public class DiceScreenHandler extends CassinoScreenHandler {
     public static final int BUTTON_WITHDRAW = 4;
     public static final int BUTTON_NUMBER_UP = 5;
     public static final int BUTTON_NUMBER_DOWN = 6;
-    /** Marcar ou desmarcar uma aposta: {@code BUTTON_TOGGLE + Dice.EVEN/ODD/NUMBER/LOW/HIGH}. */
-    public static final int BUTTON_TOGGLE = 7;
+    /** Escolher a aposta: {@code BUTTON_CHOOSE + Dice.EVEN/ODD/NUMBER/LOW/HIGH}. */
+    public static final int BUTTON_CHOOSE = 7;
 
     /** Quantas somas o quadro dos últimos resultados mostra. */
-    public static final int HISTORY = 6;
+    public static final int HISTORY = 5;
 
     // ---------------------------------------------------------------- desenho (em pixels, a partir do canto da tela)
 
@@ -47,7 +47,7 @@ public class DiceScreenHandler extends CassinoScreenHandler {
     // ---------------------------------------------------------------- propriedades enviadas para a tela
 
     private static final int P_BET = 0;
-    private static final int P_MASK = 1;
+    private static final int P_CHOICE = 1;
     private static final int P_NUMBER = 2;
     private static final int P_DIE_1 = 3;
     private static final int P_DIE_2 = 4;
@@ -60,8 +60,8 @@ public class DiceScreenHandler extends CassinoScreenHandler {
     private static final int P_COUNT = P_ROLLS + 1;
 
     private int betIndex = 2;
-    /** As apostas marcadas, um bit por tipo ({@code 1 << Dice.EVEN} etc.). Começa com PARES. */
-    private int mask = 1 << Dice.EVEN;
+    /** A aposta escolhida ({@link Dice#EVEN} etc.). Começa com PARES. */
+    private int choice = Dice.EVEN;
     private int number = 7;
     private int die1 = 3;
     private int die2 = 4;
@@ -86,7 +86,7 @@ public class DiceScreenHandler extends CassinoScreenHandler {
             public int get(int index) {
                 return switch (index) {
                     case P_BET -> betIndex;
-                    case P_MASK -> mask;
+                    case P_CHOICE -> choice;
                     case P_NUMBER -> number;
                     case P_DIE_1 -> die1;
                     case P_DIE_2 -> die2;
@@ -102,7 +102,7 @@ public class DiceScreenHandler extends CassinoScreenHandler {
             public void set(int index, int value) {
                 switch (index) {
                     case P_BET -> betIndex = value;
-                    case P_MASK -> mask = value;
+                    case P_CHOICE -> choice = value;
                     case P_NUMBER -> number = value;
                     case P_DIE_1 -> die1 = value;
                     case P_DIE_2 -> die2 = value;
@@ -123,27 +123,18 @@ public class DiceScreenHandler extends CassinoScreenHandler {
 
     // ---------------------------------------------------------------- o que a tela mostra
 
-    /** A aposta de cada fileira marcada. */
     public int bet() {
         return SlotMachine.BETS[Math.floorMod(betIndex, SlotMachine.BETS.length)];
     }
 
-    public int mask() {
-        return mask;
-    }
-
-    public boolean marked(int type) {
-        return (mask & (1 << type)) != 0;
+    /** A aposta escolhida ({@link Dice#EVEN}, {@link Dice#ODD}, {@link Dice#NUMBER}, LOW ou HIGH). */
+    public int choice() {
+        return Math.floorMod(choice, Dice.TYPES);
     }
 
     /** O número escolhido para a aposta NÚMERO (2 a 12). */
     public int number() {
         return Math.max(Dice.MIN_TOTAL, Math.min(Dice.MAX_TOTAL, number));
-    }
-
-    /** O que a jogada custa: a aposta vezes quantas fileiras estão marcadas. */
-    public int cost() {
-        return Dice.cost(mask, bet());
     }
 
     public int die1() {
@@ -154,12 +145,12 @@ public class DiceScreenHandler extends CassinoScreenHandler {
         return die2;
     }
 
-    /** Quanto a última jogada devolveu (0 se nenhuma aposta acertou). */
+    /** Quanto a última jogada devolveu (0 se a aposta errou). */
     public int lastWin() {
         return lastWin;
     }
 
-    /** A maior aposta que a mesa aceita agora nas fileiras marcadas (0 = nenhuma), pelo limite da casa. */
+    /** A maior aposta que a mesa aceita agora na aposta escolhida (0 = nenhuma), pelo limite da casa. */
     public int maxBet() {
         return maxBet;
     }
@@ -175,7 +166,7 @@ public class DiceScreenHandler extends CassinoScreenHandler {
     // ---------------------------------------------------------------- limite da casa (só no servidor)
 
     private boolean fits(int stake) {
-        return state.available() - Dice.worstLoss(mask, number(), stake) >= -CassinoState.MAX_HOUSE_DEBT;
+        return state.available() - Dice.worstLoss(choice(), number(), stake) >= -CassinoState.MAX_HOUSE_DEBT;
     }
 
     private int tableMaxBet() {
@@ -192,8 +183,8 @@ public class DiceScreenHandler extends CassinoScreenHandler {
 
     @Override
     public boolean onButtonClick(PlayerEntity player, int id) {
-        if (id >= BUTTON_TOGGLE && id < BUTTON_TOGGLE + Dice.TYPES) {
-            mask ^= 1 << (id - BUTTON_TOGGLE);
+        if (id >= BUTTON_CHOOSE && id < BUTTON_CHOOSE + Dice.TYPES) {
+            choice = id - BUTTON_CHOOSE;
             return true;
         }
         switch (id) {
@@ -213,24 +204,20 @@ public class DiceScreenHandler extends CassinoScreenHandler {
 
     private void roll() {
         int stake = bet();
-        int cost = Dice.cost(mask, stake);
-        if (cost == 0) {
-            return; // nenhuma aposta marcada
-        }
-        if (credits < cost) {
+        if (credits < stake) {
             deposit(); // colocou fichas e já mandou rolar: deposita antes
         }
-        if (credits < cost || !fits(stake)) {
+        if (credits < stake || !fits(stake)) {
             return;
         }
-        int[] dice = Dice.roll(player.getRandom(), mask, number(), stake, state.house());
+        int[] dice = Dice.roll(player.getRandom(), choice(), number(), state.house());
         die1 = dice[0];
         die2 = dice[1];
         int total = die1 + die2;
-        credits -= cost;
-        lastWin = Math.min(Dice.payout(mask, number(), stake, total), CassinoState.MAX_BALANCE - credits);
+        credits -= stake;
+        lastWin = Math.min(Dice.payout(choice(), number(), stake, total), CassinoState.MAX_BALANCE - credits);
         credits += lastWin;
-        state.settle(cost, lastWin);
+        state.settle(stake, lastWin);
         saveCredits();
         System.arraycopy(history, 0, history, 1, HISTORY - 1);
         history[0] = total;

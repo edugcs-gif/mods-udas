@@ -95,11 +95,9 @@
   "gui.cassino.dice.bet.2": "NUMBER",
   "gui.cassino.dice.bet.3": "LOW 2-6",
   "gui.cassino.dice.bet.4": "HIGH 8-12",
-  "gui.cassino.dice.cost": "Total for this roll: %2$s chips",
-  "gui.cassino.dice.no_bet": "Mark a bet on the list.",
   "gui.cassino.dice.result.win": "Rolled %s! +%s chips",
   "gui.cassino.dice.result.lose": "Rolled %s. Not this time.",
-  "gui.cassino.dice.tip.rules": "Two dice are rolled, and the bets are on the total (2 to 12). Click the rows to mark one or more bets: each one costs the bet, and each one that hits pays its prize.",
+  "gui.cassino.dice.tip.rules": "Two dice are rolled, and the bet is on the total (2 to 12). Click a row to pick the bet: if it hits, it pays that row's prize.",
   "gui.cassino.dice.tip.0": "EVEN: wins if the total is even. Comes up %2$s times in 36. Pays %3$s.",
   "gui.cassino.dice.tip.1": "ODD: wins if the total is odd. Comes up %2$s times in 36. Pays %3$s.",
   "gui.cassino.dice.tip.2": "NUMBER: wins if the total is exactly %1$s. Comes up %2$s times in 36. Pays %3$s.",
@@ -122,5 +120,6 @@
   "gui.cassino.coin.result.win": "%s! +%s chips",
   "gui.cassino.coin.result.lose": "%s. Not this time.",
   "gui.cassino.coin.result.edge": "The coin landed on its edge! The house wins.",
-  "gui.cassino.coin.tip.rules": "Pick HEADS or TAILS and flip the coin: a hit pays 2x the bet. Once in 25 flips the coin lands on its edge, and the house wins."
+  "gui.cassino.coin.tip.rules": "Pick HEADS or TAILS and flip the coin: a hit pays 2x the bet. Once in 25 flips the coin lands on its edge, and the house wins.",
+  "gui.cassino.dice.hint": "Pick a bet and roll the dice"
 }
