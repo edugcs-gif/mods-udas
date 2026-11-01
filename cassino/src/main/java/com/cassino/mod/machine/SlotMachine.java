@@ -154,12 +154,14 @@ public final class SlotMachine {
     /**
      * Gira os rolos: os 15 símbolos à mostra (veja {@link #cell}). Só a linha do meio vale; as outras enfeitam.
      *
-     * @param bet   a aposta desta girada
-     * @param house o saldo da casa antes dela (veja {@link CassinoState})
+     * @param bet       a aposta desta girada
+     * @param house     o saldo da casa antes dela (decide a chance; veja {@link CassinoState})
+     * @param available o saldo da casa menos o que as mesas de blackjack têm reservado para mãos em andamento
+     *                  (decide o maior prêmio que cabe no limite)
      */
-    public static int[] spin(Random random, int bet, long house) {
+    public static int[] spin(Random random, int bet, long house, long available) {
         // O maior prêmio (em vezes a aposta) que não deixa a casa abaixo do limite.
-        long maxMultiplier = (house + CassinoState.MAX_HOUSE_DEBT + bet) / bet;
+        long maxMultiplier = (available + CassinoState.MAX_HOUSE_DEBT + bet) / bet;
         int[] prize = random.nextFloat() < winChance(house) ? pickWin(random, maxMultiplier) : null;
         int[] payline = new int[REELS];
         if (prize != null) {

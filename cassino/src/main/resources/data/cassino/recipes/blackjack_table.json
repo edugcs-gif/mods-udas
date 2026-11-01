@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "GGG", "PFP", "S S" ],
+  "key": {
+    "G": { "item": "minecraft:green_carpet" },
+    "P": { "tag": "minecraft:planks" },
+    "F": { "item": "cassino:chip" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "result": { "item": "cassino:blackjack_table", "count": 1 }
+}

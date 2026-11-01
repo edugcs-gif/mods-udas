@@ -3,7 +3,6 @@ package com.cassino.mod.client;
 import com.cassino.mod.Cassino;
 import com.cassino.mod.machine.SlotMachine;
 import com.cassino.mod.screen.SlotMachineScreenHandler;
-import java.util.Locale;
 import java.util.Random;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -17,7 +16,6 @@ import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
@@ -30,19 +28,12 @@ import net.minecraft.util.math.MathHelper;
  * para a direita; só então mostra o prêmio e o saldo novo.
  */
 public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
-    private static final int PANEL = 0xFFC6C6C6;
-    private static final int PANEL_LIGHT = 0xFFFFFFFF;
-    private static final int PANEL_DARK = 0xFF555555;
-    private static final int OUTLINE = 0xFF000000;
-    private static final int TEXT = 0xFF3F3F3F;
-    private static final int TITLE = 0xFF202020;
     private static final int FRAME = 0xFF3A3A3A;
     private static final int FRAME_LIGHT = 0xFF5C5C5C;
     private static final int CELL_FILL = 0xFF8B8B8B;
     private static final int CELL_LIGHT = 0xFFA9A9A9;
     private static final int CELL_DARK = 0xFF6A6A6A;
     private static final int PAYLINE = 0xFFF2D43A;
-    private static final int SLOT_DARK = 0xFF373737;
     private static final int WIN_TEXT = 0xFF1E7A1E;
     private static final int JACKPOT_TEXT = 0xFFC00000;
     private static final int LOSE_TEXT = 0xFF555555;
@@ -83,12 +74,11 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
             null, new ItemStack(Items.NETHER_STAR), new ItemStack(Items.DIAMOND), null, new ItemStack(Items.EMERALD),
             new ItemStack(Items.DIAMOND_SHOVEL)
     };
-    private static final ItemStack CHIP = new ItemStack(Cassino.CHIP);
 
     /** O que passa em cada rolo enquanto ele gira (só enfeite; o resultado vem do servidor). */
     private final int[][] strips = new int[SlotMachine.REELS][24];
 
-    private SpinButton spinButton;
+    private ColorButton spinButton;
     private boolean initialized;
     private int seenSpins;
     /** Quando começou a girada que está sendo mostrada ({@code -1} = rolos parados). */
@@ -124,8 +114,8 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
             seenSpins = handler.spins();
             initialized = true;
         }
-        spinButton = addDrawableChild(new SpinButton(x + RIGHT_X, y + REELS_Y, RIGHT_WIDTH, 22,
-                Text.translatable("gui.cassino.slot.spin"), this::spin));
+        spinButton = addDrawableChild(new ColorButton(x + RIGHT_X, y + REELS_Y, RIGHT_WIDTH, 22,
+                Text.translatable("gui.cassino.slot.spin"), ColorButton.GREEN, 1.5F, this::spin));
         spinButton.setTooltip(Tooltip.of(payTable()));
 
         // + e - na linha da aposta; o espaço das fichas, DEPÓSITO e, embaixo, RETIRADA.
@@ -265,38 +255,14 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
 
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        // Painel
-        context.fill(x, y, x + backgroundWidth, y + backgroundHeight, OUTLINE);
-        context.fill(x + 1, y + 1, x + backgroundWidth - 1, y + backgroundHeight - 1, PANEL);
-        context.fill(x + 1, y + 1, x + backgroundWidth - 1, y + 3, PANEL_LIGHT);
-        context.fill(x + 1, y + 1, x + 3, y + backgroundHeight - 1, PANEL_LIGHT);
-        context.fill(x + 1, y + backgroundHeight - 3, x + backgroundWidth - 1, y + backgroundHeight - 1, PANEL_DARK);
-        context.fill(x + backgroundWidth - 3, y + 1, x + backgroundWidth - 1, y + backgroundHeight - 1, PANEL_DARK);
+        CassinoGui.drawPanel(context, x, y, backgroundWidth, backgroundHeight);
 
         drawReels(context);
 
-        // Espaço das fichas (com uma ficha "apagada" quando está vazio) e o inventário.
-        int coinX = x + SlotMachineScreenHandler.COIN_SLOT_X;
-        int coinY = y + SlotMachineScreenHandler.COIN_SLOT_Y;
-        drawSlot(context, coinX, coinY);
-        if (!handler.getSlot(0).hasStack()) {
-            context.drawItem(CHIP, coinX + 1, coinY + 1);
-            MatrixStack matrices = context.getMatrices();
-            matrices.push();
-            matrices.translate(0.0F, 0.0F, 300.0F);
-            context.fill(coinX + 1, coinY + 1, coinX + 17, coinY + 17, 0xA08B8B8B);
-            matrices.pop();
-        }
-        for (int row = 0; row < 3; row++) {
-            for (int column = 0; column < 9; column++) {
-                drawSlot(context, x + SlotMachineScreenHandler.INVENTORY_X + column * 18,
-                        y + SlotMachineScreenHandler.INVENTORY_Y + row * 18);
-            }
-        }
-        for (int column = 0; column < 9; column++) {
-            drawSlot(context, x + SlotMachineScreenHandler.INVENTORY_X + column * 18,
-                    y + SlotMachineScreenHandler.HOTBAR_Y);
-        }
+        CassinoGui.drawCoinSlot(context, x + SlotMachineScreenHandler.COIN_SLOT_X,
+                y + SlotMachineScreenHandler.COIN_SLOT_Y, !handler.getSlot(0).hasStack());
+        CassinoGui.drawInventorySlots(context, x + SlotMachineScreenHandler.INVENTORY_X,
+                y + SlotMachineScreenHandler.INVENTORY_Y, y + SlotMachineScreenHandler.HOTBAR_Y);
     }
 
     private void drawReels(DrawContext context) {
@@ -367,25 +333,14 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
         matrices.pop();
     }
 
-    private static void drawSlot(DrawContext context, int slotX, int slotY) {
-        context.fill(slotX, slotY, slotX + 18, slotY + 18, PANEL_LIGHT);
-        context.fill(slotX, slotY, slotX + 17, slotY + 17, SLOT_DARK);
-        context.fill(slotX + 1, slotY + 1, slotX + 17, slotY + 17, CELL_FILL);
-    }
-
     /** Os textos, a partir do canto da tela: título, aposta, créditos, aviso e "INVENTÁRIO". */
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
-        Text bigTitle = Text.literal(title.getString().toUpperCase(Locale.ROOT)).formatted(Formatting.BOLD);
-        MatrixStack matrices = context.getMatrices();
-        matrices.push();
-        matrices.translate(backgroundWidth / 2.0F, 6.0F, 0.0F);
-        matrices.scale(1.5F, 1.5F, 1.0F);
-        context.drawText(textRenderer, bigTitle, -textRenderer.getWidth(bigTitle) / 2, 0, TITLE, false);
-        matrices.pop();
-
-        drawAmount(context, Text.translatable("gui.cassino.slot.bet", handler.bet()), RIGHT_X, BET_Y);
-        drawAmount(context, Text.translatable("gui.cassino.slot.credits", shownCredits()), RIGHT_X, CREDITS_Y);
+        CassinoGui.drawTitle(context, textRenderer, title, backgroundWidth);
+        CassinoGui.drawAmount(context, textRenderer, Text.translatable("gui.cassino.slot.bet", handler.bet()), RIGHT_X,
+                BET_Y);
+        CassinoGui.drawAmount(context, textRenderer, Text.translatable("gui.cassino.slot.credits", shownCredits()),
+                RIGHT_X, CREDITS_Y);
 
         // Embaixo dos rolos: o aviso da última girada por uns segundos; senão, o acumulado do jackpot.
         Text below = message;
@@ -397,19 +352,7 @@ public class SlotMachineScreen extends HandledScreen<SlotMachineScreenHandler> {
         context.drawText(textRenderer, below, REELS_X + (REELS_WIDTH - textRenderer.getWidth(below)) / 2,
                 MESSAGE_Y, belowColor, false);
 
-        Text inventory = Text.literal(Text.translatable("container.inventory").getString().toUpperCase(Locale.ROOT));
-        context.drawText(textRenderer, inventory, SlotMachineScreenHandler.INVENTORY_X,
-                SlotMachineScreenHandler.INVENTORY_Y - 10, TEXT, false);
-    }
-
-    /** "APOSTA: 5" ou "CRÉDITOS: 150", com uma ficha pequena do lado. */
-    private void drawAmount(DrawContext context, Text text, int textX, int textY) {
-        context.drawText(textRenderer, text, textX, textY, TEXT, false);
-        MatrixStack matrices = context.getMatrices();
-        matrices.push();
-        matrices.translate(textX + textRenderer.getWidth(text) + 2, textY - 2, 0.0F);
-        matrices.scale(0.75F, 0.75F, 1.0F);
-        context.drawItem(CHIP, 0, 0);
-        matrices.pop();
+        CassinoGui.drawInventoryLabel(context, textRenderer, SlotMachineScreenHandler.INVENTORY_X,
+                SlotMachineScreenHandler.INVENTORY_Y);
     }
 }

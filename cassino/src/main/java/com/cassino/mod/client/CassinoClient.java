@@ -8,5 +8,6 @@ public class CassinoClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         HandledScreens.register(Cassino.SLOT_MACHINE_HANDLER, SlotMachineScreen::new);
+        HandledScreens.register(Cassino.BLACKJACK_HANDLER, BlackjackScreen::new);
     }
 }

@@ -8,6 +8,7 @@ Um mod de cassino para o Minecraft 1.20.1, com Fabric. É um mod original: o có
 | --- | --- |
 | **Ficha** | A "moeda" do cassino, usada para apostar. Custa caro (8 barras de ouro + 1 diamante) e não volta a ser ouro. |
 | **Caça-níquel** (bloco) | Botão direito abre a máquina: 5 rolos, aposta de 1 a 64 fichas, créditos e prêmios de até 100x a aposta. |
+| **Mesa de Blackjack** (bloco) | Botão direito abre a mesa: blackjack (21) contra o dealer, com os mesmos créditos e o mesmo saldo da casa do caça-níquel. |
 | **Dado** | Botão direito rola de 1 a 6; quem está até 16 blocos vê o resultado no chat. |
 | **Moeda** | Botão direito joga cara ou coroa; quem está até 16 blocos vê o resultado no chat. |
 
@@ -17,6 +18,7 @@ Tudo fica na aba **Cassino** do criativo.
 
 - **Ficha:** 8 barras de ouro em volta e 1 diamante no centro = 1 ficha.
 - **Caça-níquel:** fileira de cima 3 barras de ferro; no meio ferro, **ficha**, ferro; embaixo ferro, redstone, ferro.
+- **Mesa de Blackjack:** em cima 3 tapetes verdes; no meio tábua, **ficha**, tábua; embaixo um graveto em cada canto (o meio vazio).
 - **Dado:** 4 quartzos em quadrado (2x2).
 - **Moeda:** em cruz, 4 pepitas de ferro (em cima, embaixo e nos lados) e 1 pepita de ouro no centro.
 
@@ -77,6 +79,23 @@ O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada apost
 
 Com as apostas dos jogadores a casa volta a subir, e a chance volta ao normal. A chance para em 45% mesmo com a casa muito no positivo: a partir de uns 45,5% a máquina passaria a pagar mais do que recebe. O saldo da casa e os créditos de cada jogador ficam salvos no mundo (`data/cassino.dat`).
 
+## Mesa de Blackjack
+
+Botão direito na mesa abre o blackjack (21) contra o dealer. Os **créditos são os mesmos** do caça-níquel (o seu saldo vale nas duas), e o **espaço das fichas, DEPÓSITO e RETIRADA** funcionam igual.
+
+- **DAR CARTAS** (o botão verde) gasta a aposta e dá duas cartas para você e duas para o dealer (a segunda dele fica virada). Durante a mão, o mesmo botão vira **PEDIR** (mais uma carta).
+- **PARAR**: você para e o dealer compra até ter 17 ou mais.
+- **DOBRAR**: só com as duas primeiras cartas; dobra a aposta, você recebe só mais uma carta e para.
+- **APOSTA** com **+** e **-**: 1, 2, 4, 8, 16, 32 ou 64 (só entre as mãos).
+- **Pagamento:** blackjack (Ás + uma carta de 10 nas duas primeiras) paga **3:2**; vitória paga **1:1**; empate devolve a aposta. O Ás vale 11 ou 1, e as figuras valem 10.
+- **As cartas:** o valor (A, 2 a 10, J, Q, K) e o naipe como um item do jogo: **copas = coração**, **ouros = barra de ouro**, **espadas = espada de ferro** e **paus = graveto**. Copas e ouros com o número em vermelho.
+- Se você fechar a mesa (ou sair do jogo) no meio de uma mão, você para e a mão termina normalmente.
+
+**Ligada ao caça-níquel:** o blackjack usa o **mesmo saldo da casa**:
+
+- O limite de **-640** vale para tudo junto. Ao dar as cartas (e ao dobrar), a mesa **reserva** o pior caso para a casa (você tirar blackjack, ou ganhar a aposta dobrada) e só aceita a aposta se ele couber, contando também as mãos de outros jogadores em andamento. Se a aposta for alta demais, a tela mostra a aposta máxima do momento.
+- A **sorte da mesa** segue as mesmas faixas do caça-níquel: com a casa no negativo, numa parte das cartas a mesa tira duas e fica com a pior para o jogador (5% a cada 64 negativos, até 50%); com a casa a partir de +640, a melhor para o jogador (2% a cada 64, até 10%). Entre 0 e +639 o jogo é limpo.
+
 ## Instalação
 
 O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque na pasta `mods`. Em servidor, instale no servidor e em todos os jogadores (só o servidor sorteia, mas a tela da máquina fica no jogo de cada um).
@@ -88,7 +107,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.4.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.5.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -99,11 +118,11 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.4.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.5.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 
-Roleta, mesa de blackjack, conquistas, uma ficha com valores diferentes (azul, verde, preta) e um caixa (NPC ou bloco) que troca fichas por esmeraldas.
+Roleta, divisão de pares no blackjack, conquistas, uma ficha com valores diferentes (azul, verde, preta) e um caixa (NPC ou bloco) que troca fichas por esmeraldas.
 
 ## Licença
 

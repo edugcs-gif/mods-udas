@@ -6,7 +6,7 @@ Mods de Minecraft (Fabric) do edugcs. Cada mod fica na sua própria pasta, com R
 |---|---|---|
 | [**jblesk**](jblesk/) | **jbleskão** (bloco) e **jblesk** (caixa de som portátil): tocam músicas e playlists do YouTube, SoundCloud ou links diretos de áudio para todo mundo que estiver perto. Pausa, pular na barra, volume pessoal, alcance perto/longe, e a caixa também toca do inventário, do baú do burro e do barco com baú. | 1.20.1 (Fabric) |
 | [**batraquizar**](batraquizar/) | O **Batraquizador**, uma poção: jogue a versão arremessável em alguém e ele vira sapo (pequeno, rápido, pulando alto, coaxando e sem conseguir atacar) até o efeito passar ou beber leite; depois ganha a Bênção do Príncipe, que protege por 10 minutos. E a **Poção de Retorsão**, que devolve os efeitos ruins para quem os jogou. | 1.20.1 (Fabric) |
-| [**cassino**](cassino/) | **Cassino**: fichas (trocadas por ouro), **caça-níquel** de 5 rolos com tela própria e jackpot, **dado** e **moeda** de cara ou coroa, com os resultados no chat para quem está perto. | 1.20.1 (Fabric) |
+| [**cassino**](cassino/) | **Cassino**: fichas (trocadas por ouro), **caça-níquel** de 5 rolos com tela própria e jackpot, **mesa de blackjack**, **dado** e **moeda** de cara ou coroa, com os resultados no chat para quem está perto. | 1.20.1 (Fabric) |
 | [**transparencia**](transparencia/) | **Inventário Transparente**: o fundo do inventário (e de baús, fornalhas, mesas...) fica semitransparente para ver o mundo atrás; a tecla **I** troca entre 100%, 80%, 60%, 40% e 20%. Só visual: não precisa estar no servidor. | 1.20.1 (Fabric) |
 
 ## Baixar o .jar

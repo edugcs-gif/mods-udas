@@ -14,10 +14,15 @@ import net.minecraft.world.PersistentState;
  * <ul>
  *   <li>o <b>saldo de cada jogador</b> (as fichas que ele depositou nas máquinas, mais os prêmios, menos as
  *       apostas): é só dele, vale em qualquer caça-níquel e continua lá depois de fechar a máquina;</li>
- *   <li>o <b>saldo da casa</b>: começa em 0, sobe com cada aposta e desce com cada prêmio. Ele mede quantas
- *       fichas o cassino já criou (negativo) ou destruiu (positivo) no servidor, e nunca passa de
- *       {@link #MAX_HOUSE_DEBT} negativo (veja {@link SlotMachine}).</li>
+ *   <li>o <b>saldo da casa</b>, o mesmo para o caça-níquel e o blackjack: começa em 0, sobe com cada aposta e
+ *       desce com cada prêmio. Ele mede quantas fichas o cassino já criou (negativo) ou destruiu (positivo) no
+ *       servidor, e nunca passa de {@link #MAX_HOUSE_DEBT} negativo (veja {@link SlotMachine}).</li>
  * </ul>
+ *
+ * <p>Uma mão de blackjack dura vários cliques: enquanto ela não termina, a mesa <b>reserva</b> o pior caso para a
+ * casa (o quanto ela perderia se o jogador ganhasse tudo). O limite é conferido sobre o saldo menos o reservado
+ * ({@link #available}), para várias mesas e máquinas ao mesmo tempo nunca passarem dele juntas. A reserva não é
+ * salva: some se o servidor fechar (as mãos em andamento também).
  */
 public class CassinoState extends PersistentState {
     /** O máximo de fichas que o cassino pode ter dado a mais do que recebeu, no servidor todo. */
@@ -26,6 +31,7 @@ public class CassinoState extends PersistentState {
     public static final int MAX_BALANCE = 1_000_000;
 
     private long house;
+    private long reserved;
     private final Map<UUID, Integer> balances = new HashMap<>();
 
     public static CassinoState get(MinecraftServer server) {
@@ -35,6 +41,21 @@ public class CassinoState extends PersistentState {
 
     public long house() {
         return house;
+    }
+
+    /** O saldo da casa menos o que está reservado para mãos de blackjack em andamento. */
+    public long available() {
+        return house - reserved;
+    }
+
+    /** Reserva o pior caso de uma mão de blackjack que começou (ou dobrou). */
+    public void reserve(long amount) {
+        reserved += amount;
+    }
+
+    /** Libera a reserva de uma mão que terminou (o resultado de verdade entra pelo {@link #settle}). */
+    public void release(long amount) {
+        reserved = Math.max(0L, reserved - amount);
     }
 
     /** A casa recebeu {@code bet} e pagou {@code prize}. */
