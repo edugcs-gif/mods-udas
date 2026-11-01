@@ -2,6 +2,8 @@ package com.cassino.mod.screen;
 
 import com.cassino.mod.Cassino;
 import com.cassino.mod.machine.CassinoState;
+import com.mojang.authlib.GameProfile;
+import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,6 +16,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 /**
@@ -120,7 +123,7 @@ public abstract class CassinoScreenHandler extends ScreenHandler {
                     case P_RANKED -> Math.min(0x7FFF, state.rankedPlayers());
                     case P_TYCOON_LOW -> low(tycoon == null ? 0 : state.balance(tycoon));
                     case P_TYCOON_HIGH -> high(tycoon == null ? 0 : state.balance(tycoon));
-                    default -> nameChars(tycoon == null ? "" : state.name(tycoon), index - P_TYCOON_NAME);
+                    default -> nameChars(tycoon == null ? "" : nameOf(tycoon), index - P_TYCOON_NAME);
                 };
             }
 
@@ -174,6 +177,23 @@ public abstract class CassinoScreenHandler extends ScreenHandler {
     /** O saldo da casa, somando todos os jogos: o que o cassino já ganhou, ou 0 se ele estiver no negativo. */
     public int house() {
         return house;
+    }
+
+    /**
+     * O nome de um jogador para o ranking. Quem ganhou créditos antes do ranking existir (e não abriu nenhuma máquina
+     * depois) ainda não tem nome no cofre: aí ele vem da lista de jogadores que o servidor já viu.
+     */
+    private String nameOf(UUID id) {
+        String name = state.name(id);
+        MinecraftServer server = player.getServer();
+        if ("?".equals(name) && server != null && server.getUserCache() != null) {
+            Optional<GameProfile> profile = server.getUserCache().getByUuid(id);
+            if (profile.isPresent()) {
+                name = profile.get().getName();
+                state.rememberName(id, name);
+            }
+        }
+        return name;
     }
 
     /** Duas letras do nome (a {@code 2k}-ésima e a seguinte) num número de 16 bits; 0 depois do fim. */
