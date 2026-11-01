@@ -15,6 +15,7 @@ Um mod de cassino para o Minecraft 1.20.1, com Fabric. É um mod original: o có
 | **Mesa de Dados** (bloco) | Botão direito abre o jogo de dados: aposte em pares, ímpares, um número, menor ou maior e role dois dados. Mesmos créditos e mesmo saldo da casa. |
 | **Mesa de Cara ou Coroa** (bloco) | Botão direito abre o cara ou coroa: aposte na CARA (o rosto) ou na COROA e lance a moeda. Mesmos créditos e mesmo saldo da casa. |
 | **Plinko de Slime** (bloco) | Botão direito abre o Plinko: a bola de slime quica numa pirâmide de pinos até cair num buraco que multiplica a aposta (de 0,2x a 10x). Mesmos créditos e mesmo saldo da casa. |
+| **Loteria de Mobs** (bloco) | O "jogo do bicho" do Minecraft: escolha um dos 25 mobs e aposte 32 fichas; no fim do dia sai um mob, e quem acertou leva o prêmio acumulado. Saldo separado dos outros jogos. |
 | **Dado** | Botão direito rola de 1 a 6; quem está até 16 blocos vê o resultado no chat. |
 | **Moeda** | Botão direito joga cara ou coroa; quem está até 16 blocos vê o resultado no chat. |
 
@@ -31,6 +32,7 @@ Tudo fica na aba **Cassino** do criativo.
 - **Mesa de Dados:** em cima dado, tapete verde, dado; no meio tábua, **ficha**, tábua; embaixo um graveto em cada canto (o meio vazio).
 - **Mesa de Cara ou Coroa:** em cima moeda, tapete verde, moeda; no meio tábua, **ficha**, tábua; embaixo um graveto em cada canto (o meio vazio).
 - **Plinko de Slime:** fileira de cima 3 barras de ferro; no meio bola de slime, **ficha**, bola de slime; embaixo 3 barras de ferro.
+- **Loteria de Mobs:** fileira de cima 3 papéis; no meio tábua, **ficha**, tábua; embaixo 3 tábuas.
 - **Dado:** 4 quartzos em quadrado (2x2).
 - **Moeda:** em cruz, 4 pepitas de ferro (em cima, embaixo e nos lados) e 1 pepita de ouro no centro.
 
@@ -114,7 +116,7 @@ Com as apostas dos jogadores a casa volta a subir, e a chance volta ao normal. D
 | +896 | 45% (~99%) | 51,8% (~104%) | 2,9% (~104%) | chance x1,125 (~98%) | ~104% |
 | +1216 ou mais | 50% (~110%) | 55,0% (~110%) | 3,05% (~110%) | chance x1,25 (~109%) | ~110% |
 
-Numa simulação com jogadores apostando de 1 a 64 nos jogos, o saldo da casa para de crescer e fica **em volta de +1000** (sem essa regra, ele subiria sem parar).
+**Teto de +800 (desde a 1.14.0):** o saldo da casa não passa de **+800**; o que passar vai para o prêmio da **Loteria de Mobs**. Por isso, na prática, a chance dos jogadores sobe só nos degraus até +800 (até 43% no caça-níquel).
 
 ## Mesa de Blackjack
 
@@ -215,6 +217,18 @@ Botão direito no Plinko abre o jogo. Os **créditos**, o **espaço das fichas**
 
 **Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-640** (o pior caso é a bola cair numa ponta, 10x; com a casa perto de 0 a aposta fica limitada e a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (a bola cai duas vezes e fica o pior buraco para você: 5% a cada 64 negativos, até 50%); de 0 a +639 o Plinko é limpo; de **+640** para cima, numa parte das quedas nos buracos de 0,5x e 0,2x a bola cai de novo, até o jogo devolver uns **110%** em +1216.
 
+## Loteria de Mobs
+
+O "jogo do bicho" do Minecraft. Botão direito no bloco abre a tabela com **25 mobs**: Porco, Vaca, Ovelha, Galinha, Lobo, Raposa, Abelha, Lula, Aldeão, Golem de Ferro, Zumbi, Afogado, Esqueleto, Creeper, Aranha, Slime, Saqueador, Enderman, Blaze, Ghast, Piglin, Esqueleto Wither, Warden, Wither e Dragão (o rosto de cada um sai da textura do próprio Minecraft).
+
+- **Clique num mob** para escolher e aperte **APOSTAR!**: a aposta é sempre **32 fichas**, tiradas dos seus créditos (os mesmos das outras máquinas). **Uma aposta por dia**, num mob só.
+- Quando o **dia do Minecraft acaba** (o relógio passa para o dia seguinte, também quando todo mundo dorme ou com `/time set`), **sai um mob**, todos com a mesma chance (1 em 25). A tela mostra quanto falta para o sorteio.
+- Quem acertou **leva o prêmio inteiro** (se mais de um acertou, divide em partes iguais), direto nos créditos. Se **ninguém acertou, o prêmio acumula** para o dia seguinte.
+- O resultado é **anunciado no chat** para todo mundo, e quem ganhou vê **"VOCÊ GANHOU!"** na tela com o valor. Quem ganhou sem estar no jogo vê o aviso quando entrar.
+- A tela mostra o **prêmio acumulado**, os seus créditos, quantas apostas entraram hoje, a **sua aposta** (com borda amarela e a ficha na tabela) e o **último mob sorteado** (com borda verde).
+
+**Saldo separado:** a loteria tem o próprio saldo (o prêmio) e não mexe no saldo da casa dos outros jogos; ela só paga o que tem, então nunca cria fichas. Mas ela **recebe o que o saldo da casa passar de +800**: quando os outros jogos deixam a casa acima de 800, o excesso vai direto para o prêmio da loteria.
+
 ## Instalação
 
 O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque na pasta `mods`. Em servidor, instale no servidor e em todos os jogadores (só o servidor sorteia, mas a tela da máquina fica no jogo de cada um).
@@ -226,7 +240,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.13.1.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.14.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -237,7 +251,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.13.1.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.14.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 

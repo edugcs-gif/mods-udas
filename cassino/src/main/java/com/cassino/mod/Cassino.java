@@ -5,16 +5,20 @@ import com.cassino.mod.block.ChipExchangerBlock;
 import com.cassino.mod.block.CoinFlipBlock;
 import com.cassino.mod.block.DiceTableBlock;
 import com.cassino.mod.block.HorseRaceBlock;
+import com.cassino.mod.block.LotteryBlock;
 import com.cassino.mod.block.PlinkoBlock;
 import com.cassino.mod.block.RouletteBlock;
 import com.cassino.mod.block.SlotMachineBlock;
 import com.cassino.mod.item.CoinItem;
 import com.cassino.mod.item.DiceItem;
+import com.cassino.mod.machine.CassinoState;
+import com.cassino.mod.machine.Lottery;
 import com.cassino.mod.screen.BlackjackScreenHandler;
 import com.cassino.mod.screen.ChipExchangerScreenHandler;
 import com.cassino.mod.screen.CoinFlipScreenHandler;
 import com.cassino.mod.screen.DiceScreenHandler;
 import com.cassino.mod.screen.HorseRaceScreenHandler;
+import com.cassino.mod.screen.LotteryScreenHandler;
 import com.cassino.mod.screen.PlinkoScreenHandler;
 import com.cassino.mod.screen.RouletteScreenHandler;
 import com.cassino.mod.screen.SlotMachineScreenHandler;
@@ -24,6 +28,7 @@ import java.util.List;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -44,7 +49,8 @@ import net.minecraft.world.World;
 
 /**
  * Cassino: ficha (a "moeda" do cassino), trocador de fichas, caça-níquel, blackjack, roleta, corrida de cavalos, jogo de
- * dados, cara ou coroa, Plinko de Slime, dado e moeda.
+ * dados, cara ou coroa, Plinko de Slime, loteria
+ * de mobs, dado e moeda.
  */
 public class Cassino implements ModInitializer {
     public static final String MOD_ID = "cassino";
@@ -78,6 +84,9 @@ public class Cassino implements ModInitializer {
     public static final Item COIN_FLIP_ITEM = new BlockItem(COIN_FLIP, new Item.Settings());
     public static final Block PLINKO = new PlinkoBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
     public static final Item PLINKO_ITEM = new BlockItem(PLINKO, new Item.Settings());
+    public static final Block LOTTERY =
+            new LotteryBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).strength(2.0F));
+    public static final Item LOTTERY_ITEM = new BlockItem(LOTTERY, new Item.Settings());
 
     /** A tela do trocador de fichas (ouro e diamante viram fichas, e fichas viram ouro e diamante). */
     public static final ScreenHandlerType<ChipExchangerScreenHandler> CHIP_EXCHANGER_HANDLER = Registry.register(
@@ -115,6 +124,11 @@ public class Cassino implements ModInitializer {
             Registries.SCREEN_HANDLER, id("plinko"),
             new ScreenHandlerType<>(PlinkoScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
 
+    /** A tela da loteria de mobs (a tabela dos mobs, o prêmio, a aposta do dia e o espaço das fichas). */
+    public static final ScreenHandlerType<LotteryScreenHandler> LOTTERY_HANDLER = Registry.register(
+            Registries.SCREEN_HANDLER, id("lottery"),
+            new ScreenHandlerType<>(LotteryScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
+
     /** Tarefas para rodar daqui a alguns ticks (o aviso do jackpot espera os rolos pararem na tela). */
     private static final List<Later> LATER = new ArrayList<>();
 
@@ -134,6 +148,7 @@ public class Cassino implements ModInitializer {
                 entries.add(DICE_TABLE_ITEM);
                 entries.add(COIN_FLIP_ITEM);
                 entries.add(PLINKO_ITEM);
+                entries.add(LOTTERY_ITEM);
                 entries.add(DIE);
                 entries.add(COIN);
             })
@@ -164,9 +179,22 @@ public class Cassino implements ModInitializer {
         Registry.register(Registries.ITEM, id("coin_flip"), COIN_FLIP_ITEM);
         Registry.register(Registries.BLOCK, id("plinko"), PLINKO);
         Registry.register(Registries.ITEM, id("plinko"), PLINKO_ITEM);
+        Registry.register(Registries.BLOCK, id("lottery"), LOTTERY);
+        Registry.register(Registries.ITEM, id("lottery"), LOTTERY_ITEM);
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
 
+        // Quem ganhou na loteria sem estar no jogo fica sabendo quando entrar.
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            Long prize = CassinoState.get(server).takeLotteryNotice(handler.player.getUuid());
+            if (prize != null) {
+                Lottery.announceWin(handler.player, prize);
+            }
+        });
+
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            if (server.getTicks() % 20 == 0) {
+                Lottery.tick(server); // o sorteio da loteria sai quando o dia do Minecraft acaba
+            }
             if (LATER.isEmpty()) {
                 return;
             }
