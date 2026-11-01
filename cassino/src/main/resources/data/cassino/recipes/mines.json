@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [ "SSS", "GFG", "SSS" ],
+  "key": {
+    "S": { "item": "minecraft:stone" },
+    "G": { "item": "minecraft:gunpowder" },
+    "F": { "item": "cassino:chip" }
+  },
+  "result": { "item": "cassino:mines", "count": 1 }
+}

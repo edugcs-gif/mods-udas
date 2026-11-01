@@ -6,6 +6,7 @@ import com.cassino.mod.block.CoinFlipBlock;
 import com.cassino.mod.block.DiceTableBlock;
 import com.cassino.mod.block.HorseRaceBlock;
 import com.cassino.mod.block.LotteryBlock;
+import com.cassino.mod.block.MinesBlock;
 import com.cassino.mod.block.PlinkoBlock;
 import com.cassino.mod.block.RouletteBlock;
 import com.cassino.mod.block.SlotMachineBlock;
@@ -19,6 +20,7 @@ import com.cassino.mod.screen.CoinFlipScreenHandler;
 import com.cassino.mod.screen.DiceScreenHandler;
 import com.cassino.mod.screen.HorseRaceScreenHandler;
 import com.cassino.mod.screen.LotteryScreenHandler;
+import com.cassino.mod.screen.MinesScreenHandler;
 import com.cassino.mod.screen.PlinkoScreenHandler;
 import com.cassino.mod.screen.RouletteScreenHandler;
 import com.cassino.mod.screen.SlotMachineScreenHandler;
@@ -50,7 +52,7 @@ import net.minecraft.world.World;
 /**
  * Cassino: ficha (a "moeda" do cassino), trocador de fichas, caça-níquel, blackjack, roleta, corrida de cavalos, jogo de
  * dados, cara ou coroa, Plinko de Slime, loteria
- * de mobs, dado e moeda.
+ * de mobs, Campo Minado, dado e moeda.
  */
 public class Cassino implements ModInitializer {
     public static final String MOD_ID = "cassino";
@@ -87,6 +89,8 @@ public class Cassino implements ModInitializer {
     public static final Block LOTTERY =
             new LotteryBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).strength(2.0F));
     public static final Item LOTTERY_ITEM = new BlockItem(LOTTERY, new Item.Settings());
+    public static final Block MINES = new MinesBlock(AbstractBlock.Settings.copy(Blocks.STONE));
+    public static final Item MINES_ITEM = new BlockItem(MINES, new Item.Settings());
 
     /** A tela do trocador de fichas (ouro e diamante viram fichas, e fichas viram ouro e diamante). */
     public static final ScreenHandlerType<ChipExchangerScreenHandler> CHIP_EXCHANGER_HANDLER = Registry.register(
@@ -129,6 +133,11 @@ public class Cassino implements ModInitializer {
             Registries.SCREEN_HANDLER, id("lottery"),
             new ScreenHandlerType<>(LotteryScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
 
+    /** A tela do Campo Minado (a grade, as minas, o multiplicador, a aposta e o espaço das fichas). */
+    public static final ScreenHandlerType<MinesScreenHandler> MINES_HANDLER = Registry.register(
+            Registries.SCREEN_HANDLER, id("mines"),
+            new ScreenHandlerType<>(MinesScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
+
     /** Tarefas para rodar daqui a alguns ticks (o aviso do jackpot espera os rolos pararem na tela). */
     private static final List<Later> LATER = new ArrayList<>();
 
@@ -149,6 +158,7 @@ public class Cassino implements ModInitializer {
                 entries.add(COIN_FLIP_ITEM);
                 entries.add(PLINKO_ITEM);
                 entries.add(LOTTERY_ITEM);
+                entries.add(MINES_ITEM);
                 entries.add(DIE);
                 entries.add(COIN);
             })
@@ -181,6 +191,8 @@ public class Cassino implements ModInitializer {
         Registry.register(Registries.ITEM, id("plinko"), PLINKO_ITEM);
         Registry.register(Registries.BLOCK, id("lottery"), LOTTERY);
         Registry.register(Registries.ITEM, id("lottery"), LOTTERY_ITEM);
+        Registry.register(Registries.BLOCK, id("mines"), MINES);
+        Registry.register(Registries.ITEM, id("mines"), MINES_ITEM);
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
 
         // Quem ganhou na loteria sem estar no jogo fica sabendo quando entrar.

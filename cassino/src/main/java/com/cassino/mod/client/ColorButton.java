@@ -16,6 +16,7 @@ final class ColorButton extends ClickableWidget {
     static final Colors GREEN = new Colors(0xFF1F3D17, 0xFF3C8E2C, 0xFF4CA83A, 0xFF4A6B45, 0xFF7FD36A, 0xFF235A19);
     static final Colors RED = new Colors(0xFF3D1414, 0xFFB52A2A, 0xFFCC3A3A, 0xFF6B4545, 0xFFE07070, 0xFF6E1515);
     static final Colors BLUE = new Colors(0xFF14243D, 0xFF3E5F8E, 0xFF4C72A8, 0xFF4A5566, 0xFF8AA6D6, 0xFF223A5E);
+    static final Colors GOLD = new Colors(0xFF4A3608, 0xFFC08A10, 0xFFD89E1C, 0xFF6B5A35, 0xFFF2D06A, 0xFF7A5606);
 
     private final Colors colors;
     private final float textScale;

@@ -16,6 +16,7 @@ Um mod de cassino para o Minecraft 1.20.1, com Fabric. É um mod original: o có
 | **Mesa de Cara ou Coroa** (bloco) | Botão direito abre o cara ou coroa: aposte na CARA (o rosto) ou na COROA e lance a moeda. Mesmos créditos e mesmo saldo da casa. |
 | **Plinko de Slime** (bloco) | Botão direito abre o Plinko: a bola de slime quica numa pirâmide de pinos até cair num buraco que multiplica a aposta (de 0,2x a 10x). Mesmos créditos e mesmo saldo da casa. |
 | **Loteria de Mobs** (bloco) | O "jogo do bicho" do Minecraft: escolha um dos 25 mobs e aposte 32 fichas; no fim do dia sai um mob, e quem acertou leva o prêmio acumulado. Saldo separado dos outros jogos. |
+| **Campo Minado** (bloco) | Estilo "Mines": cave os blocos de uma grade 5x5 atrás de diamantes e esmeraldas (o multiplicador sobe) e saque antes de achar uma TNT ou um Creeper. Mesmos créditos e mesmo saldo da casa. |
 | **Dado** | Botão direito rola de 1 a 6; quem está até 16 blocos vê o resultado no chat. |
 | **Moeda** | Botão direito joga cara ou coroa; quem está até 16 blocos vê o resultado no chat. |
 
@@ -33,6 +34,7 @@ Tudo fica na aba **Cassino** do criativo.
 - **Mesa de Cara ou Coroa:** em cima moeda, tapete verde, moeda; no meio tábua, **ficha**, tábua; embaixo um graveto em cada canto (o meio vazio).
 - **Plinko de Slime:** fileira de cima 3 barras de ferro; no meio bola de slime, **ficha**, bola de slime; embaixo 3 barras de ferro.
 - **Loteria de Mobs:** fileira de cima 3 papéis; no meio tábua, **ficha**, tábua; embaixo 3 tábuas.
+- **Campo Minado:** fileira de cima 3 pedras; no meio pólvora, **ficha**, pólvora; embaixo 3 pedras.
 - **Dado:** 4 quartzos em quadrado (2x2).
 - **Moeda:** em cruz, 4 pepitas de ferro (em cima, embaixo e nos lados) e 1 pepita de ouro no centro.
 
@@ -81,7 +83,7 @@ Em todos os jogos, **à esquerda do inventário**, um quadro com coroa mostra o 
 
 ### Limite de prêmios da casa
 
-O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada aposta e **desce** com cada prêmio, somando todos os jogos (caça-níquel, blackjack, roleta, corrida, dados, cara ou coroa e Plinko). Quando está negativo, quer dizer que o cassino já deu mais fichas do que recebeu. Ele aparece no **canto de cima, à esquerda, de todas as telas** ("CASA: +1234", em verde); passe o mouse em cima para ver a explicação. Quando a casa está no negativo, a tela mostra **0** (o valor de verdade nem sai do servidor), então os jogadores não ficam sabendo que as chances estão contra eles.
+O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada aposta e **desce** com cada prêmio, somando todos os jogos (caça-níquel, blackjack, roleta, corrida, dados, cara ou coroa, Plinko e Campo Minado). Quando está negativo, quer dizer que o cassino já deu mais fichas do que recebeu. Ele aparece no **canto de cima, à esquerda, de todas as telas** ("CASA: +1234", em verde); passe o mouse em cima para ver a explicação. Quando a casa está no negativo, a tela mostra **0** (o valor de verdade nem sai do servidor), então os jogadores não ficam sabendo que as chances estão contra eles.
 
 - A casa pode ficar **no máximo em -640**: o cassino nunca cria mais de 640 fichas a mais do que recebeu, no servidor todo. Um prêmio que passaria disso vira um prêmio menor que caiba; se nem o menor couber, a girada perde.
 - Quanto mais no negativo, menor a chance de ganhar, aos poucos; e a partir de **+640** a chance sobe um ponto a cada 64 fichas, até **50%**, para a casa devolver fichas em vez de acumular. No caça-níquel:
@@ -233,6 +235,30 @@ O "jogo do bicho" do Minecraft. Botão direito no bloco abre a tabela com **25 m
 
 **Saldo separado:** a loteria tem o próprio saldo (o prêmio) e não mexe no saldo da casa dos outros jogos; ela só paga o que tem, então nunca cria fichas. Mas ela **recebe o que o saldo da casa passar de +800**: quando os outros jogos deixam a casa acima de 800, o excesso vai direto para o prêmio da loteria.
 
+## Campo Minado
+
+Estilo "Mines". Botão direito no bloco abre uma **grade de 5x5 blocos de pedra**. Os **créditos**, o **espaço das fichas**, **DEPÓSITO** e **RETIRADA** são os mesmos das outras máquinas.
+
+- Escolha **quantas minas** tem na grade (**MINAS**, de 1 a 24, com - e +) e a **APOSTA**, e aperte **JOGAR!**: a aposta sai dos créditos e a grade fica coberta.
+- **Clique nos blocos para cavar.** Um **diamante** ou uma **esmeralda** aumenta o multiplicador; uma **TNT** ou um **Creeper** explode e você perde a aposta.
+- Aperte **SACAR!** (o botão dourado) a qualquer momento para levar a aposta vezes o multiplicador. Antes de achar a primeira pedra, SACAR! só devolve a aposta. Achar todas as pedras saca sozinho, e fechar a tela no meio da rodada também.
+- No fim da rodada a grade toda aparece (apagada): onde estavam as outras minas e pedras.
+- O quadro do meio mostra quantas pedras você achou, o multiplicador **atual**, o da **próxima** pedra, quanto você leva se **sacar** agora e a **chance** de o próximo bloco ser uma pedra.
+
+Mais minas, mais difícil, e o multiplicador sobe mais rápido. Alguns exemplos:
+
+| Minas | 1 pedra | 3 pedras | 5 pedras | 10 pedras |
+| --- | --- | --- | --- | --- |
+| 1 | x1,00 | x1,09 | x1,20 | x1,60 |
+| 3 | x1,09 | x1,43 | x1,94 | x4,85 |
+| 5 | x1,20 | x1,94 | x3,29 | x16,98 |
+| 10 | x1,60 | x4,85 | x16,98 | x1044 |
+| 24 | x24,00 | - | - | - |
+
+O multiplicador é o justo (pela chance de chegar até ali) vezes **0,96**: seja qual for a estratégia, o jogo devolve uns **96%** no longo prazo. O prêmio é arredondado para baixo.
+
+**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-640**. Enquanto a rodada está aberta, a casa reserva o que pagaria se você sacasse, e só deixa cavar se o prêmio depois da próxima pedra ainda couber no limite: perto do limite, a tela avisa **"Limite da casa: hora de sacar!"**. Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (numa parte das cavadas o bloco é sorteado duas vezes e fica o pior para você); de +640 para cima, a primeira mina de cada rodada pode virar pedra preciosa.
+
 ## Instalação
 
 O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque na pasta `mods`. Em servidor, instale no servidor e em todos os jogadores (só o servidor sorteia, mas a tela da máquina fica no jogo de cada um).
@@ -244,7 +270,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.15.2.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.16.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -255,7 +281,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.15.2.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.16.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 
