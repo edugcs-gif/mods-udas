@@ -121,5 +121,13 @@
   "gui.cassino.coin.result.lose": "%s. Not this time.",
   "gui.cassino.coin.result.edge": "The coin landed on its edge! The house wins.",
   "gui.cassino.coin.tip.rules": "Pick HEADS or TAILS and flip the coin: a hit pays 2x the bet. Once in 25 flips the coin lands on its edge, and the house wins.",
-  "gui.cassino.dice.hint": "Pick a bet and roll the dice"
+  "gui.cassino.dice.hint": "Pick a bet and roll the dice",
+  "block.cassino.plinko": "Slime Plinko",
+  "gui.cassino.plinko.title": "Slime Plinko",
+  "gui.cassino.plinko.drop": "DROP!",
+  "gui.cassino.plinko.hint": "Drop the slime ball and see where it lands",
+  "gui.cassino.plinko.result.win": "Landed on %s! +%s chips",
+  "gui.cassino.plinko.result.back": "Landed on %s: %s chips back",
+  "gui.cassino.plinko.result.lose": "Landed on %s. Not this time.",
+  "gui.cassino.plinko.tip.rules": "The slime ball leaves the funnel and bounces off the pegs, left or right, until it falls into one of the slots below. Each slot multiplies the bet: 10x on the ends (1 in 64 each), 2x, 0.5x and 0.2x in the middle (the easiest)."
 }

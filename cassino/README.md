@@ -14,6 +14,7 @@ Um mod de cassino para o Minecraft 1.20.1, com Fabric. É um mod original: o có
 | **Corrida de Cavalos** (bloco) | Botão direito abre as apostas: escolha um dos 7 cavalos do dia e veja a corrida. Os cavalos e as chances mudam a cada dia do Minecraft. |
 | **Mesa de Dados** (bloco) | Botão direito abre o jogo de dados: aposte em pares, ímpares, um número, menor ou maior e role dois dados. Mesmos créditos e mesmo saldo da casa. |
 | **Mesa de Cara ou Coroa** (bloco) | Botão direito abre o cara ou coroa: aposte na CARA (o rosto) ou na COROA e lance a moeda. Mesmos créditos e mesmo saldo da casa. |
+| **Plinko de Slime** (bloco) | Botão direito abre o Plinko: a bola de slime quica numa pirâmide de pinos até cair num buraco que multiplica a aposta (de 0,2x a 10x). Mesmos créditos e mesmo saldo da casa. |
 | **Dado** | Botão direito rola de 1 a 6; quem está até 16 blocos vê o resultado no chat. |
 | **Moeda** | Botão direito joga cara ou coroa; quem está até 16 blocos vê o resultado no chat. |
 
@@ -29,6 +30,7 @@ Tudo fica na aba **Cassino** do criativo.
 - **Corrida de Cavalos:** em cima 3 fardos de feno; no meio couro, **ficha**, couro; embaixo 3 tábuas.
 - **Mesa de Dados:** em cima dado, tapete verde, dado; no meio tábua, **ficha**, tábua; embaixo um graveto em cada canto (o meio vazio).
 - **Mesa de Cara ou Coroa:** em cima moeda, tapete verde, moeda; no meio tábua, **ficha**, tábua; embaixo um graveto em cada canto (o meio vazio).
+- **Plinko de Slime:** fileira de cima 3 barras de ferro; no meio bola de slime, **ficha**, bola de slime; embaixo 3 barras de ferro.
 - **Dado:** 4 quartzos em quadrado (2x2).
 - **Moeda:** em cruz, 4 pepitas de ferro (em cima, embaixo e nos lados) e 1 pepita de ouro no centro.
 
@@ -73,7 +75,7 @@ Ganha quem tirar **3, 4 ou 5 símbolos iguais seguidos na linha do meio, a parti
 
 ### Limite de prêmios da casa
 
-O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada aposta e **desce** com cada prêmio, somando todos os jogos (caça-níquel, blackjack, roleta, corrida, dados e cara ou coroa). Quando está negativo, quer dizer que o cassino já deu mais fichas do que recebeu. Ele aparece no **canto de cima, à esquerda, de todas as telas** ("CASA: +1234", em verde); passe o mouse em cima para ver a explicação. Quando a casa está no negativo, a tela mostra **0** (o valor de verdade nem sai do servidor), então os jogadores não ficam sabendo que as chances estão contra eles.
+O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada aposta e **desce** com cada prêmio, somando todos os jogos (caça-níquel, blackjack, roleta, corrida, dados, cara ou coroa e Plinko). Quando está negativo, quer dizer que o cassino já deu mais fichas do que recebeu. Ele aparece no **canto de cima, à esquerda, de todas as telas** ("CASA: +1234", em verde); passe o mouse em cima para ver a explicação. Quando a casa está no negativo, a tela mostra **0** (o valor de verdade nem sai do servidor), então os jogadores não ficam sabendo que as chances estão contra eles.
 
 - A casa pode ficar **no máximo em -640**: o cassino nunca cria mais de 640 fichas a mais do que recebeu, no servidor todo. Um prêmio que passaria disso vira um prêmio menor que caiba; se nem o menor couber, a girada perde.
 - Quanto mais no negativo, menor a chance de ganhar, aos poucos; e a partir de **+640** a chance sobe um ponto a cada 64 fichas, até **50%**, para a casa devolver fichas em vez de acumular. No caça-níquel:
@@ -198,6 +200,21 @@ Botão direito na mesa de cara ou coroa abre o jogo. Os **créditos**, o **espa�
 
 **Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-640** (o pior caso é o seu lado sair). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (a moeda é lançada duas vezes e fica o pior para você: 5% a cada 64 negativos, até 50%); de 0 a +639 a moeda é limpa; de **+640** para cima, numa parte dos lançamentos que você perderia a moeda é lançada de novo, até o jogo devolver uns **110%** em +1216.
 
+## Plinko de Slime
+
+Botão direito no Plinko abre o jogo. Os **créditos**, o **espaço das fichas**, **DEPÓSITO** e **RETIRADA** são os mesmos das outras máquinas.
+
+- Escolha a **APOSTA** com **+** e **-** (1 a 64) e aperte **LANÇAR!**: a **bola de slime** sai do funil e quica nas **6 fileiras de pinos**, cada vez para a esquerda ou para a direita (meio a meio), até cair num dos **7 buracos** de baixo. O buraco onde ela caiu fica com a borda branca.
+- Cada buraco multiplica a aposta. Os do meio são os mais fáceis; as pontas, as mais difíceis:
+
+| Buraco | 10x | 2x | 0,5x | 0,2x | 0,5x | 2x | 10x |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Chance | 1,6% | 9,4% | 23,4% | 31,2% | 23,4% | 9,4% | 1,6% |
+
+- No total o Plinko devolve uns **98,4%** do que é apostado. Quando a conta não dá um número inteiro de fichas (0,5x de 1 ficha, por exemplo), a parte quebrada vira a chance de 1 ficha a mais (metade das vezes volta 1), então os multiplicadores valem igual para qualquer aposta.
+
+**Ligado ao resto do cassino:** mesmo **saldo da casa** e mesmo limite de **-640** (o pior caso é a bola cair numa ponta, 10x; com a casa perto de 0 a aposta fica limitada e a tela mostra o máximo). Com a casa no negativo vale a mesma **sorte da casa** das outras mesas (a bola cai duas vezes e fica o pior buraco para você: 5% a cada 64 negativos, até 50%); de 0 a +639 o Plinko é limpo; de **+640** para cima, numa parte das quedas nos buracos de 0,5x e 0,2x a bola cai de novo, até o jogo devolver uns **110%** em +1216.
+
 ## Instalação
 
 O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque na pasta `mods`. Em servidor, instale no servidor e em todos os jogadores (só o servidor sorteia, mas a tela da máquina fica no jogo de cada um).
@@ -209,7 +226,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.12.1.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.13.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -220,7 +237,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.12.1.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.13.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 

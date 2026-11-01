@@ -121,5 +121,13 @@
   "gui.cassino.coin.result.lose": "Deu %s. Não foi dessa vez.",
   "gui.cassino.coin.result.edge": "A moeda caiu em pé! A casa ganha.",
   "gui.cassino.coin.tip.rules": "Escolha CARA ou COROA e lance a moeda: acertar devolve 2x a aposta. Uma vez em 25 a moeda cai em pé, e aí a casa ganha.",
-  "gui.cassino.dice.hint": "Clique numa aposta e role os dados"
+  "gui.cassino.dice.hint": "Clique numa aposta e role os dados",
+  "block.cassino.plinko": "Plinko de Slime",
+  "gui.cassino.plinko.title": "Plinko de Slime",
+  "gui.cassino.plinko.drop": "LANÇAR!",
+  "gui.cassino.plinko.hint": "Lance a bola de slime e veja onde ela cai",
+  "gui.cassino.plinko.result.win": "Caiu no %s! +%s fichas",
+  "gui.cassino.plinko.result.back": "Caiu no %s: voltaram %s fichas",
+  "gui.cassino.plinko.result.lose": "Caiu no %s. Não foi dessa vez.",
+  "gui.cassino.plinko.tip.rules": "A bola de slime sai do funil e quica nos pinos, para a esquerda ou para a direita, até cair num dos buracos de baixo. Cada buraco multiplica a aposta: 10x nas pontas (1 em 64 cada), 2x, 0,5x e 0,2x no meio (o mais fácil)."
 }

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "cassino:block/plinko_top",
+    "side": "cassino:block/plinko_side",
+    "bottom": "cassino:block/plinko_top"
+  }
+}

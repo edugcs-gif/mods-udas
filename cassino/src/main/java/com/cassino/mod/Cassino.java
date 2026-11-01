@@ -5,6 +5,7 @@ import com.cassino.mod.block.ChipExchangerBlock;
 import com.cassino.mod.block.CoinFlipBlock;
 import com.cassino.mod.block.DiceTableBlock;
 import com.cassino.mod.block.HorseRaceBlock;
+import com.cassino.mod.block.PlinkoBlock;
 import com.cassino.mod.block.RouletteBlock;
 import com.cassino.mod.block.SlotMachineBlock;
 import com.cassino.mod.item.CoinItem;
@@ -14,6 +15,7 @@ import com.cassino.mod.screen.ChipExchangerScreenHandler;
 import com.cassino.mod.screen.CoinFlipScreenHandler;
 import com.cassino.mod.screen.DiceScreenHandler;
 import com.cassino.mod.screen.HorseRaceScreenHandler;
+import com.cassino.mod.screen.PlinkoScreenHandler;
 import com.cassino.mod.screen.RouletteScreenHandler;
 import com.cassino.mod.screen.SlotMachineScreenHandler;
 import java.util.ArrayList;
@@ -42,7 +44,7 @@ import net.minecraft.world.World;
 
 /**
  * Cassino: ficha (a "moeda" do cassino), trocador de fichas, caça-níquel, blackjack, roleta, corrida de cavalos, jogo de
- * dados, cara ou coroa, dado e moeda.
+ * dados, cara ou coroa, Plinko de Slime, dado e moeda.
  */
 public class Cassino implements ModInitializer {
     public static final String MOD_ID = "cassino";
@@ -74,6 +76,8 @@ public class Cassino implements ModInitializer {
     public static final Block COIN_FLIP =
             new CoinFlipBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).strength(2.0F));
     public static final Item COIN_FLIP_ITEM = new BlockItem(COIN_FLIP, new Item.Settings());
+    public static final Block PLINKO = new PlinkoBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK));
+    public static final Item PLINKO_ITEM = new BlockItem(PLINKO, new Item.Settings());
 
     /** A tela do trocador de fichas (ouro e diamante viram fichas, e fichas viram ouro e diamante). */
     public static final ScreenHandlerType<ChipExchangerScreenHandler> CHIP_EXCHANGER_HANDLER = Registry.register(
@@ -106,6 +110,11 @@ public class Cassino implements ModInitializer {
             Registries.SCREEN_HANDLER, id("coin_flip"),
             new ScreenHandlerType<>(CoinFlipScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
 
+    /** A tela do Plinko de Slime (o tabuleiro de pinos, a aposta, os créditos e o espaço das fichas). */
+    public static final ScreenHandlerType<PlinkoScreenHandler> PLINKO_HANDLER = Registry.register(
+            Registries.SCREEN_HANDLER, id("plinko"),
+            new ScreenHandlerType<>(PlinkoScreenHandler::new, FeatureFlags.VANILLA_FEATURES));
+
     /** Tarefas para rodar daqui a alguns ticks (o aviso do jackpot espera os rolos pararem na tela). */
     private static final List<Later> LATER = new ArrayList<>();
 
@@ -124,6 +133,7 @@ public class Cassino implements ModInitializer {
                 entries.add(HORSE_RACE_ITEM);
                 entries.add(DICE_TABLE_ITEM);
                 entries.add(COIN_FLIP_ITEM);
+                entries.add(PLINKO_ITEM);
                 entries.add(DIE);
                 entries.add(COIN);
             })
@@ -152,6 +162,8 @@ public class Cassino implements ModInitializer {
         Registry.register(Registries.ITEM, id("dice_table"), DICE_TABLE_ITEM);
         Registry.register(Registries.BLOCK, id("coin_flip"), COIN_FLIP);
         Registry.register(Registries.ITEM, id("coin_flip"), COIN_FLIP_ITEM);
+        Registry.register(Registries.BLOCK, id("plinko"), PLINKO);
+        Registry.register(Registries.ITEM, id("plinko"), PLINKO_ITEM);
         Registry.register(Registries.ITEM_GROUP, id("main"), GROUP);
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
