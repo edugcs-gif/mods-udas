@@ -21,7 +21,7 @@ import net.minecraft.util.math.random.Random;
  *
  * <p>JOGAR! tira a aposta dos créditos e cobre a grade; cada clique num bloco cava ele; SACAR! paga o prêmio do
  * momento. Enquanto a rodada está aberta, a casa reserva o que pagaria se o jogador sacasse (como numa mão de
- * blackjack), e só deixa cavar se o prêmio depois da próxima pedra ainda couber no limite de -640: perto do limite, a
+ * blackjack), e só deixa cavar se o prêmio depois da próxima pedra ainda couber no limite de -2000: perto do limite, a
  * tela avisa que é hora de sacar. Fechar a tela no meio da rodada saca sozinho.
  */
 public class MinesScreenHandler extends CassinoScreenHandler {

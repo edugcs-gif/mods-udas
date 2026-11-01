@@ -4,8 +4,10 @@ package com.cassino.mod.machine;
  * A sorte que segue o saldo da casa ({@link CassinoState}), igual em todos os jogos do cassino.
  *
  * <ul>
- *   <li><b>Casa no negativo:</b> a cada 64 fichas no negativo, a casa ganha mais sorte ({@link #houseLuck}: 5% a cada
- *       64, até 50% em -640). Os jogos sorteiam duas vezes e ficam com o pior para o jogador.</li>
+ *   <li><b>Casa no negativo:</b> a cada 64 fichas no negativo sobe um degrau ({@link #debtStep}: 1 de -64 a -127, 2
+ *       de -128 a -191... até {@link #DEBT_STEPS} perto do limite de -{@value CassinoState#MAX_HOUSE_DEBT}), e a casa
+ *       ganha mais sorte ({@link #houseLuck}: uns 1,6% a cada degrau, até {@link #MAX_HOUSE_LUCK} no último). Os jogos
+ *       sorteiam duas vezes e ficam com o pior para o jogador.</li>
  *   <li><b>Casa de 0 a +639:</b> jogo normal.</li>
  *   <li><b>Casa em +640 ou mais:</b> a cada 64 fichas sobe um degrau ({@link #profitStep}: 1 de +640 a +703, 2 de
  *       +704 a +767... até {@link #MAX_STEPS} de +1216 para cima), e a chance de o jogador ganhar sobe em todos os
@@ -18,15 +20,24 @@ public final class Luck {
     public static final int STEP = 64;
     /** Saldo da casa a partir do qual a chance dos jogadores começa a subir. */
     public static final int PROFIT_START = 640;
-    /** Quantos degraus há de cada lado. */
+    /** Quantos degraus há no positivo. */
     public static final int MAX_STEPS = 10;
+    /** Quantos degraus há no negativo: de 64 em 64 até o limite da casa (31 com o limite de -2000). */
+    public static final int DEBT_STEPS = CassinoState.MAX_HOUSE_DEBT / STEP;
+    /** A sorte da casa no último degrau negativo. */
+    public static final float MAX_HOUSE_LUCK = 0.5F;
 
     private Luck() {
     }
 
+    /** O degrau do negativo da casa: 0 de -63 para cima, 1 de -64 a -127, 2 de -128... até {@link #DEBT_STEPS}. */
+    public static int debtStep(long house) {
+        return house >= 0 ? 0 : (int) Math.min(DEBT_STEPS, -house / STEP);
+    }
+
     /** Com a casa no negativo: a chance de um sorteio sair duas vezes e ficar o pior para o jogador. */
     public static float houseLuck(long house) {
-        return house >= 0 ? 0.0F : 0.05F * Math.min(MAX_STEPS, -house / STEP);
+        return MAX_HOUSE_LUCK * debtStep(house) / DEBT_STEPS;
     }
 
     /** O degrau do lucro da casa: 0 abaixo de +640, 1 de +640 a +703, 2 de +704 a +767... até 10 de +1216 para cima. */

@@ -18,7 +18,7 @@ import net.minecraft.util.math.random.Random;
  *
  * <p>A "sorte da mesa" segue o saldo da casa, como em todos os jogos ({@link Luck}): numa parte das cartas a mesa tira
  * duas e dá a melhor para um lado e a pior para o outro. Com a casa no negativo, a melhor vai para o dealer
- * ({@link Luck#houseLuck}: 5% a cada 64, até 50%); de 0 a +639 o jogo é limpo (devolve uns 99% para quem joga perfeito);
+ * ({@link Luck#houseLuck}: uns 1,6% a cada 64, até 50% perto de -2000); de 0 a +639 o jogo é limpo (uns 99%);
  * de +640 para cima, a melhor vai para o jogador ({@link #playerLuck}: 1,5% a cada 64, até 15% em +1216, quando a
  * mesa devolve uns 110% para quem joga perfeito).
  */

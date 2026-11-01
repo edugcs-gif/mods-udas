@@ -16,7 +16,7 @@ import net.minecraft.sound.SoundEvents;
  * créditos, o espaço das fichas, DEPÓSITO e RETIRADA, em {@link CassinoScreenHandler}.
  *
  * <p>O botão verde dá as cartas (gastando a aposta) e, durante a mão, pede mais uma. A aposta e o resultado entram no
- * saldo da casa, o mesmo do caça-níquel. Para o limite de -640 valer mesmo com a mão aberta, a mesa reserva o pior
+ * saldo da casa, o mesmo do caça-níquel. Para o limite de -2000 valer mesmo com a mão aberta, a mesa reserva o pior
  * caso para a casa ao dar as cartas e ao dobrar, e só aceita a aposta se ele couber. Se o jogador fechar a tela (ou
  * sair do jogo) no meio da mão, ele para e a mão termina normalmente.
  */

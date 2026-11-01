@@ -18,7 +18,7 @@ import net.minecraft.sound.SoundEvents;
  *
  * <p>O jogador escolhe uma aposta clicando numa fileira da mesa, escolhe o número do NÚMERO e aperta ROLAR!. A aposta e
  * o prêmio entram no saldo da casa, o mesmo das outras máquinas; a jogada só é aceita se o pior caso (a aposta
- * acertar) couber no limite de -640.
+ * acertar) couber no limite de -2000.
  */
 public class DiceScreenHandler extends CassinoScreenHandler {
     public static final int BUTTON_ROLL = 0;

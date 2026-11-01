@@ -18,7 +18,7 @@ import net.minecraft.sound.SoundEvents;
  *
  * <p>O jogador escolhe a cor clicando numa das caixas da mesa (0, VERMELHO ou PRETO) e aperta GIRAR!. A aposta e o
  * prêmio entram no saldo da casa, o mesmo do caça-níquel e do blackjack; uma girada só é aceita se o pior caso (a cor
- * escolhida sair) couber no limite de -640.
+ * escolhida sair) couber no limite de -2000.
  */
 public class RouletteScreenHandler extends CassinoScreenHandler {
     public static final int BUTTON_SPIN = 0;
