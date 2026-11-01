@@ -358,7 +358,7 @@ public class HorseRaceScreen extends HandledScreen<HorseRaceScreenHandler> {
         drawSmall(context, Text.translatable("gui.cassino.race.track"), LANE_X, HEADER_Y, LABEL);
         for (int horse = 0; horse < HorseRace.HORSES; horse++) {
             int rowY = ROWS_Y + horse * ROW_HEIGHT;
-            drawSmall(context, horseName(horse), TEXT_X, rowY + 2, NAME);
+            drawSmall(context, horseName(horse), TEXT_X, rowY + 2, LANE_X - TEXT_X - 3, NAME);
             drawSmall(context, Text.literal(odds(handler.odds(horse))), TEXT_X, rowY + 9, ODDS);
             // O número do cavalo correndo na raia.
             int markerX = LANE_X + 2 + Math.round(lanePosition(horse) * (LANE_END - LANE_X - 2));
@@ -389,10 +389,16 @@ public class HorseRaceScreen extends HandledScreen<HorseRaceScreenHandler> {
 
     /** Texto em 3/4 do tamanho (para caber na fileira). */
     private void drawSmall(DrawContext context, Text text, int textX, int textY, int color) {
+        drawSmall(context, text, textX, textY, Integer.MAX_VALUE, color);
+    }
+
+    /** Texto pequeno (3/4 do tamanho) que diminui mais se passar de {@code maxWidth} (os nomes compridos). */
+    private void drawSmall(DrawContext context, Text text, int textX, int textY, int maxWidth, int color) {
+        float scale = Math.min(0.75F, maxWidth / (float) textRenderer.getWidth(text));
         MatrixStack matrices = context.getMatrices();
         matrices.push();
-        matrices.translate(textX, textY, 0.0F);
-        matrices.scale(0.75F, 0.75F, 1.0F);
+        matrices.translate(textX, textY + (0.75F - scale) * 4.0F, 0.0F);
+        matrices.scale(scale, scale, 1.0F);
         context.drawText(textRenderer, text, 0, 0, color, false);
         matrices.pop();
     }
