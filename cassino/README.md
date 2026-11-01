@@ -94,7 +94,16 @@ Botão direito na mesa abre o blackjack (21) contra o dealer. Os **créditos sã
 **Ligada ao caça-níquel:** o blackjack usa o **mesmo saldo da casa**:
 
 - O limite de **-640** vale para tudo junto. Ao dar as cartas (e ao dobrar), a mesa **reserva** o pior caso para a casa (você tirar blackjack, ou ganhar a aposta dobrada) e só aceita a aposta se ele couber, contando também as mãos de outros jogadores em andamento. Se a aposta for alta demais, a tela mostra a aposta máxima do momento.
-- A **sorte da mesa** segue as mesmas faixas do caça-níquel: com a casa no negativo, numa parte das cartas a mesa tira duas e fica com a pior para o jogador (5% a cada 64 negativos, até 50%); com a casa a partir de +640, a melhor para o jogador (2% a cada 64, até 10%). Entre 0 e +639 o jogo é limpo.
+- A **sorte da mesa** segue as mesmas faixas do caça-níquel no lado negativo: com a casa no negativo, numa parte das cartas a mesa tira duas e fica com a melhor para a casa (5% a cada 64 negativos, até 50%). Com a casa no positivo o jogo é **limpo**: o blackjack limpo já devolve uns 99% para quem joga perfeito, então ajudar o jogador faria a mesa pagar mais do que recebe.
+
+Quanto a mesa devolve (simulação com as regras do mod, 400 mil mãos por linha):
+
+| Saldo da casa | Jogando perfeito | Pedindo até 17, sem dobrar |
+| --- | --- | --- |
+| 0 ou mais (limpo) | ~99% | ~94% |
+| -64 | ~95% | ~91% |
+| -320 | ~82% | ~76% |
+| -640 | ~64% | ~58% |
 
 ## Instalação
 
@@ -107,7 +116,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.5.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.5.1.jar`.
 
 ### Opção 2: no seu PC
 
@@ -118,7 +127,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.5.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.5.1.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 

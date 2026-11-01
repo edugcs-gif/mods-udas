@@ -18,8 +18,8 @@ import net.minecraft.util.math.random.Random;
  *
  * <p>A "sorte da mesa" segue o saldo da casa (o mesmo do caça-níquel, veja {@link CassinoState}), como as chances
  * do caça-níquel: com a casa no negativo, numa parte das cartas ({@link #houseLuck}) a mesa tira duas e fica com a
- * melhor para a casa; com a casa bem no positivo ({@link #playerLuck}), com a melhor para o jogador. Entre 0 e +639
- * o jogo é limpo.
+ * melhor para a casa. Com a casa no positivo o jogo é limpo: o blackjack limpo já devolve uns 99% para quem joga
+ * perfeito, então qualquer ajuda ao jogador faria a mesa pagar mais do que recebe.
  */
 public final class Blackjack {
     public static final int COPAS = 0;
@@ -92,37 +92,25 @@ public final class Blackjack {
 
     /** Fichas de saldo da casa por degrau da sorte (o mesmo degrau do caça-níquel). */
     private static final int STEP = 64;
-    /** Saldo a partir do qual a mesa passa a ajudar o jogador (o mesmo do caça-níquel). */
-    private static final int PROFIT_START = 640;
 
     /** Com a casa no negativo: chance de uma carta sair a melhor para a casa entre duas (5% a cada 64, até 50%). */
     public static float houseLuck(long house) {
         return house >= 0 ? 0.0F : 0.05F * Math.min(10, -house / STEP);
     }
 
-    /** Com a casa a partir de +640: chance de uma carta sair a melhor para o jogador (2% a cada 64, até 10%). */
-    public static float playerLuck(long house) {
-        return house < PROFIT_START ? 0.0F : 0.02F * Math.min(5, 1 + (house - PROFIT_START) / STEP);
-    }
-
     /**
-     * Tira uma carta para a mão {@code hand} (com {@code count} cartas). {@code dealerHand} diz de quem é a mão: a
-     * sorte da mesa ajuda a mão do lado que ela favorece e atrapalha a do outro.
+     * Tira uma carta para a mão {@code hand} (com {@code count} cartas). {@code dealerHand} diz de quem é a mão: com a
+     * sorte da casa, a mão do dealer fica com a melhor de duas cartas, e a do jogador com a pior.
      */
     public static int draw(Random random, int[] hand, int count, boolean dealerHand, long house) {
         int card = random.nextInt(DECK);
-        float roll = random.nextFloat();
-        boolean favorHouse = roll < houseLuck(house);
-        boolean favorPlayer = !favorHouse && roll < playerLuck(house);
-        if (!favorHouse && !favorPlayer) {
+        if (random.nextFloat() >= houseLuck(house)) {
             return card;
         }
         int other = random.nextInt(DECK);
-        // A casa ajudada: carta boa para o dealer, ruim para o jogador. O jogador ajudado: o contrário.
-        boolean helpThisHand = favorHouse == dealerHand;
         int scoreCard = score(hand, count, card);
         int scoreOther = score(hand, count, other);
-        if (helpThisHand) {
+        if (dealerHand) {
             return scoreOther > scoreCard ? other : card;
         }
         return scoreOther < scoreCard ? other : card;
