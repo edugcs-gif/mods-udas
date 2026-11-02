@@ -78,7 +78,7 @@
   "gui.cassino.race.result.lose": "%s venceu.",
   "message.cassino.race.longshot": "%s ganhou %s fichas apostando no azarão %s (x%s)!",
   "gui.cassino.house": "CASA: %s",
-  "gui.cassino.house.tip": "Saldo da casa: quanto o cassino já ganhou no servidor, somando todos os jogos. A partir de +640, a chance de ganhar sobe aos poucos em todos os jogos, para devolver as fichas aos jogadores.",
+  "gui.cassino.house.tip": "Saldo da casa: quanto o cassino já ganhou no servidor, somando todos os jogos. A partir de +640, a chance de ganhar sobe aos poucos em todos os jogos, para devolver as fichas aos jogadores. O que passar de +800 também é o prêmio da Loteria de Mobs.",
   "block.cassino.chip_exchanger": "Trocador de Fichas",
   "gui.cassino.exchanger.title": "Trocador de Fichas",
   "gui.cassino.exchanger.trade": "TROCAR",

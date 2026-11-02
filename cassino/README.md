@@ -129,7 +129,7 @@ No negativo, quanto cada jogo devolve (com a mesma estratégia de sempre):
 
 Perto de -5000 **a casa ganha todas**: ninguém acerta nada (no Plinko a bola só cai nos buracos de 0,5x e 0,2x, que devolvem menos que a aposta).
 
-**Sem teto para cima:** o saldo da casa é um valor só, compartilhado por todos os jogos, e pode subir quanto for; a partir de +640 a chance dos jogadores sobe (até +1216), e é isso que faz a casa devolver fichas em vez de acumular.
+**Sem teto para cima:** o saldo da casa é um valor só, compartilhado por todos os jogos, e pode subir quanto for; a partir de +640 a chance dos jogadores sobe (até +1216), e é isso que faz a casa devolver fichas em vez de acumular. **O que a casa tiver acima de +800 também é o prêmio da Loteria de Mobs** (um valor compartilhado: continua na casa até alguém ganhar a loteria).
 
 ## Mesa de Blackjack
 
@@ -242,7 +242,7 @@ O "jogo do bicho" do Minecraft. Botão direito no bloco abre a tabela com **25 m
 - O resultado é **anunciado no chat** para todo mundo, e quem ganhou vê **"VOCÊ GANHOU!"** na tela com o valor. Quem ganhou sem estar no jogo vê o aviso quando entrar.
 - A tela mostra o **prêmio acumulado**, os seus créditos, quantas apostas entraram hoje, a **sua aposta** (com borda amarela e a ficha na tabela) e o **último mob sorteado** (com borda verde).
 
-**Saldo separado:** a loteria tem o próprio saldo (o prêmio, que só junta as apostas) e não mexe no saldo da casa dos outros jogos; ela só paga o que tem, então nunca cria fichas.
+**O prêmio:** as apostas da loteria acumulam no prêmio, separadas do saldo da casa. E o prêmio **também inclui tudo o que o saldo da casa tiver acima de +800**: é um valor compartilhado, que continua no saldo da casa (e conta para a sorte dos outros jogos) enquanto ninguém ganha a loteria. Quando alguém ganha, o prêmio sai primeiro dessa parte da casa (que volta para +800) e o resto das apostas acumuladas. A loteria só paga o que tem, então nunca cria fichas.
 
 ## Campo Minado
 

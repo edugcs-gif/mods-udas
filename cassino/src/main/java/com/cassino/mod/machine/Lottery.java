@@ -22,8 +22,10 @@ import net.minecraft.util.Formatting;
  * <ul>
  *   <li>Cada jogador escolhe um dos {@link #MOBS 25 mobs} e aposta {@value #BET} fichas (dos créditos do cassino). Uma
  *       aposta por jogador por dia do Minecraft.</li>
- *   <li>As apostas vão para o <b>prêmio da loteria</b>, que tem o saldo separado dos outros jogos (não mexe no saldo
- *       da casa).</li>
+ *   <li>As apostas vão para o <b>prêmio da loteria</b>, que tem o saldo separado dos outros jogos. O prêmio também
+ *       inclui o que o saldo da casa tiver acima de {@value CassinoState#LOTTERY_SHARE_FROM}: um valor compartilhado,
+ *       que continua no saldo da casa (contando para a sorte dos jogos) até alguém ganhar a loteria, quando ele sai da
+ *       casa e vai para quem ganhou (veja {@link CassinoState#lotteryShare}).</li>
  *   <li>Quando o dia do Minecraft acaba (o relógio do mundo passa de um dia para o outro, também dormindo ou com
  *       {@code /time set}), sai um mob, todos com a mesma chance. Quem acertou divide o prêmio inteiro (em partes
  *       iguais) e o recebe nos créditos; se ninguém acertou, o prêmio acumula para o dia seguinte.</li>
@@ -113,9 +115,9 @@ public final class Lottery {
         Text mobName = name(mob).formatted(Formatting.YELLOW);
         Text message;
         if (winners.isEmpty()) {
-            message = Text.translatable("message.cassino.lottery.draw.none", prefix, mobName, state.lotteryPot());
+            message = Text.translatable("message.cassino.lottery.draw.none", prefix, mobName, state.lotteryPrize());
         } else {
-            long share = state.lotteryPot() / winners.size();
+            long share = state.lotteryPrize() / winners.size();
             long paid = 0;
             for (UUID winner : winners) {
                 int balance = state.balance(winner);
@@ -129,7 +131,7 @@ public final class Lottery {
                     state.addLotteryNotice(winner, prize);
                 }
             }
-            state.addToLotteryPot(-paid);
+            state.payLottery(paid);
             Text who = Text.literal(String.join(", ", names)).formatted(Formatting.GREEN);
             message = Text.translatable(winners.size() == 1
                     ? "message.cassino.lottery.draw.win" : "message.cassino.lottery.draw.win_many",

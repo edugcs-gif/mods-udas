@@ -22,7 +22,9 @@ import net.minecraft.world.PersistentState;
  *   <li>o <b>saldo da casa</b>, um só, compartilhado por todos os jogos: começa em 0, sobe com cada aposta e
  *       desce com cada prêmio. Ele mede quantas fichas o cassino já criou (negativo) ou destruiu (positivo) no
  *       servidor, e nunca passa de {@link #MAX_HOUSE_DEBT} negativo (veja {@link SlotMachine}). Para cima não tem
- *       teto: com a casa muito no positivo, a chance dos jogadores sobe (veja {@link Luck});</li>
+ *       teto: com a casa muito no positivo, a chance dos jogadores sobe (veja {@link Luck}). O que ela tem acima de
+ *       {@link #LOTTERY_SHARE_FROM} é um valor compartilhado: continua no saldo da casa, e também vale como prêmio da
+ *       loteria ({@link #lotteryShare}), até alguém ganhar a loteria;</li>
  *   <li>o <b>nome</b> de cada jogador (para o ranking: o <b>magnata</b> é quem tem mais créditos);</li>
  *   <li>a <b>loteria de mobs</b> ({@link Lottery}), com o saldo separado: o prêmio acumulado, as apostas do dia, o
  *       último mob sorteado e os avisos de prêmio para quem ganhou sem estar no jogo.</li>
@@ -38,6 +40,8 @@ public class CassinoState extends PersistentState {
     public static final int MAX_HOUSE_DEBT = 5000;
     /** Máximo de créditos de um jogador. */
     public static final int MAX_BALANCE = 1_000_000;
+    /** O saldo da casa acima disso também vale como prêmio da loteria (o valor é compartilhado). */
+    public static final int LOTTERY_SHARE_FROM = 800;
 
     private long house;
     private long reserved;
@@ -91,8 +95,30 @@ public class CassinoState extends PersistentState {
 
     // ---------------------------------------------------------------- loteria de mobs
 
+    /** As apostas acumuladas na loteria (sem a parte compartilhada da casa). */
     public long lotteryPot() {
         return lotteryPot;
+    }
+
+    /**
+     * A parte compartilhada: o que a casa tem acima de {@link #LOTTERY_SHARE_FROM}, sem contar o que está reservado
+     * para rodadas em andamento (para pagar a loteria nunca deixar a casa passar do limite).
+     */
+    public long lotteryShare() {
+        return Math.max(0L, available() - LOTTERY_SHARE_FROM);
+    }
+
+    /** O prêmio da loteria: as apostas acumuladas mais a parte compartilhada da casa. */
+    public long lotteryPrize() {
+        return lotteryPot + lotteryShare();
+    }
+
+    /** Paga um prêmio da loteria: sai primeiro da parte compartilhada da casa, e o resto das apostas acumuladas. */
+    public void payLottery(long amount) {
+        long fromHouse = Math.min(amount, lotteryShare());
+        house -= fromHouse;
+        lotteryPot = Math.max(0L, lotteryPot - (amount - fromHouse));
+        markDirty();
     }
 
     public void addToLotteryPot(long amount) {

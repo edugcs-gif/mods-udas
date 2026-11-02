@@ -78,7 +78,7 @@
   "gui.cassino.race.result.lose": "%s wins.",
   "message.cassino.race.longshot": "%s won %s chips betting on the long shot %s (x%s)!",
   "gui.cassino.house": "HOUSE: %s",
-  "gui.cassino.house.tip": "House balance: how much the casino has won on this server, across all games. From +640 up, the odds of winning rise step by step in every game, to give the chips back to the players.",
+  "gui.cassino.house.tip": "House balance: how much the casino has won on this server, across all games. From +640 up, the odds of winning rise step by step in every game, to give the chips back to the players. Anything above +800 is also the Mob Lottery pot.",
   "block.cassino.chip_exchanger": "Chip Exchanger",
   "gui.cassino.exchanger.title": "Chip Exchanger",
   "gui.cassino.exchanger.trade": "TRADE",

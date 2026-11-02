@@ -96,7 +96,7 @@ public class LotteryScreenHandler extends CassinoScreenHandler {
     /** Copia do cofre o que a tela mostra (só no servidor). */
     private void refresh() {
         myBet = state.lotteryBet(player.getUuid());
-        pot = (int) Math.min(Integer.MAX_VALUE, state.lotteryPot());
+        pot = (int) Math.min(Integer.MAX_VALUE, state.lotteryPrize());
         lastMob = state.lastLotteryMob();
         seconds = Math.min(0xFFFF, Lottery.secondsLeft(player.getServer()));
         betsToday = Math.min(0xFFFF, state.lotteryBets().size());
