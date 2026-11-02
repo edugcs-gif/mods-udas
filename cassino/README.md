@@ -90,7 +90,14 @@ O servidor guarda o **saldo da casa**: ele começa em 0, **sobe** com cada apost
 
 | Saldo da casa | Chance de ganhar | A máquina devolve |
 | --- | --- | --- |
-| +768 a +800 | 43% | ~95% |
+| +1216 ou mais | 50% | ~110% |
+| +1152 a +1215 | 49% | ~108% |
+| +1088 a +1151 | 48% | ~106% |
+| +1024 a +1087 | 47% | ~104% |
+| +960 a +1023 | 46% | ~101% |
+| +896 a +959 | 45% | ~99% |
+| +832 a +895 | 44% | ~97% |
+| +768 a +831 | 43% | ~95% |
 | +704 a +767 | 42% | ~92% |
 | +640 a +703 | 41% | ~90% |
 | -63 a +639 | 40% (o normal) | ~88% |
@@ -122,7 +129,7 @@ No negativo, quanto cada jogo devolve (com a mesma estratégia de sempre):
 
 Perto de -5000 **a casa ganha todas**: ninguém acerta nada (no Plinko a bola só cai nos buracos de 0,5x e 0,2x, que devolvem menos que a aposta).
 
-**Teto de +800 (desde a 1.14.0):** o saldo da casa não passa de **+800**; o que passar vai para o prêmio da **Loteria de Mobs**. Por isso, na prática, a chance dos jogadores sobe só nos degraus até +800 (até 43% no caça-níquel).
+**Sem teto para cima:** o saldo da casa é um valor só, compartilhado por todos os jogos, e pode subir quanto for; a partir de +640 a chance dos jogadores sobe (até +1216), e é isso que faz a casa devolver fichas em vez de acumular.
 
 ## Mesa de Blackjack
 
@@ -235,7 +242,7 @@ O "jogo do bicho" do Minecraft. Botão direito no bloco abre a tabela com **25 m
 - O resultado é **anunciado no chat** para todo mundo, e quem ganhou vê **"VOCÊ GANHOU!"** na tela com o valor. Quem ganhou sem estar no jogo vê o aviso quando entrar.
 - A tela mostra o **prêmio acumulado**, os seus créditos, quantas apostas entraram hoje, a **sua aposta** (com borda amarela e a ficha na tabela) e o **último mob sorteado** (com borda verde).
 
-**Saldo separado:** a loteria tem o próprio saldo (o prêmio) e não mexe no saldo da casa dos outros jogos; ela só paga o que tem, então nunca cria fichas. Mas ela **recebe o que o saldo da casa passar de +800**: quando os outros jogos deixam a casa acima de 800, o excesso vai direto para o prêmio da loteria.
+**Saldo separado:** a loteria tem o próprio saldo (o prêmio, que só junta as apostas) e não mexe no saldo da casa dos outros jogos; ela só paga o que tem, então nunca cria fichas.
 
 ## Campo Minado
 
@@ -272,7 +279,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.18.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.19.0.jar`.
 
 ### Opção 2: no seu PC
 
@@ -283,7 +290,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.18.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.19.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 

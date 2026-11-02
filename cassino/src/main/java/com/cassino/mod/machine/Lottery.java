@@ -22,8 +22,8 @@ import net.minecraft.util.Formatting;
  * <ul>
  *   <li>Cada jogador escolhe um dos {@link #MOBS 25 mobs} e aposta {@value #BET} fichas (dos créditos do cassino). Uma
  *       aposta por jogador por dia do Minecraft.</li>
- *   <li>As apostas vão para o <b>prêmio da loteria</b>, que tem o saldo separado dos outros jogos. Ele também recebe
- *       o que o saldo da casa passar de {@value CassinoState#LOTTERY_HOUSE_CAP} (veja {@link CassinoState#settle}).</li>
+ *   <li>As apostas vão para o <b>prêmio da loteria</b>, que tem o saldo separado dos outros jogos (não mexe no saldo
+ *       da casa).</li>
  *   <li>Quando o dia do Minecraft acaba (o relógio do mundo passa de um dia para o outro, também dormindo ou com
  *       {@code /time set}), sai um mob, todos com a mesma chance. Quem acertou divide o prêmio inteiro (em partes
  *       iguais) e o recebe nos créditos; se ninguém acertou, o prêmio acumula para o dia seguinte.</li>

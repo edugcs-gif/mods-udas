@@ -19,10 +19,10 @@ import net.minecraft.world.PersistentState;
  * <ul>
  *   <li>o <b>saldo de cada jogador</b> (as fichas que ele depositou nas máquinas, mais os prêmios, menos as
  *       apostas): é só dele, vale em qualquer caça-níquel e continua lá depois de fechar a máquina;</li>
- *   <li>o <b>saldo da casa</b>, o mesmo para o caça-níquel e o blackjack: começa em 0, sobe com cada aposta e
+ *   <li>o <b>saldo da casa</b>, um só, compartilhado por todos os jogos: começa em 0, sobe com cada aposta e
  *       desce com cada prêmio. Ele mede quantas fichas o cassino já criou (negativo) ou destruiu (positivo) no
- *       servidor, e nunca passa de {@link #MAX_HOUSE_DEBT} negativo (veja {@link SlotMachine}). Também nunca passa de
- *       {@link #LOTTERY_HOUSE_CAP}: o que passar vai para o prêmio da loteria;</li>
+ *       servidor, e nunca passa de {@link #MAX_HOUSE_DEBT} negativo (veja {@link SlotMachine}). Para cima não tem
+ *       teto: com a casa muito no positivo, a chance dos jogadores sobe (veja {@link Luck});</li>
  *   <li>o <b>nome</b> de cada jogador (para o ranking: o <b>magnata</b> é quem tem mais créditos);</li>
  *   <li>a <b>loteria de mobs</b> ({@link Lottery}), com o saldo separado: o prêmio acumulado, as apostas do dia, o
  *       último mob sorteado e os avisos de prêmio para quem ganhou sem estar no jogo.</li>
@@ -38,8 +38,6 @@ public class CassinoState extends PersistentState {
     public static final int MAX_HOUSE_DEBT = 5000;
     /** Máximo de créditos de um jogador. */
     public static final int MAX_BALANCE = 1_000_000;
-    /** O saldo da casa não passa disso: o que passar vai para o prêmio da loteria. */
-    public static final int LOTTERY_HOUSE_CAP = 800;
 
     private long house;
     private long reserved;
@@ -85,18 +83,10 @@ public class CassinoState extends PersistentState {
         reserved = Math.max(0L, reserved - amount);
     }
 
-    /** A casa recebeu {@code bet} e pagou {@code prize}. O excesso acima do teto vai para a loteria. */
+    /** A casa recebeu {@code bet} e pagou {@code prize}. */
     public void settle(int bet, int prize) {
         house += bet - prize;
-        capHouse();
         markDirty();
-    }
-
-    private void capHouse() {
-        if (house > LOTTERY_HOUSE_CAP) {
-            lotteryPot += house - LOTTERY_HOUSE_CAP;
-            house = LOTTERY_HOUSE_CAP;
-        }
     }
 
     // ---------------------------------------------------------------- loteria de mobs
@@ -303,7 +293,6 @@ public class CassinoState extends PersistentState {
                 state.lotteryNotices.put(notice.getUuid("Player"), notice.getLong("Amount"));
             }
         }
-        state.capHouse();
         return state;
     }
 }
