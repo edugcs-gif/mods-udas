@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "jbleskmic",
+  "version": "${version}",
+  "name": "jblesk Microfone",
+  "description": "Um microfone para o jblesk: conecte numa jbleskão e a sua voz (Simple Voice Chat) sai pela caixa de som.",
+  "authors": ["Autores do jblesk Microfone"],
+  "license": "MIT",
+  "icon": "assets/jbleskmic/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.jbleskmic.mod.JbleskMic"],
+    "voicechat": ["com.jbleskmic.mod.voicechat.MicVoicechatPlugin"]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "fabric-api": "*",
+    "caixademusica": "*",
+    "voicechat": "*"
+  }
+}

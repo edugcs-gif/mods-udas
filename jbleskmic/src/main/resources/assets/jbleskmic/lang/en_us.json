@@ -1,0 +1,11 @@
+{
+  "item.jbleskmic.microphone": "Microphone",
+  "item.jbleskmic.microphone.linked": "Linked to the jblesk at %s",
+  "item.jbleskmic.microphone.not_linked": "Not linked: click a jbleskão",
+  "item.jbleskmic.microphone.hint": "Hold it to talk through the speaker",
+  "item.jbleskmic.microphone.hint2": "Sneak and click the air to unlink",
+  "message.jbleskmic.linked": "Microphone linked to the jblesk at %s",
+  "message.jbleskmic.unlinked": "Microphone unlinked",
+  "message.jbleskmic.not_linked": "Click a jbleskão to link the microphone",
+  "message.jbleskmic.status": "Linked to the jblesk at %s. Talk: your voice plays from the speaker."
+}

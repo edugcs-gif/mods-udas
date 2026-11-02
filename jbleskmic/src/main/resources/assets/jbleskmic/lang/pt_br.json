@@ -1,0 +1,11 @@
+{
+  "item.jbleskmic.microphone": "Microfone",
+  "item.jbleskmic.microphone.linked": "Conectado à jblesk em %s",
+  "item.jbleskmic.microphone.not_linked": "Sem conexão: clique numa jbleskão",
+  "item.jbleskmic.microphone.hint": "Segure para falar pela caixa de som",
+  "item.jbleskmic.microphone.hint2": "Agache e clique no ar para desconectar",
+  "message.jbleskmic.linked": "Microfone conectado à jblesk em %s",
+  "message.jbleskmic.unlinked": "Microfone desconectado",
+  "message.jbleskmic.not_linked": "Clique numa jbleskão para conectar o microfone",
+  "message.jbleskmic.status": "Conectado à jblesk em %s. Fale: sua voz sai pela caixa."
+}
