@@ -35,7 +35,7 @@ Tudo fica na aba **Cassino** do criativo.
 - **Plinko de Slime:** fileira de cima 3 barras de ferro; no meio bola de slime, **ficha**, bola de slime; embaixo 3 barras de ferro.
 - **Loteria de Mobs:** fileira de cima 3 papéis; no meio tábua, **ficha**, tábua; embaixo 3 tábuas.
 - **Campo Minado:** fileira de cima 3 pedras; no meio pólvora, **ficha**, pólvora; embaixo 3 pedras.
-- **Dado:** 4 quartzos em quadrado (2x2).
+- **Dado:** 2 quartzos e 1 corante preto, em qualquer lugar da mesa (sem formato).
 - **Moeda:** em cruz, 4 pepitas de ferro (em cima, embaixo e nos lados) e 1 pepita de ouro no centro.
 
 ## Trocador de Fichas
@@ -279,7 +279,7 @@ O `.jar` precisa do **Fabric Loader** e do **Fabric API** para a 1.20.1. Coloque
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `cassino/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **cassino - gerar o .jar**. Ele roda sozinho a cada alteração em `cassino/` (uns 2 a 3 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.19.0.jar`.
+2. Clique no build que terminou e baixe o artefato **cassino**. Dentro do zip está o `cassino-1.19.1.jar`.
 
 ### Opção 2: no seu PC
 
@@ -290,7 +290,7 @@ Precisa do **JDK 17 ou 21**. Na pasta `cassino/` do projeto:
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/cassino-1.19.0.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
+O jar fica em `build/libs/cassino-1.19.1.jar`. Para testar sem montar o modpack: `./gradlew runClient`.
 
 ## Ideias para a próxima versão
 

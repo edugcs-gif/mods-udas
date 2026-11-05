@@ -1,6 +1,9 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [ "QQ", "QQ" ],
-  "key": { "Q": { "item": "minecraft:quartz" } },
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:quartz" },
+    { "item": "minecraft:quartz" },
+    { "item": "minecraft:black_dye" }
+  ],
   "result": { "item": "cassino:die", "count": 1 }
 }
