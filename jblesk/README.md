@@ -86,7 +86,7 @@ O `.jar` precisa estar **no servidor e no cliente de todos os jogadores** (preci
 Este mod mora no repositório [mods-udas](https://github.com/edugcs-gif/mods-udas), na pasta `jblesk/`.
 
 1. No repositório, abra a aba **Actions** e escolha o workflow **jblesk - gerar o .jar**. Ele roda sozinho a cada alteração em `jblesk/` (uns 3 a 5 minutos); também dá para rodar à mão em **Run workflow**.
-2. Clique no build que terminou e baixe o artefato **jblesk**. Dentro do zip está o `jblesk-2.1.0.jar`.
+2. Clique no build que terminou e baixe o artefato **jblesk**. Dentro do zip está o `jblesk-2.1.1.jar`.
 
 ### Opção 2: no seu PC
 
@@ -97,6 +97,6 @@ Precisa do **JDK 17 ou mais novo** (por exemplo, o Temurin 21). Na pasta `jblesk
 gradlew.bat build      # Prompt do Windows
 ```
 
-O jar fica em `build/libs/jblesk-2.1.0.jar`.
+O jar fica em `build/libs/jblesk-2.1.1.jar`.
 
 Para testar sem montar o modpack, use `./gradlew runClient`.

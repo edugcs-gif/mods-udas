@@ -3,7 +3,7 @@
   "item.caixademusica.portable_music_box": "jblesk",
   "item.caixademusica.portable_music_box.hint": "Right-click (or press B) to open",
   "item.caixademusica.portable_music_box.hint2": "Plays while stored in your inventory",
-  "key.caixademusica.open": "Open the music box (nearby donkey/boat, or portable one in inventory)",
+  "key.caixademusica.open": "Open the music box",
   "gui.caixademusica.no_target": "No music box nearby: get close to a donkey or boat with a chest, or carry the portable box in your inventory.",
   "gui.caixademusica.entity_title": "Music Box: %s",
   "item.caixademusica.portable_music_box.playing": "Playing: %s",

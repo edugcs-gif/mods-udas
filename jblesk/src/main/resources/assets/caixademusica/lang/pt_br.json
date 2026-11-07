@@ -3,7 +3,7 @@
   "item.caixademusica.portable_music_box": "jblesk",
   "item.caixademusica.portable_music_box.hint": "Botão direito (ou a tecla B) para abrir",
   "item.caixademusica.portable_music_box.hint2": "Toca guardada no inventário",
-  "key.caixademusica.open": "Abrir a caixa de som (burro/barco por perto ou portátil do inventário)",
+  "key.caixademusica.open": "Abrir a caixa de som",
   "gui.caixademusica.no_target": "Nenhuma caixa por perto: chegue perto de um burro ou barco com baú, ou leve a caixa portátil no inventário.",
   "gui.caixademusica.entity_title": "Caixa de Som: %s",
   "item.caixademusica.portable_music_box.playing": "Tocando: %s",
