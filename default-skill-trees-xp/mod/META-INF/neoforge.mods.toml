@@ -1,0 +1,10 @@
+modLoader="lowcodefml"
+loaderVersion="[1,)"
+license="Unlicense"
+
+[[mods]]
+modId="default_skill_trees"
+version="1.1"
+displayName="Default Skill Trees"
+description="Adds default skill trees for Pufferfish's Skills mod."
+authors="Pufferfish"

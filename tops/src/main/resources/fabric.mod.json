@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "tops",
+  "version": "${version}",
+  "name": "Tops do Servidor",
+  "description": "Rankings do servidor a partir das estatísticas do jogo (e XP ganho contado pelo mod): /top [página], /top <categoria>, /status [jogador] e /peixes. Só precisa estar no servidor.",
+  "authors": [
+    "edugcs"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.edugcs.tops.Tops"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}

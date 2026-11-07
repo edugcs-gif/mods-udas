@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "loja",
+  "version": "${version}",
+  "name": "Loja de Baú",
+  "description": "Lojas de troca com baú e placa ([loja]) e baús trancados ([privado]). Só precisa estar no servidor.",
+  "authors": [
+    "edugcs"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.edugcs.loja.LojaMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}

@@ -1,0 +1,46 @@
+name: loja - gerar o .jar
+
+on:
+  push:
+    paths:
+      - 'loja/**'
+      - '.github/workflows/loja.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: loja
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          build-root-directory: loja
+      - name: Compilar
+        run: chmod +x gradlew && ./gradlew build --no-daemon
+      # O Minecraft 1.20.1 roda no Java 17: nada no .jar (nem as bibliotecas embutidas) pode exigir Java mais novo.
+      - name: Conferir Java 17
+        run: |
+          python3 - <<'PY'
+          import glob, struct, sys, zipfile
+          bad = []
+          for jar in glob.glob('build/libs/*.jar'):
+              with zipfile.ZipFile(jar) as z:
+                  for name in z.namelist():
+                      if name.endswith('.class') and not name.startswith('META-INF/versions/'):
+                          major = struct.unpack('>H', z.read(name)[6:8])[0]
+                          if major > 61:
+                              bad.append(f'{jar}: {name} (Java {major - 44})')
+          print('\n'.join(bad[:20]) or 'Tudo compatível com Java 17.')
+          sys.exit(1 if bad else 0)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: loja
+          path: loja/build/libs/*.jar

@@ -1,0 +1,33 @@
+name: default-skill-trees-xp - gerar o .jar
+
+on:
+  push:
+    paths:
+      - 'default-skill-trees-xp/**'
+      - '.github/workflows/default-skill-trees-xp.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: default-skill-trees-xp
+    steps:
+      - uses: actions/checkout@v4
+      # Não tem código: o .jar é só o conteúdo da pasta mod/ compactado.
+      - name: Conferir os JSON
+        run: |
+          python3 - <<'PY'
+          import glob, json
+          arquivos = glob.glob('mod/**/*.json', recursive=True)
+          for f in arquivos:
+              json.load(open(f, encoding='utf-8'))
+          print(f'{len(arquivos)} arquivos JSON válidos.')
+          PY
+      - name: Montar o .jar
+        run: cd mod && zip -q -r -X ../default_skill_trees-1.1-xp-exponencial.jar .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: default-skill-trees-xp
+          path: default-skill-trees-xp/default_skill_trees-1.1-xp-exponencial.jar
