@@ -22,6 +22,7 @@ enum Categoria {
     DIMAHORA("dimahora", "Diamantes por hora de jogo", "§b", "diamante/h", "diamantes/h", Tema.MINERACAO, Tipo.DECIMAL),
     ESMERALDAS("esmeraldas", "Esmeraldas mineradas", "§a", "esmeralda", "esmeraldas", Tema.MINERACAO, Tipo.CONTAGEM),
     FERRO("ferro", "Ferro minerado", "§f", "minério", "minérios", Tema.MINERACAO, Tipo.CONTAGEM),
+    QUARTZO("quartzo", "Quartzo minerado", "§f", "minério", "minérios", Tema.MINERACAO, Tipo.CONTAGEM),
     NETHERITE("netherite", "Detritos antigos", "§5", "detrito", "detritos", Tema.MINERACAO, Tipo.CONTAGEM),
     FERRAMENTAS("ferramentas", "Ferramentas quebradas", "§8", "ferramenta", "ferramentas", Tema.MINERACAO, Tipo.CONTAGEM),
     // ----- Fazenda e Vila
@@ -82,6 +83,7 @@ enum Categoria {
             case ESMERALDAS: return c(mined, "emerald_ore") + c(mined, "deepslate_emerald_ore");
             case FERRO: return c(mined, "iron_ore") + c(mined, "deepslate_iron_ore");
             case NETHERITE: return c(mined, "ancient_debris");
+            case QUARTZO: return c(mined, "nether_quartz_ore");
             case FERRAMENTAS: return soma(st.getOrDefault("minecraft:broken", Map.of()));
             case COLHEITA: { long t = 0; for (String k : COLHEITAS) t += c(mined, k); return t; }
             case CRIADOR: return c(custom, "animals_bred");

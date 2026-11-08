@@ -11,10 +11,10 @@ Rankings do servidor tirados das **estatísticas do próprio jogo** (a pasta `wo
 | `/status [jogador]` | Todas as estatísticas de uma pessoa, com a colocação em cada uma |
 | `/peixes` | Atalho para `/top peixes` |
 
-## Rankings (35)
+## Rankings (36)
 
 - **Combate:** `mobs`, `pvp`, `kd` (relação K/D), `creepers`, `causado` (dano causado), `escudo` (dano bloqueado), `mortes`, `azarado` (mortes por hora), `dano` (dano sofrido), `sobrevivente` (tempo sem morrer)
-- **Mineração:** `blocos`, `diamantes`, `dimahora` (diamantes por hora), `esmeraldas`, `ferro`, `netherite`, `ferramentas` (quebradas)
+- **Mineração:** `blocos`, `diamantes`, `dimahora` (diamantes por hora), `esmeraldas`, `ferro`, `quartzo`, `netherite`, `ferramentas` (quebradas)
 - **Fazenda e Vila:** `colheita`, `criador`, `peixes`, `trocas`, `craftados`, `encantamentos`
 - **Exploração e Vida:** `horas`, `xp`, `distancia`, `nado`, `cavalo`, `queda`, `pulos`, `agachado`, `baus`, `dormir`, `ragequit` (vezes que saiu), `lixo` (itens jogados no chão)
 
